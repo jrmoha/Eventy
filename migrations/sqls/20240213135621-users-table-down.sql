@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS organizer;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS person;
+DROP TYPE IF EXISTS gender_type;
+DROP FUNCTION IF EXISTS update_updatedAt;
+DROP TABLE IF EXISTS migrations;

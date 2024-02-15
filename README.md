@@ -1,1 +1,1 @@
-# eventy-server
+# Eventy
