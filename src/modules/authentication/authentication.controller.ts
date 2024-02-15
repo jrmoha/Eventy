@@ -18,7 +18,7 @@ import Organizer from "../organizer/organizer.model";
 import {
   sendResetPasswordEmail,
   sendVerificationEmail,
-} from "../../interfaces/handlers/email.handler";
+} from "../../interfaces/handlers/email/email.handler";
 import { nanoid } from "nanoid";
 
 export const signup = async_(

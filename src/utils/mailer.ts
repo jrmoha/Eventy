@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 import { Email, EmailServer } from "../types/email.type";
 import hbs from "nodemailer-express-handlebars";
+import path from "path";
 
 export const sendEmail = async ({
   email,
@@ -15,10 +16,16 @@ export const sendEmail = async ({
     "compile",
     hbs({
       viewEngine: {
-        partialsDir: "./src/email/",
+        partialsDir: path.resolve(
+          __dirname,
+          "../interfaces/handlers/email/template",
+        ),
         defaultLayout: "",
       },
-      viewPath: "./src/email/",
+      viewPath: path.resolve(
+        __dirname,
+        "../interfaces/handlers/email/template",
+      ),
       extName: ".hbs",
     }),
   );

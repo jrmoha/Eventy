@@ -1,7 +1,7 @@
-import Person from "../../modules/person/person.model";
+import Person from "../../../modules/person/person.model";
 import config from "config";
 import jwt from "jsonwebtoken";
-import { sendEmail } from "../../utils/mailer";
+import { sendEmail } from "../../../utils/mailer";
 
 export const sendResetPasswordEmail = function (data: Person) {
   const { email, first_name, password_reset_code } = data;
