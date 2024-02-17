@@ -8,6 +8,7 @@ import {
 } from "../src/interfaces/middleware/error.handler";
 import authRoutes from "../src/modules/authentication/authentication.routes";
 import userRoutes from "../src/modules/user/user.routes";
+import categoryRoutes from "../src/modules/category/category.routes";
 import {
   req_logger,
   err_logger,
@@ -29,7 +30,7 @@ export class ExpressConfig {
       this.app.use(req_logger);
       this.app.use("/api/v1/authentication", authRoutes);
       this.app.use("/api/v1/users", userRoutes);
-
+      this.app.use("/api/v1/categories", categoryRoutes);
       this.app.use(routeError);
       this.app.use(err_logger);
       this.app.use(error_handler);
@@ -39,7 +40,8 @@ export class ExpressConfig {
         logger.info(`Server is running on port ${this.port}`);
       });
     } catch (error) {
-      console.error(error);
+      logger.error(`Error in express config: ${error}`);
+      process.exit(1);
     }
   }
 }

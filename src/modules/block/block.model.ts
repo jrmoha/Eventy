@@ -24,6 +24,7 @@ Block.init(
   {
     timestamps: true,
     tableName: "block",
+    modelName: "Block",
     sequelize,
   },
 );

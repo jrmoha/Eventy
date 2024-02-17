@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import config from "config";
 import StatusCodes from "http-status-codes";
 import { APIError } from "../../types/APIError.error";
+import fs from "fs";
 
 export const routeError = function (
   req: Request,
@@ -21,6 +22,8 @@ export const error_handler = function (
   res: Response,
   next: NextFunction,
 ) {
+  if (req.file) fs.unlinkSync(req.file.path);
+
   if (err instanceof APIError) {
     return res.status(err.statusCode).json({
       success: false,

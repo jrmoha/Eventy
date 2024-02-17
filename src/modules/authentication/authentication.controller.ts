@@ -140,6 +140,8 @@ export const emailVerification = async_(
     next: NextFunction,
   ) => {
     const { t } = req.query;
+    console.log(t);
+    
     const decoded = jwt.verify(
       t,
       config.get<string>("jwt.secret"),

@@ -24,6 +24,7 @@ FriendRequest.init(
   {
     timestamps: true,
     tableName: "friend_request",
+    modelName: "FriendRequest",
     sequelize,
   },
 );

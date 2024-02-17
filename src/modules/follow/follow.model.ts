@@ -24,8 +24,8 @@ Follow.init(
   {
     timestamps: true,
     sequelize,
-    modelName: "Follow",
-    tableName: "follow",
+   tableName: "follow",
+   modelName: "Follow",
   },
 );
 

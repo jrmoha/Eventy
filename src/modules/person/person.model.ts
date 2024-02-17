@@ -29,7 +29,6 @@ Person.init(
     },
     username: {
       type: DataTypes.STRING,
-      unique: true,
       allowNull: false,
       validate: {
         len: [3, 255],
@@ -38,7 +37,6 @@ Person.init(
     },
     email: {
       type: DataTypes.STRING,
-      unique: true,
       allowNull: false,
       validate: {
         len: [3, 255],
@@ -63,7 +61,6 @@ Person.init(
     },
     phone_number: {
       type: DataTypes.STRING,
-      unique: true,
       allowNull: false,
       validate: {
         len: [3, 255],
@@ -108,7 +105,18 @@ Person.init(
       defaultValue: null,
     },
   },
-  { timestamps: true, sequelize, tableName: "person" },
+  {
+    timestamps: true,
+    sequelize,
+    tableName: "person",
+    modelName: "Person",
+    indexes: [
+      {
+        unique: true,
+        fields: ["email", "username", "phone_number"],
+      },
+    ],
+  },
 );
 
 export default Person;

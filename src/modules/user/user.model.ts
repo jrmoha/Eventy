@@ -1,10 +1,14 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../../database";
 import Person from "../person/person.model";
+import UserImage from "../image/user.image.model";
+import Image from "../image/image.model";
+import Block from "../block/block.model";
+import Category from "../category/category.model";
+import UserCategory from "../category/user.category.model";
 import Follow from "../follow/follow.model";
 import FriendRequest from "../friendrequest/friendrequest.model";
 import Friendship from "../friendship/friendship.model";
-import Block from "../block/block.model";
 
 class User extends Person {
   declare followers_count: number;
@@ -39,7 +43,7 @@ User.init(
   {
     timestamps: true,
     tableName: "user",
-    modelName: "user",
+    modelName: "User",
     sequelize,
   },
 );
@@ -52,7 +56,7 @@ User.belongsTo(Person, {
 });
 
 User.belongsToMany(User, {
-  as: "followers",
+  as: "follow",
   through: Follow,
   foreignKey: "followed_id",
   otherKey: "follower_id",
@@ -75,6 +79,18 @@ User.belongsToMany(User, {
   through: Block,
   foreignKey: "blocker_id",
   otherKey: "blocked_id",
+});
+
+User.belongsToMany(Category, {
+  through: UserCategory,
+  foreignKey: "user_id",
+  otherKey: "name",
+});
+
+User.belongsToMany(Image, {
+  through: UserImage,
+  foreignKey: "user_id",
+  otherKey: "public_id",
 });
 
 export default User;

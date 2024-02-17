@@ -1,9 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../../database";
-import User from "../user/user.model";
-import Person from "../person/person.model";
 
-class Organizer extends User {
+class Organizer extends sequelize.models.User {
   declare rate: number;
   declare events_count: number;
 }
@@ -35,19 +33,12 @@ Organizer.init(
   {
     timestamps: true,
     tableName: "organizer",
-    modelName: "organizer",
+    modelName: "Organizer",
     sequelize,
   },
 );
 
-Organizer.belongsTo(User, {
-  foreignKey: "id",
-  targetKey: "id",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-});
-
-Organizer.belongsTo(Person, {
+Organizer.belongsTo(sequelize.models.User, {
   foreignKey: "id",
   targetKey: "id",
   onDelete: "CASCADE",

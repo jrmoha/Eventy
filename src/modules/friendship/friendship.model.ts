@@ -24,6 +24,7 @@ Friendship.init(
   {
     timestamps: true,
     tableName: "friendship",
+    modelName: "Friendship",
     sequelize,
   },
 );
