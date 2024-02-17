@@ -4,6 +4,7 @@ import {
   forgotPassword,
   login,
   resendEmailVerification,
+  reset_password,
   signup,
 } from "./authentication.controller";
 import { validate } from "../../interfaces/middleware/validator.middleware";
@@ -11,7 +12,8 @@ import {
   emailVerificationSchema,
   loginSchema,
   signupSchema,
-  passwordResetSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
 } from "./authentication.schema";
 
 const router = Router();
@@ -28,10 +30,7 @@ router.get(
   validate(emailVerificationSchema),
   resendEmailVerification,
 );
-router.post(
-  "/forgot-password",
-  validate(passwordResetSchema),
-  forgotPassword,
-);
+router.post("/forgot-password", validate(forgotPasswordSchema), forgotPassword);
+router.post("/reset-password", validate(resetPasswordSchema), reset_password);
 
 export default router;

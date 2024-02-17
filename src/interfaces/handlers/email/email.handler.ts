@@ -4,7 +4,15 @@ import jwt from "jsonwebtoken";
 import { sendEmail } from "../../../utils/mailer";
 
 export const sendResetPasswordEmail = function (data: Person) {
-  const { email, first_name, password_reset_code } = data;
+  const { id, email, first_name, password_reset_code } = data;
+
+  const token = jwt.sign(
+    { id, email, password_reset_code },
+    config.get<string>("jwt.secret"),
+    {
+      expiresIn: `${config.get<string>("PASSWORD_RESET_CODE_EXPIRES_IN")}m`,
+    },
+  );
 
   const config_ = {
     mailserver: {
@@ -21,10 +29,10 @@ export const sendResetPasswordEmail = function (data: Person) {
       template: "password.reset",
       context: {
         username: `${first_name}`,
-        code: password_reset_code,
+        token,
         email,
-        // host: config.get<string>("host"),
-        // port: config.get<string>("port"),
+        host: config.get<string>("host"),
+        port: config.get<string>("port"),
       },
     },
   };

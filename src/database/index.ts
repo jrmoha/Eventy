@@ -36,6 +36,7 @@
 
 import { Sequelize } from "sequelize";
 import config from "config";
+import logger from "../utils/logger";
 export class Database {
   private readonly sequelize: Sequelize;
 
@@ -52,10 +53,9 @@ export class Database {
         logging: false,
         benchmark: true,
       });
-      console.log("Connected to database");
+      logger.info("Connected to database");
     } catch (error) {
-      console.log("Error connecting to database");
-      console.error(error);
+      logger.error(`Error connecting to database: ${error}`);
     }
   }
   public getSequelize(): Sequelize {

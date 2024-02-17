@@ -1,21 +1,21 @@
 import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../../database";
 
-class Friendship extends Model {
-  declare sender_id: number;
-  declare receiver_id: number;
+class Block extends Model {
+  declare blocker_id: number;
+  declare blocked_id: number;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 }
 
-Friendship.init(
+Block.init(
   {
-    sender_id: {
+    blocker_id: {
       type: DataTypes.BIGINT,
       allowNull: false,
       primaryKey: true,
     },
-    receiver_id: {
+    blocked_id: {
       type: DataTypes.BIGINT,
       allowNull: false,
       primaryKey: true,
@@ -23,9 +23,9 @@ Friendship.init(
   },
   {
     timestamps: true,
-    tableName: "friendship",
+    tableName: "block",
     sequelize,
   },
 );
 
-export default Friendship;
+export default Block;

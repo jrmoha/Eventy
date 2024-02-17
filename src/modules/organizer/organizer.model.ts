@@ -21,6 +21,11 @@ Organizer.init(
       allowNull: false,
       defaultValue: 0,
     },
+    rates_count: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
     events_count: {
       type: DataTypes.INTEGER,
       allowNull: false,

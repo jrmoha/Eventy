@@ -3,7 +3,7 @@ import { sequelize } from "../../database";
 
 class FriendRequest extends Model {
   declare sender_id: number;
-  declare reciever_id: number;
+  declare receiver_id: number;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 }
@@ -15,7 +15,7 @@ FriendRequest.init(
       allowNull: false,
       primaryKey: true,
     },
-    reciever_id: {
+    receiver_id: {
       type: DataTypes.BIGINT,
       allowNull: false,
       primaryKey: true,

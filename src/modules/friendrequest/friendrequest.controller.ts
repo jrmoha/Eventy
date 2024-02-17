@@ -18,7 +18,7 @@ export const send = async_(
   ) => {
     const sender_id = req.user?.id;
     const receiver_id = +req.params.id;
-
+    
     if (sender_id == receiver_id)
       throw new APIError(
         "You cannot send a friend request to yourself",

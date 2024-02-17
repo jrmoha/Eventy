@@ -5,7 +5,7 @@ import friendshipRoutes from "../friendship/friendship.routes";
 
 const router = Router();
 router.use(followRoutes);
-router.use(friendRequestRoutes);
-router.use(friendshipRoutes);
+router.use("/friend/request",friendRequestRoutes);
+router.use("/friendship",friendshipRoutes);
 
 export default router;

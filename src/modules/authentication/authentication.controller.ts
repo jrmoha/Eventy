@@ -5,14 +5,15 @@ import User from "../user/user.model";
 import { Op } from "sequelize";
 import { StatusCodes } from "http-status-codes";
 import { APIError } from "../../types/APIError.error";
-import { comparePassword, hashPassword } from "../../utils/functions";
+import { comparePassword, hash } from "../../utils/functions";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "config";
 import {
   LoginInput,
   SignupInput,
   EmailInput,
-  PasswordResetInput,
+  ForgotPasswordInput,
+  ResetPasswordInput,
 } from "./authentication.schema";
 import Organizer from "../organizer/organizer.model";
 import {
@@ -56,7 +57,7 @@ export const signup = async_(
       }
     }
 
-    const password_hash = await hashPassword(password);
+    const password_hash = await hash(password);
 
     const person = await Person.create({
       username,
@@ -70,7 +71,7 @@ export const signup = async_(
     });
 
     await User.create({ id: person.id });
-    if (config.get<string>("NODE_ENV") !== "test")
+    if (config.get<string>("NODE_ENV") !== "development")
       await sendVerificationEmail(person);
     else {
       person.confirmed = true;
@@ -133,8 +134,12 @@ export const login = async_(
 );
 
 export const emailVerification = async_(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { t } = req.query as EmailInput;
+  async (
+    req: Request<{}, {}, {}, EmailInput>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const { t } = req.query;
     const decoded = jwt.verify(
       t,
       config.get<string>("jwt.secret"),
@@ -155,8 +160,12 @@ export const emailVerification = async_(
   },
 );
 export const resendEmailVerification = async_(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const t = req.query.t as string;
+  async (
+    req: Request<{}, {}, {}, EmailInput>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const t = req.query.t;
 
     const decoded = jwt.verify(
       t,
@@ -182,7 +191,7 @@ export const resendEmailVerification = async_(
 
 export const forgotPassword = async_(
   async (
-    req: Request<{}, {}, PasswordResetInput>,
+    req: Request<{}, {}, ForgotPasswordInput>,
     res: Response,
     next: NextFunction,
   ) => {
@@ -198,10 +207,11 @@ export const forgotPassword = async_(
         StatusCodes.UNAUTHORIZED,
       );
 
-    if (
+    const code_expired =
       person.password_reset_code_time &&
-      person.password_reset_code_time > new Date()
-    )
+      person.password_reset_code_time < new Date();
+
+    if (!code_expired)
       throw new APIError(
         "You have already requested a password reset code",
         StatusCodes.BAD_REQUEST,
@@ -214,14 +224,65 @@ export const forgotPassword = async_(
     person.password_reset_code = password_reset_code;
 
     person.password_reset_code_time = new Date(
-      Date.now() + config.get<number>("passwordResetCodeExpiresIn") * 60 * 1000,
+      Date.now() +
+        config.get<number>("PASSWORD_RESET_CODE_EXPIRES_IN") * 60 * 1000,
     );
     await person.save();
-    console.log(person.password_reset_code_time);
 
     const sent = await sendResetPasswordEmail(person);
     return sent
       ? res.status(StatusCodes.ACCEPTED).json({ success: true })
       : next(new APIError("Error Occurred", StatusCodes.INTERNAL_SERVER_ERROR));
+  },
+);
+
+export const reset_password = async_(
+  async (
+    req: Request<
+      {},
+      {},
+      ResetPasswordInput["body"],
+      ResetPasswordInput["query"]
+    >,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const { password } = req.body;
+    const { t } = req.query;
+    const decoded = jwt.verify(
+      t,
+      config.get<string>("jwt.secret"),
+    ) as JwtPayload;
+
+    if (!decoded?.id)
+      throw new APIError("Invalid token", StatusCodes.BAD_REQUEST);
+
+    const person = await Person.findByPk(decoded.id);
+
+    if (!person)
+      throw new APIError("User does not exist", StatusCodes.NOT_FOUND);
+
+    if (!person.confirmed)
+      throw new APIError("Please confirm email first", StatusCodes.BAD_REQUEST);
+
+    if (person.password_reset_code != decoded?.password_reset_code)
+      throw new APIError("Invalid code", StatusCodes.BAD_REQUEST);
+
+    const code_expired =
+      person.password_reset_code_time &&
+      person.password_reset_code_time < new Date();
+
+    if (code_expired)
+      throw new APIError(
+        "Code expired, Please request another one",
+        StatusCodes.BAD_REQUEST,
+      );
+
+    person.password = await hash(password);
+    person.password_reset_code = null;
+    person.password_reset_code_time = null;
+    await person.save();
+
+    return res.status(StatusCodes.ACCEPTED).json({ success: true });
   },
 );

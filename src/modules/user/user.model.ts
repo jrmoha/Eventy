@@ -1,6 +1,10 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../../database";
 import Person from "../person/person.model";
+import Follow from "../follow/follow.model";
+import FriendRequest from "../friendrequest/friendrequest.model";
+import Friendship from "../friendship/friendship.model";
+import Block from "../block/block.model";
 
 class User extends Person {
   declare followers_count: number;
@@ -45,6 +49,32 @@ User.belongsTo(Person, {
   targetKey: "id",
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
+});
+
+User.belongsToMany(User, {
+  as: "followers",
+  through: Follow,
+  foreignKey: "followed_id",
+  otherKey: "follower_id",
+});
+
+User.belongsToMany(User, {
+  as: "friendrequest",
+  through: FriendRequest,
+  foreignKey: "sender_id",
+  otherKey: "receiver_id",
+});
+User.belongsToMany(User, {
+  as: "friendship",
+  through: Friendship,
+  foreignKey: "sender_id",
+  otherKey: "receiver_id",
+});
+User.belongsToMany(User, {
+  as: "block",
+  through: Block,
+  foreignKey: "blocker_id",
+  otherKey: "blocked_id",
 });
 
 export default User;

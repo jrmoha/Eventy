@@ -147,7 +147,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/authentication/reset-password?t=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJlbWFpbCI6Im1vc3RhZmEuZGFzaDM0QGdtYWlsLmNvbSIsInBhc3N3b3JkX3Jlc2V0X2NvZGUiOiIwRG1mSjBORyIsImlhdCI6MTcwODAwNzM1MiwiZXhwIjoxNzA4MDA3OTUyfQ.G7fBn-8FJTVgm_dtmdiksVchNwnI8LzpNOZ8-LYkmlM",
+							"raw": "{{base_url}}/api/v1/authentication/reset-password?t={{token}}2",
 							"host": [
 								"{{base_url}}"
 							],
@@ -160,7 +160,7 @@
 							"query": [
 								{
 									"key": "t",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJlbWFpbCI6Im1vc3RhZmEuZGFzaDM0QGdtYWlsLmNvbSIsInBhc3N3b3JkX3Jlc2V0X2NvZGUiOiIwRG1mSjBORyIsImlhdCI6MTcwODAwNzM1MiwiZXhwIjoxNzA4MDA3OTUyfQ.G7fBn-8FJTVgm_dtmdiksVchNwnI8LzpNOZ8-LYkmlM"
+									"value": "{{token}}2"
 								}
 							]
 						}
@@ -179,12 +179,12 @@
 						"header": [
 							{
 								"key": "x-access-token",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJ1c2VybmFtZSI6IkNhbGxpZV9IdWVsIiwiZmlyc3RfbmFtZSI6IkthdHJpbmEiLCJsYXN0X25hbWUiOiJIZXJ6b2ciLCJyb2xlIjoidSIsImlhdCI6MTcwNzk5OTIzNiwiZXhwIjoxNzA4MDg1NjM2fQ.NRWCM5WjIbChTTAlNlYhjBKThNL0WRnKBiFfdLbHkWk",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYiLCJ1c2VybmFtZSI6ImRhc2giLCJmaXJzdF9uYW1lIjoiTW9zdGFmYSIsImxhc3RfbmFtZSI6Im1vaCIsInJvbGUiOiJ1IiwiaWF0IjoxNzA4MTc5NTAwLCJleHAiOjE3MDgyNjU5MDB9.W8AirZRw8byycg6X8ZqJPvnwyEaHOKL_GeCd7gy0x7g",
 								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/users/follow/4",
+							"raw": "{{base_url}}/api/v1/users/follow/3",
 							"host": [
 								"{{base_url}}"
 							],
@@ -193,7 +193,7 @@
 								"v1",
 								"users",
 								"follow",
-								"4"
+								"3"
 							]
 						}
 					},
@@ -201,6 +201,190 @@
 				},
 				{
 					"name": "unfollow",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJ1c2VybmFtZSI6IkNhbGxpZV9IdWVsIiwiZmlyc3RfbmFtZSI6IkthdHJpbmEiLCJsYXN0X25hbWUiOiJIZXJ6b2ciLCJyb2xlIjoidSIsImlhdCI6MTcwODE3OTQ3OCwiZXhwIjoxNzA4MjY1ODc4fQ.x42uJcjHncdCQooVWnliZqNG0W18Ngqg_bSqCaA-Ark",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/unfollow/6",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"unfollow",
+								"6"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "friend request",
+			"item": [
+				{
+					"name": "send",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJ1c2VybmFtZSI6IkNhbGxpZV9IdWVsIiwiZmlyc3RfbmFtZSI6IkthdHJpbmEiLCJsYXN0X25hbWUiOiJIZXJ6b2ciLCJyb2xlIjoidSIsImlhdCI6MTcwODE3OTQ3OCwiZXhwIjoxNzA4MjY1ODc4fQ.x42uJcjHncdCQooVWnliZqNG0W18Ngqg_bSqCaA-Ark",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/friend/request/send/6",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"friend",
+								"request",
+								"send",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cancel",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJ1c2VybmFtZSI6IkNhbGxpZV9IdWVsIiwiZmlyc3RfbmFtZSI6IkthdHJpbmEiLCJsYXN0X25hbWUiOiJIZXJ6b2ciLCJyb2xlIjoidSIsImlhdCI6MTcwODE3OTQ3OCwiZXhwIjoxNzA4MjY1ODc4fQ.x42uJcjHncdCQooVWnliZqNG0W18Ngqg_bSqCaA-Ark",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/friend/request/cancel/6",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"friend",
+								"request",
+								"cancel",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "accept",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJ1c2VybmFtZSI6IkNhbGxpZV9IdWVsIiwiZmlyc3RfbmFtZSI6IkthdHJpbmEiLCJsYXN0X25hbWUiOiJIZXJ6b2ciLCJyb2xlIjoidSIsImlhdCI6MTcwODE3OTQ3OCwiZXhwIjoxNzA4MjY1ODc4fQ.x42uJcjHncdCQooVWnliZqNG0W18Ngqg_bSqCaA-Ark",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/friend/request/accept/6",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"friend",
+								"request",
+								"accept",
+								"6"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "friend",
+			"item": [
+				{
+					"name": "unfriend",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYiLCJ1c2VybmFtZSI6ImRhc2giLCJmaXJzdF9uYW1lIjoiTW9zdGFmYSIsImxhc3RfbmFtZSI6Im1vaCIsInJvbGUiOiJ1IiwiaWF0IjoxNzA4MTc5NTAwLCJleHAiOjE3MDgyNjU5MDB9.W8AirZRw8byycg6X8ZqJPvnwyEaHOKL_GeCd7gy0x7g",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/friendship/unfriend/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"friendship",
+								"unfriend",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "block",
+			"item": [
+				{
+					"name": "block",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJ1c2VybmFtZSI6IkNhbGxpZV9IdWVsIiwiZmlyc3RfbmFtZSI6IkthdHJpbmEiLCJsYXN0X25hbWUiOiJIZXJ6b2ciLCJyb2xlIjoidSIsImlhdCI6MTcwODA5NzY4NCwiZXhwIjoxNzA4MTg0MDg0fQ.JzzP-pspJau77_itakXV9eMJKb9R94qFtjZi_iHzF90",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/block/4",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"block",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "unblock",
 					"request": {
 						"method": "POST",
 						"header": [
