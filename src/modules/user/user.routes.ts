@@ -4,9 +4,9 @@ import friendRequestRoutes from "../friendrequest/friendrequest.routes";
 import friendshipRoutes from "../friendship/friendship.routes";
 import { authenticate } from "../../interfaces/middleware/authentication.middleware";
 import multer from "../../utils/multer";
-import { uploadImage } from "./user.controller";
+import { update, uploadImage } from "./user.controller";
 import { validate } from "../../interfaces/middleware/validator.middleware";
-import { uploadImageSchema } from "./user.validator";
+import { updateUserSchema, uploadImageSchema } from "./user.validator";
 
 const router = Router();
 router.use(followRoutes);
@@ -19,6 +19,12 @@ router.post(
   multer("image", "images").single("image"),
   validate(uploadImageSchema),
   uploadImage,
+);
+router.patch(
+  "/update",
+  authenticate("u", "o"),
+  validate(updateUserSchema),
+  update,
 );
 
 export default router;
