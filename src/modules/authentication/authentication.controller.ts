@@ -140,8 +140,7 @@ export const emailVerification = async_(
     next: NextFunction,
   ) => {
     const { t } = req.query;
-    console.log(t);
-    
+
     const decoded = jwt.verify(
       t,
       config.get<string>("jwt.secret"),
@@ -154,6 +153,9 @@ export const emailVerification = async_(
 
     if (!person)
       throw new APIError("User does not exist", StatusCodes.NOT_FOUND);
+
+    if (person.confirmed)
+      throw new APIError("User is already confirmed", StatusCodes.BAD_REQUEST);
 
     person.confirmed = true;
     await person.save();
@@ -209,13 +211,13 @@ export const forgotPassword = async_(
         StatusCodes.UNAUTHORIZED,
       );
 
-    const code_expired =
+    const already_request =
       person.password_reset_code_time &&
-      person.password_reset_code_time < new Date();
+      person.password_reset_code_time > new Date();
 
-    if (!code_expired)
+    if (already_request)
       throw new APIError(
-        "You have already requested a password reset code",
+        "Please wait for the code to expire before requesting another one",
         StatusCodes.BAD_REQUEST,
       );
 

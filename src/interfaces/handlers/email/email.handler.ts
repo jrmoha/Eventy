@@ -32,7 +32,7 @@ export const sendResetPasswordEmail = function (data: Person) {
         token,
         email,
         host: config.get<string>("host"),
-        port: config.get<string>("port"),
+        port: 5173 || config.get<string>("port"),
       },
     },
   };
@@ -80,7 +80,7 @@ export const sendVerificationEmail = function (data: Person) {
         resend_token,
         username: `${first_name}`,
         host: config.get<string>("host"),
-        port: config.get<string>("port"),
+        port: 5173 || config.get<string>("port"),
       },
     },
   };
