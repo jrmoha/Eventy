@@ -7,7 +7,7 @@ declare module "jsonwebtoken" {
     email?: string;
     first_name?: string;
     last_name?: string;
-    role?: string;
+    role: string;
     password_reset_code?: string;
   
   }

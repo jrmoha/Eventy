@@ -1,4 +1,6 @@
 import express, { Express } from "express";
+import { Server } from "http";
+import { configSocket } from "../src/utils/socket";
 import cors from "cors";
 import config from "config";
 import database from "../src/database";
@@ -20,11 +22,13 @@ export class ExpressConfig {
 
   constructor(express: Express) {
     this.app = express;
-    this.port = config.get<number>("port");
+    this.port = config.get("port");
   }
 
   public async init(): Promise<void> {
     try {
+      const server = new Server(this.app);
+      configSocket(server);
       this.app.use(express.json());
       this.app.use(cors());
       this.app.use(req_logger);
@@ -36,7 +40,7 @@ export class ExpressConfig {
       this.app.use(error_handler);
 
       await database.init();
-      this.app.listen(this.port, () => {
+      server.listen(this.port, () => {
         logger.info(`Server is running on port ${this.port}`);
       });
     } catch (error) {
