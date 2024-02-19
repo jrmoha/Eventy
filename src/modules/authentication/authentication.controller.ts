@@ -72,7 +72,9 @@ export const signup = async_(
 
     await User.create({ id: person.id });
     if (config.get<string>("NODE_ENV") !== "development")
-      await sendVerificationEmail(person);
+      await sendVerificationEmail(person, {
+        origin: req.get("origin") || req.protocol + "://" + req.get("host"),
+      });
     else {
       person.confirmed = true;
       await person.save();
@@ -187,7 +189,9 @@ export const resendEmailVerification = async_(
     if (person.confirmed)
       throw new APIError("User is already confirmed", StatusCodes.BAD_REQUEST);
 
-    await sendVerificationEmail(person);
+    await sendVerificationEmail(person, {
+      origin: req.get("origin") || req.protocol + "://" + req.get("host"),
+    });
 
     return res.status(StatusCodes.ACCEPTED).json({ success: true });
   },
@@ -233,7 +237,9 @@ export const forgotPassword = async_(
     );
     await person.save();
 
-    const sent = await sendResetPasswordEmail(person);
+    const sent = await sendResetPasswordEmail(person, {
+      origin: req.get("origin") || req.protocol + "://" + req.get("host"),
+    });
     return sent
       ? res.status(StatusCodes.ACCEPTED).json({ success: true })
       : next(new APIError("Error Occurred", StatusCodes.INTERNAL_SERVER_ERROR));

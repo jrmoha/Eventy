@@ -373,7 +373,7 @@
                                                                 cellspacing="0">
                                                                 <tbody>
                                                                     <tr>
-                                                                        <td> <a href="http://{{host}}:{{port}}/email/activate/{{token}}"
+                                                                        <td> <a href="{{url}}"
                                                                                 target="_blank">Verify</a> </td>
                                                                     </tr>
                                                                 </tbody>
@@ -385,14 +385,14 @@
                                             <p> If that doesn't work, copy and paste the following link in your browser:
                                             </p>
                                             <pre>
-                                                <a href="http://{{host}}:{{port}}/email/activate/{{token}}"
-                                                                                target="_blank">http://{{host}}:{{port}}/email/activate/{{token}}</a>
+                                                <a href="{{url}}"
+                                                                                target="_blank">{{url}}</a>
                                             </pre>
                                             <p> the email will expire in 30 minutes, to resend it please click here</p>
                                             </p>
                                             <pre>
-                                                <a href="http://{{host}}:{{port}}/api/v1/authentication/email/resend-activation?t={{resend_token}}"
-                                                                                target="_blank">http://{{host}}:{{port}}/api/v1/authentication/email/resend-activation?t={{resend_token}}</a>
+                                                <a href="{{resend_url}}"
+                                                                                target="_blank">{{resend_url}}</a>
                                             </pre>
                                             <pre>
     <p>Thanks,</p>

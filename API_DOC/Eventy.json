@@ -1,0 +1,594 @@
+{
+	"info": {
+		"_postman_id": "c8ca3daa-a971-4124-9de3-13e3bb4d2e9d",
+		"name": "Eventy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19605929"
+	},
+	"item": [
+		{
+			"name": "authentication",
+			"item": [
+				{
+					"name": "signup",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"window = {}\r",
+									"pm.sendRequest(\"https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.min.js\", (error, response) => {\r",
+									"    if (error || response.code != 200) {\r",
+									"        pm.expect.fail(\"Not Loaded 35\")\r",
+									"    }\r",
+									"\r",
+									"    eval(response.text())\r",
+									"\r",
+									"    window.faker.locale = \"en\"\r",
+									"    pm.collectionVariables.set(\"username\", window.faker.internet.userName())\r",
+									"    pm.collectionVariables.set(\"first_name\", window.faker.name.firstName())\r",
+									"    pm.collectionVariables.set(\"last_name\", window.faker.name.lastName())\r",
+									"    pm.collectionVariables.set(\"phone_number\", window.faker.phone.phoneNumber())\r",
+									"    pm.collectionVariables.set(\"password\", window.faker.internet.password());\r",
+									"    pm.collectionVariables.set(\"gender\", window.faker.random.arrayElement([\"male\", \"female\"]));\r",
+									"    pm.collectionVariables.set(\"birthdate\", window.faker.date.past().toISOString().split('T')[0]);\r",
+									"    pm.collectionVariables.set(\"email\", window.faker.internet.email())\r",
+									"    \r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{username}}\",\r\n    \"email\": \"sci.mostafamohamed12788@alexu.edu.eg\",\r\n    \"first_name\": \"{{first_name}}\",\r\n    \"last_name\": \"{{last_name}}\",\r\n    \"phone_number\": \"{{phone_number}}\",\r\n    \"password\": \"{{password}}\",\r\n    \"password_confirmation\": \"{{password}}\",\r\n    \"birthdate\": \"{{birthdate}}\",\r\n    \"gender\": \"{{gender}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/authentication/signup",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"authentication",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEwIiwidXNlcm5hbWUiOiJKdWxpYS5GYWhleSIsImZpcnN0X25hbWUiOiJFbWlsaWFubyIsImxhc3RfbmFtZSI6Ilpib25jYWsiLCJyb2xlIjoidSIsImlhdCI6MTcwNzg1Mjg4MSwiZXhwIjoxNzA3OTM5MjgxfQ.OhvYYnyHpo6L16YpgBASkEB327gX7fQ6pba90Ep2pcM",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"query\":\"mostafa.dash34@gmail.com\",\r\n    \"password\":\"HYo9VamaaVMWAmt\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/authentication/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"authentication",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "forgot-password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"mostafa.dash34@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/authentication/forgot-password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"authentication",
+								"forgot-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "reset-password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"Mostafa\",\r\n    \"password_confirmation\": \"Mostafa\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/authentication/reset-password?t=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJlbWFpbCI6Im1vc3RhZmEuZGFzaDM0QGdtYWlsLmNvbSIsInBhc3N3b3JkX3Jlc2V0X2NvZGUiOiJfZmlIVWc0WCIsImlhdCI6MTcwODI3OTM2NywiZXhwIjoxNzA4Mjc5OTY3fQ.TrA9W7t3qf2NSOmbdu-StB3QC_Ow_NxzrsDMISxvbYk",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"authentication",
+								"reset-password"
+							],
+							"query": [
+								{
+									"key": "t",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJlbWFpbCI6Im1vc3RhZmEuZGFzaDM0QGdtYWlsLmNvbSIsInBhc3N3b3JkX3Jlc2V0X2NvZGUiOiJfZmlIVWc0WCIsImlhdCI6MTcwODI3OTM2NywiZXhwIjoxNzA4Mjc5OTY3fQ.TrA9W7t3qf2NSOmbdu-StB3QC_Ow_NxzrsDMISxvbYk"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "follow",
+			"item": [
+				{
+					"name": "follow",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYiLCJ1c2VybmFtZSI6ImRhc2giLCJmaXJzdF9uYW1lIjoiTW9zdGFmYSIsImxhc3RfbmFtZSI6Im1vaCIsInJvbGUiOiJ1IiwiaWF0IjoxNzA4MTc5NTAwLCJleHAiOjE3MDgyNjU5MDB9.W8AirZRw8byycg6X8ZqJPvnwyEaHOKL_GeCd7gy0x7g",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/follow/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"follow",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "unfollow",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJ1c2VybmFtZSI6IkNhbGxpZV9IdWVsIiwiZmlyc3RfbmFtZSI6IkthdHJpbmEiLCJsYXN0X25hbWUiOiJIZXJ6b2ciLCJyb2xlIjoidSIsImlhdCI6MTcwODE3OTQ3OCwiZXhwIjoxNzA4MjY1ODc4fQ.x42uJcjHncdCQooVWnliZqNG0W18Ngqg_bSqCaA-Ark",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/unfollow/6",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"unfollow",
+								"6"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "friend request",
+			"item": [
+				{
+					"name": "send",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJ1c2VybmFtZSI6IkNhbGxpZV9IdWVsIiwiZmlyc3RfbmFtZSI6IkthdHJpbmEiLCJsYXN0X25hbWUiOiJIZXJ6b2ciLCJyb2xlIjoidSIsImlhdCI6MTcwODE3OTQ3OCwiZXhwIjoxNzA4MjY1ODc4fQ.x42uJcjHncdCQooVWnliZqNG0W18Ngqg_bSqCaA-Ark",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/friend/request/send/6",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"friend",
+								"request",
+								"send",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cancel",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJ1c2VybmFtZSI6IkNhbGxpZV9IdWVsIiwiZmlyc3RfbmFtZSI6IkthdHJpbmEiLCJsYXN0X25hbWUiOiJIZXJ6b2ciLCJyb2xlIjoidSIsImlhdCI6MTcwODE3OTQ3OCwiZXhwIjoxNzA4MjY1ODc4fQ.x42uJcjHncdCQooVWnliZqNG0W18Ngqg_bSqCaA-Ark",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/friend/request/cancel/6",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"friend",
+								"request",
+								"cancel",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "accept",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJ1c2VybmFtZSI6IkNhbGxpZV9IdWVsIiwiZmlyc3RfbmFtZSI6IkthdHJpbmEiLCJsYXN0X25hbWUiOiJIZXJ6b2ciLCJyb2xlIjoidSIsImlhdCI6MTcwODE3OTQ3OCwiZXhwIjoxNzA4MjY1ODc4fQ.x42uJcjHncdCQooVWnliZqNG0W18Ngqg_bSqCaA-Ark",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/friend/request/accept/6",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"friend",
+								"request",
+								"accept",
+								"6"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "friend",
+			"item": [
+				{
+					"name": "unfriend",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYiLCJ1c2VybmFtZSI6ImRhc2giLCJmaXJzdF9uYW1lIjoiTW9zdGFmYSIsImxhc3RfbmFtZSI6Im1vaCIsInJvbGUiOiJ1IiwiaWF0IjoxNzA4MTc5NTAwLCJleHAiOjE3MDgyNjU5MDB9.W8AirZRw8byycg6X8ZqJPvnwyEaHOKL_GeCd7gy0x7g",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/friendship/unfriend/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"friendship",
+								"unfriend",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "block",
+			"item": [
+				{
+					"name": "block",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJ1c2VybmFtZSI6IkNhbGxpZV9IdWVsIiwiZmlyc3RfbmFtZSI6IkthdHJpbmEiLCJsYXN0X25hbWUiOiJIZXJ6b2ciLCJyb2xlIjoidSIsImlhdCI6MTcwODA5NzY4NCwiZXhwIjoxNzA4MTg0MDg0fQ.JzzP-pspJau77_itakXV9eMJKb9R94qFtjZi_iHzF90",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/block/4",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"block",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "unblock",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMiLCJ1c2VybmFtZSI6IkNhbGxpZV9IdWVsIiwiZmlyc3RfbmFtZSI6IkthdHJpbmEiLCJsYXN0X25hbWUiOiJIZXJ6b2ciLCJyb2xlIjoidSIsImlhdCI6MTcwNzk5OTIzNiwiZXhwIjoxNzA4MDg1NjM2fQ.NRWCM5WjIbChTTAlNlYhjBKThNL0WRnKBiFfdLbHkWk",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/unfollow/4",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"unfollow",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "category",
+			"item": [
+				{
+					"name": "add categories",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6Ikpvc2gyMCIsImZpcnN0X25hbWUiOiJFbW1hIiwibGFzdF9uYW1lIjoiUm93ZSIsInJvbGUiOiJ1IiwiaWF0IjoxNzA4MTg3OTczLCJleHAiOjE3MDgyNzQzNzN9.3VuD4DwQNVlihez655hj7NAQQcmyPfOLGAS8fd9jrkA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"categories\": [\r\n        \r\n      \r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/categories/add",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"categories",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove category",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6Ikpvc2gyMCIsImZpcnN0X25hbWUiOiJFbW1hIiwibGFzdF9uYW1lIjoiUm93ZSIsInJvbGUiOiJ1IiwiaWF0IjoxNzA4MTg3OTczLCJleHAiOjE3MDgyNzQzNzN9.3VuD4DwQNVlihez655hj7NAQQcmyPfOLGAS8fd9jrkA",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/categories/delete/Musical",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"categories",
+								"delete",
+								"Musical"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "upload-image",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6Ikpvc2gyMCIsImZpcnN0X25hbWUiOiJFbW1hIiwibGFzdF9uYW1lIjoiUm93ZSIsInJvbGUiOiJ1IiwiaWF0IjoxNzA4MjEwNzY4LCJleHAiOjE3MDgyOTcxNjh9.518JS-mtlzr1nm7L9K01YPMAyYJqJNlbaxJFoQmyT8A",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/D:/Gallery/Road - 84970.mp4"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/upload/image",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"upload",
+								"image"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6Ikpvc2gyMCIsImZpcnN0X25hbWUiOiJFbW1hIiwibGFzdF9uYW1lIjoiUm93ZSIsInJvbGUiOiJ1IiwiaWF0IjoxNzA4Mjc1MTkwLCJleHAiOjE3MDgzNjE1OTB9.TU5NrFjHApehU72ogp1EINIE0GGXix1O8oY1E5KO1_w",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"jrmohaa\",\r\n    \"first_name\":\"Mostafa\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/update",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"update"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "username",
+			"value": ""
+		},
+		{
+			"key": "first_name",
+			"value": ""
+		},
+		{
+			"key": "last_name",
+			"value": ""
+		},
+		{
+			"key": "email",
+			"value": ""
+		},
+		{
+			"key": "phone_number",
+			"value": ""
+		},
+		{
+			"key": "password",
+			"value": ""
+		},
+		{
+			"key": "gender",
+			"value": ""
+		},
+		{
+			"key": "birthdate",
+			"value": ""
+		}
+	]
+}

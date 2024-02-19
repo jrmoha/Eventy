@@ -3,7 +3,12 @@ import config from "config";
 import jwt from "jsonwebtoken";
 import { sendEmail } from "../../../utils/mailer";
 
-export const sendResetPasswordEmail = function (data: Person) {
+type EmailURL = { origin: string };
+
+export const sendResetPasswordEmail = function (
+  data: Person,
+  { origin }: EmailURL,
+) {
   const { id, email, first_name, password_reset_code } = data;
 
   const token = jwt.sign(
@@ -29,10 +34,8 @@ export const sendResetPasswordEmail = function (data: Person) {
       template: "password.reset",
       context: {
         username: `${first_name}`,
-        token,
         email,
-        host: config.get<string>("host"),
-        port: 5173 || config.get<string>("port"),
+        url: `${origin}/reset-password/${token}`,
       },
     },
   };
@@ -43,7 +46,10 @@ export const sendResetPasswordEmail = function (data: Person) {
   });
 };
 
-export const sendVerificationEmail = function (data: Person) {
+export const sendVerificationEmail = function (
+  data: Person,
+  { origin }: EmailURL,
+) {
   const { email, first_name, id } = data;
 
   const token = jwt.sign(
@@ -76,11 +82,9 @@ export const sendVerificationEmail = function (data: Person) {
       subject: "Account verification",
       template: "email.verify",
       context: {
-        token,
-        resend_token,
         username: `${first_name}`,
-        host: config.get<string>("host"),
-        port: 5173 || config.get<string>("port"),
+        url: `${origin}/email/activate/${token}`,
+        resend_url: `${origin}/resend/email/activate/${resend_token}`,
       },
     },
   };
