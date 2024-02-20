@@ -7,9 +7,8 @@ import { Socket } from "socket.io";
 
 export const socketMiddleware = async (socket: Socket, next: Function) => {
   try {
-    const token = socket.handshake.headers["x-access-token"] as string;
-    console.log(`Socket token: ${token}`);
-    
+    const token = socket.handshake.auth.headers["x-access-token"] as string;
+
     if (!token)
       throw new APIError("No Token Provided", StatusCodes.BAD_REQUEST);
 
@@ -37,7 +36,8 @@ export const socketMiddleware = async (socket: Socket, next: Function) => {
         StatusCodes.NON_AUTHORITATIVE_INFORMATION,
       );
 
-    // socket.user = decoded;
+    socket.data.user = decoded;
+    
     next();
   } catch (e) {
     next(e);

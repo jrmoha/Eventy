@@ -32,12 +32,8 @@ Message.init(
       type: DataTypes.BIGINT,
       allowNull: false,
     },
-    last_message: {
+    message: {
       type: DataTypes.STRING,
-      allowNull: false,
-    },
-    last_message_time: {
-      type: DataTypes.DATE,
       allowNull: false,
     },
   },
