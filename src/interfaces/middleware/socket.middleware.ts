@@ -1,14 +1,13 @@
-import { NextFunction, Request, Response } from "express";
 import StatusCodes from "http-status-codes";
-import { async_ } from "./async.middleware";
 import { APIError } from "../../types/APIError.error";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "config";
 import Person from "../../modules/person/person.model";
+import { Socket } from "socket.io";
 
-export const authenticate = (...roles: string[]) => {
-  return async_(async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers["x-access-token"] as string;
+export const socketMiddleware = async (socket: Socket, next: Function) => {
+  try {
+    const token = socket.handshake.auth.headers["x-access-token"] as string;
 
     if (!token)
       throw new APIError("No Token Provided", StatusCodes.BAD_REQUEST);
@@ -37,13 +36,10 @@ export const authenticate = (...roles: string[]) => {
         StatusCodes.NON_AUTHORITATIVE_INFORMATION,
       );
 
-    if (roles.length && !roles.includes(decoded?.role))
-      throw new APIError(
-        "You don't have permission to access this resource",
-        StatusCodes.FORBIDDEN,
-      );
-
-    req.user = decoded;
+    socket.data.user = decoded;
+    
     next();
-  });
+  } catch (e) {
+    next(e);
+  }
 };
