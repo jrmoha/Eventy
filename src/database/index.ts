@@ -14,6 +14,7 @@ export class Database {
       await this.sequelize.sync({
         alter: true,
         force: false,
+        logging: false,
       });
       logger.info("Connected to database");
     } catch (error) {

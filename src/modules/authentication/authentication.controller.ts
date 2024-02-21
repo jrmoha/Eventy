@@ -5,7 +5,7 @@ import User from "../user/user.model";
 import { Op } from "sequelize";
 import { StatusCodes } from "http-status-codes";
 import { APIError } from "../../types/APIError.error";
-import { comparePassword, hash } from "../../utils/functions";
+import { compare, hash } from "../../utils/functions";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "config";
 import {
@@ -106,7 +106,7 @@ export const login = async_(
     if (!person)
       throw new APIError("This user does not exist", StatusCodes.NOT_FOUND);
 
-    const is_password_valid = await comparePassword(password, person.password);
+    const is_password_valid = await compare(password, person.password);
 
     if (!is_password_valid)
       throw new APIError("Invalid password", StatusCodes.UNAUTHORIZED);

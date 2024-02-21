@@ -1,0 +1,60 @@
+import { sequelize } from "./../../database/index";
+import Post from "../post/post.model";
+import { DataTypes } from "sequelize";
+
+class Event extends Post {
+  declare location: string;
+  declare date: Date;
+  declare time: string;
+  declare likes_count: number;
+  declare comments_count: number;
+  declare attendees_count: number;
+}
+Event.init(
+  {
+    id: {
+      type: DataTypes.BIGINT,
+      primaryKey: true,
+    },
+    location: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+    },
+    date: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    time: {
+      type: DataTypes.STRING(10),
+      allowNull: false,
+    },
+    likes_count: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
+    comments_count: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
+    attendees_count: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    } 
+  },
+  {
+    sequelize,
+    modelName: "Event",
+    tableName: "events",
+    timestamps: true,
+  },
+);
+Event.belongsTo(Post, {
+  foreignKey: "id",
+  targetKey: "id",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+export default Event;
