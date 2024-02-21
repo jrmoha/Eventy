@@ -1,5 +1,6 @@
 import express from "express";
 import "dotenv/config";
+import "./modules/comment/comment.model";
 import { ExpressConfig } from "../config/express.config";
 
 const main = async () => {

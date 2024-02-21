@@ -1,7 +1,8 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../../database";
+import User from "../user/user.model";
 
-class Organizer extends sequelize.models.User {
+class Organizer extends User {
   declare rate: number;
   declare events_count: number;
 }
