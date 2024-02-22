@@ -1,4 +1,3 @@
-import User from "../user/user.model";
 import { sequelize } from "./../../database/index";
 import { DataTypes, Model } from "sequelize";
 
@@ -44,18 +43,5 @@ Inbox.init(
   },
 );
 
-Inbox.belongsTo(User, {
-  foreignKey: "sender_id",
-  as: "sender",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-});
-
-Inbox.belongsTo(User, {
-  foreignKey: "receiver_id",
-  as: "receiver",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-});
 
 export default Inbox;

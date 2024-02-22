@@ -1,7 +1,5 @@
 import { sequelize } from "../../database/index";
 import { DataTypes, Model } from "sequelize";
-import Inbox from "../inbox/inbox.model";
-import User from "../user/user.model";
 
 class Message extends Model {
   declare id: number;
@@ -45,25 +43,5 @@ Message.init(
   },
 );
 
-Message.belongsTo(Inbox, {
-  foreignKey: "inbox_id",
-  as: "inbox",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-});
-
-Message.belongsTo(User, {
-  foreignKey: "sender_id",
-  as: "sender",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-});
-
-Message.belongsTo(User, {
-  foreignKey: "receiver_id",
-  as: "receiver",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-});
 
 export default Message;

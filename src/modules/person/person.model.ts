@@ -2,6 +2,7 @@ import config from "config";
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../../database";
 import { gender } from "../../types/gender.type";
+
 class Person extends Model {
   declare id: number;
   declare username: string;
@@ -118,5 +119,5 @@ Person.init(
     ],
   },
 );
-
+ 
 export default Person;

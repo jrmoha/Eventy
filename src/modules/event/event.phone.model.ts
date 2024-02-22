@@ -32,10 +32,13 @@ Event_Phone.init(
     timestamps: true,
   },
 );
+Event.hasMany(Event_Phone, {
+  foreignKey: "event_id",
+  sourceKey: "id",
+});
+
 Event_Phone.belongsTo(Event, {
   foreignKey: "event_id",
   targetKey: "id",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
 });
 export default Event_Phone;

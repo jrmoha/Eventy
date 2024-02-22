@@ -1,5 +1,7 @@
 import { sequelize } from "./../../database/index";
 import { DataTypes, Model } from "sequelize";
+import Category from "./category.model";
+import User from "../user/user.model";
 
 class UserCategory extends Model {
   declare id: number;
@@ -26,5 +28,20 @@ UserCategory.init(
     sequelize,
   },
 );
-
+Category.hasMany(UserCategory, {
+  foreignKey: "category",
+  sourceKey: "name",
+});
+UserCategory.belongsTo(Category, {
+  foreignKey: "category",
+  targetKey: "name",
+});
+User.hasMany(UserCategory, {
+  foreignKey: "user_id",
+  sourceKey: "id",
+});
+UserCategory.belongsTo(User, {
+  foreignKey: "user_id",
+  targetKey: "id",
+});
 export default UserCategory;

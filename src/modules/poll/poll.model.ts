@@ -1,6 +1,6 @@
+import Post from "../post/post.model";
 import { sequelize } from "./../../database/index";
 import { DataTypes } from "sequelize";
-import Post from "../post/post.model";
 
 class Poll extends Post {
   declare readonly createdAt: Date;
@@ -22,11 +22,7 @@ Poll.init(
   },
 );
 
-Poll.belongsTo(Post, {
-  foreignKey: "id",
-  targetKey: "id",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-});
+Poll.belongsTo(Post);
+Post.hasOne(Poll);
 
 export default Poll;

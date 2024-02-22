@@ -8,6 +8,7 @@ class Event extends Post {
   declare time: string;
   declare likes_count: number;
   declare comments_count: number;
+  declare interests_count: number;
   declare attendees_count: number;
 }
 Event.init(
@@ -38,11 +39,16 @@ Event.init(
       allowNull: false,
       defaultValue: 0,
     },
+    interests_count: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
     attendees_count: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,
-    } 
+    },
   },
   {
     sequelize,
@@ -54,7 +60,11 @@ Event.init(
 Event.belongsTo(Post, {
   foreignKey: "id",
   targetKey: "id",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
 });
+
+Post.hasOne(Event, {
+  foreignKey: "id",
+  sourceKey: "id",
+});
+
 export default Event;

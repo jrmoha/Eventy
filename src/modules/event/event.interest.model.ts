@@ -34,17 +34,18 @@ Event_Interest.init(
 Event_Interest.belongsTo(Event, {
   foreignKey: "event_id",
   targetKey: "id",
-  as: "event",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
 });
-
+Event.hasMany(Event_Interest, {
+  foreignKey: "event_id",
+  sourceKey: "id",
+});
 Event_Interest.belongsTo(User, {
   foreignKey: "user_id",
   targetKey: "id",
-  as: "user",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
+});
+User.hasMany(Event_Interest, {
+  foreignKey: "user_id",
+  sourceKey: "id",
 });
 
 export default Event_Interest;

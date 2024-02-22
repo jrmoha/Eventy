@@ -1,7 +1,7 @@
-import Event from "../event/event.model";
 import { sequelize } from "./../../database/index";
 import { DataTypes, Model } from "sequelize";
 import Category from "./category.model";
+import Event from "../event/event.model";
 
 class EventCategory extends Model {
   declare event_id: number;
@@ -34,15 +34,21 @@ EventCategory.init(
 EventCategory.belongsTo(Event, {
   foreignKey: "event_id",
   targetKey: "id",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
+});
+
+Event.hasMany(EventCategory, {
+  foreignKey: "event_id",
+  sourceKey: "id",
 });
 
 EventCategory.belongsTo(Category, {
   foreignKey: "category",
   targetKey: "name",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
+});
+
+Category.hasMany(EventCategory, {
+  foreignKey: "category",
+  sourceKey: "name",
 });
 
 export default EventCategory;

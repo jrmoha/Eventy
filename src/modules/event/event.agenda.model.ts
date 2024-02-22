@@ -19,6 +19,10 @@ Event_Agenda.init(
       autoIncrement: true,
       primaryKey: true,
     },
+    event_id: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+    },
     description: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -39,13 +43,14 @@ Event_Agenda.init(
     timestamps: true,
   },
 );
+Event.hasMany(Event_Agenda, {
+  foreignKey: "event_id",
+  sourceKey: "id",
+});
 
 Event_Agenda.belongsTo(Event, {
   foreignKey: "event_id",
   targetKey: "id",
-  as: "event",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
 });
 
 export default Event_Agenda;

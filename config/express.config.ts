@@ -8,9 +8,7 @@ import {
   error_handler,
   routeError,
 } from "../src/interfaces/middleware/error.handler";
-import authRoutes from "../src/modules/authentication/authentication.routes";
-import userRoutes from "../src/modules/user/user.routes";
-import categoryRoutes from "../src/modules/category/category.routes";
+import routes from "../src/modules";
 import {
   req_logger,
   err_logger,
@@ -32,9 +30,8 @@ export class ExpressConfig {
       this.app.use(express.json());
       this.app.use(cors());
       this.app.use(req_logger);
-      this.app.use("/api/v1/authentication", authRoutes);
-      this.app.use("/api/v1/users", userRoutes);
-      this.app.use("/api/v1/categories", categoryRoutes);
+      this.app.use(routes);
+
       this.app.use(routeError);
       this.app.use(err_logger);
       this.app.use(error_handler);

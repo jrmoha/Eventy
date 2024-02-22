@@ -1,18 +1,18 @@
 import { sequelize } from "./../../database/index";
 import { DataTypes, Model } from "sequelize";
-import Event from "./event.model";
+import Community from "./community.model";
 import User from "../user/user.model";
 
-class Event_Attendance extends Model {
-  declare event_id: number;
+class CommunityMembership extends Model {
+  declare community_id: number;
   declare user_id: number;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 }
 
-Event_Attendance.init(
+CommunityMembership.init(
   {
-    event_id: {
+    community_id: {
       type: DataTypes.BIGINT,
       primaryKey: true,
       allowNull: false,
@@ -24,28 +24,28 @@ Event_Attendance.init(
     },
   },
   {
-    sequelize,
-    modelName: "Event_Attendance",
-    tableName: "event_attendance",
     timestamps: true,
+    tableName: "community_membership",
+    modelName: "CommunityMembership",
+    sequelize,
   },
 );
-Event_Attendance.belongsTo(Event, {
-  foreignKey: "event_id",
-  targetKey: "id",
-});
-Event.hasMany(Event_Attendance, {
-  foreignKey: "event_id",
+
+Community.hasMany(CommunityMembership, {
+  foreignKey: "community_id",
   sourceKey: "id",
 });
-
-User.hasMany(Event_Attendance, {
-  foreignKey: "user_id",
+CommunityMembership.belongsTo(Community, {
+  foreignKey: "community_id",
+  targetKey: "id",
+});
+User.hasMany(CommunityMembership, {
+  foreignKey: "community_id",
   sourceKey: "id",
 });
-Event_Attendance.belongsTo(User, {
+CommunityMembership.belongsTo(User, {
   foreignKey: "user_id",
   targetKey: "id",
 });
 
-export default Event_Attendance;
+export default CommunityMembership;

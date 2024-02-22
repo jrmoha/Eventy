@@ -1,5 +1,6 @@
 import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../../database";
+import User from "../user/user.model";
 
 class Friendship extends Model {
   declare sender_id: number;
@@ -28,5 +29,22 @@ Friendship.init(
     sequelize,
   },
 );
+
+Friendship.belongsTo(User, {
+  foreignKey: "sender_id",
+  targetKey: "id",
+});
+User.hasMany(Friendship, {
+  foreignKey: "sender_id",
+  sourceKey: "id",
+});
+Friendship.belongsTo(User, {
+  foreignKey: "receiver_id",
+  targetKey: "id",
+});
+User.hasMany(Friendship, {
+  foreignKey: "receiver_id",
+  sourceKey: "id",
+});
 
 export default Friendship;

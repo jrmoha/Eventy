@@ -1,5 +1,6 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../../database";
+import User from "../user/user.model";
 
 class Follow extends Model {
   declare follower_id: number;
@@ -24,9 +25,26 @@ Follow.init(
   {
     timestamps: true,
     sequelize,
-   tableName: "follow",
-   modelName: "Follow",
+    tableName: "follow",
+    modelName: "Follow",
   },
 );
+
+User.hasMany(Follow, {
+  foreignKey: "follower_id",
+  sourceKey: "id",
+});
+Follow.belongsTo(User, {
+  foreignKey: "follower_id",
+  targetKey: "id",
+});
+User.hasMany(Follow, {
+  foreignKey: "followed_id",
+  sourceKey: "id",
+});
+Follow.belongsTo(User, {
+  foreignKey: "followed_id",
+  targetKey: "id",
+});
 
 export default Follow;

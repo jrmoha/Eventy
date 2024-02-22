@@ -18,6 +18,10 @@ Post.init(
       primaryKey: true,
       autoIncrement: true,
     },
+    organizer_id: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+    },
     content: {
       type: DataTypes.TEXT,
       allowNull: false,
@@ -39,8 +43,10 @@ Post.init(
 Post.belongsTo(Organizer, {
   foreignKey: "organizer_id",
   targetKey: "id",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
+});
+Organizer.hasMany(Post, {
+  foreignKey: "organizer_id",
+  sourceKey: "id",
 });
 
 export default Post;

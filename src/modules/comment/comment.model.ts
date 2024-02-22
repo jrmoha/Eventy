@@ -43,15 +43,21 @@ Comment.init(
 Comment.belongsTo(User, {
   foreignKey: "user_id",
   targetKey: "id",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
+});
+
+User.hasMany(Comment, {
+  foreignKey: "user_id",
+  sourceKey: "id",
 });
 
 Comment.belongsTo(Event, {
   foreignKey: "event_id",
   targetKey: "id",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
+});
+
+Event.hasMany(Comment, {
+  foreignKey: "event_id",
+  sourceKey: "id",
 });
 
 export default Comment;

@@ -1,18 +1,18 @@
 import { sequelize } from "./../../database/index";
 import { DataTypes, Model } from "sequelize";
-import Event from "./event.model";
+import Poll_Options from "./poll.options.model";
 import User from "../user/user.model";
 
-class Event_Attendance extends Model {
-  declare event_id: number;
+class Poll_Selection extends Model {
+  declare option_id: number;
   declare user_id: number;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 }
 
-Event_Attendance.init(
+Poll_Selection.init(
   {
-    event_id: {
+    option_id: {
       type: DataTypes.BIGINT,
       primaryKey: true,
       allowNull: false,
@@ -25,27 +25,30 @@ Event_Attendance.init(
   },
   {
     sequelize,
-    modelName: "Event_Attendance",
-    tableName: "event_attendance",
+    modelName: "Poll_Selection",
+    tableName: "poll_selection",
     timestamps: true,
   },
 );
-Event_Attendance.belongsTo(Event, {
-  foreignKey: "event_id",
+
+Poll_Selection.belongsTo(Poll_Options, {
+  foreignKey: "option_id",
   targetKey: "id",
 });
-Event.hasMany(Event_Attendance, {
-  foreignKey: "event_id",
+
+Poll_Options.hasMany(Poll_Selection, {
+  foreignKey: "option_id",
   sourceKey: "id",
 });
 
-User.hasMany(Event_Attendance, {
-  foreignKey: "user_id",
-  sourceKey: "id",
-});
-Event_Attendance.belongsTo(User, {
+Poll_Selection.belongsTo(User, {
   foreignKey: "user_id",
   targetKey: "id",
 });
 
-export default Event_Attendance;
+User.hasMany(Poll_Selection, {
+  foreignKey: "user_id",
+  sourceKey: "id",
+});
+
+export default Poll_Selection;

@@ -3,49 +3,67 @@ import User from "../user/user.model";
 import { sequelize } from "./../../database/index";
 import { DataTypes, Model } from "sequelize";
 
-class Like extends Model {
-  declare user_id: number;
+class Rate extends Model {
   declare event_id: number;
+  declare user_id: number;
+  declare rate: number;
+  declare review: string;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 }
 
-Like.init(
+Rate.init(
   {
-    user_id: {
-      type: DataTypes.BIGINT,
-      primaryKey: true,
-      allowNull: false,
-    },
     event_id: {
       type: DataTypes.BIGINT,
       primaryKey: true,
       allowNull: false,
     },
+    user_id: {
+      type: DataTypes.BIGINT,
+      primaryKey: true,
+      allowNull: false,
+    },
+    rate: {
+      type: DataTypes.SMALLINT,
+      allowNull: false,
+      defaultValue: 1,
+      validate: {
+        min: 1,
+        max: 5,
+      },
+    },
+    review: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
   },
   {
-    sequelize,
-    modelName: "Like",
-    tableName: "likes",
     timestamps: true,
+    tableName: "rate",
+    modelName: "Rate",
+    sequelize,
   },
 );
 
-Like.belongsTo(User, {
+Rate.belongsTo(User, {
   foreignKey: "user_id",
   targetKey: "id",
 });
-User.hasMany(Like, {
+
+User.hasMany(Rate, {
   foreignKey: "user_id",
   sourceKey: "id",
 });
 
-Like.belongsTo(Event, {
+Rate.belongsTo(Event, {
   foreignKey: "event_id",
   targetKey: "id",
 });
-Event.hasMany(Like, {
+
+Event.hasMany(Rate, {
   foreignKey: "event_id",
   sourceKey: "id",
 });
-export default Like;
+
+export default Rate;

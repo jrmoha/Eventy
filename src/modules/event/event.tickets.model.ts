@@ -48,12 +48,13 @@ Ticket.init(
     timestamps: true,
   },
 );
+Event.hasMany(Ticket, {
+  foreignKey: "event_id",
+  sourceKey: "id",
+});
+
 Ticket.belongsTo(Event, {
   foreignKey: "event_id",
   targetKey: "id",
-  as: "event",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
 });
-
 export default Ticket;

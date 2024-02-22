@@ -38,12 +38,14 @@ Organizer.init(
     sequelize,
   },
 );
-
-Organizer.belongsTo(sequelize.models.User, {
+Organizer.belongsTo(User, {
   foreignKey: "id",
   targetKey: "id",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
+});
+
+User.hasOne(Organizer, {
+  foreignKey: "id",
+  sourceKey: "id",
 });
 
 export default Organizer;

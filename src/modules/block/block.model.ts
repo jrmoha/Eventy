@@ -1,5 +1,6 @@
 import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../../database";
+import User from "../user/user.model";
 
 class Block extends Model {
   declare blocker_id: number;
@@ -28,5 +29,24 @@ Block.init(
     sequelize,
   },
 );
+Block.belongsTo(User, {
+  foreignKey: "blocker_id",
+  targetKey: "id",
+});
+
+User.hasMany(Block, {
+  foreignKey: "blocker_id",
+  sourceKey: "id",
+});
+
+Block.belongsTo(User, {
+  foreignKey: "blocked_id",
+  targetKey: "id",
+});
+
+User.hasMany(Block, {
+  foreignKey: "blocked_id",
+  sourceKey: "id",
+});
 
 export default Block;

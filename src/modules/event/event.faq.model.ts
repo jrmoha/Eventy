@@ -39,12 +39,14 @@ EventFAQ.init(
   },
 );
 
+Event.hasMany(EventFAQ, {
+  foreignKey: "event_id",
+  sourceKey: "id",
+});
+
 EventFAQ.belongsTo(Event, {
   foreignKey: "event_id",
   targetKey: "id",
-  as: "event",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
 });
 
 export default EventFAQ;

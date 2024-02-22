@@ -16,13 +16,15 @@ export const routeError = function (
   next(err);
 };
 
-export const error_handler = function (
+export const error_handler = async function (
   err: Error | APIError,
   req: Request,
   res: Response,
   next: NextFunction,
 ) {
   if (req.file) fs.unlinkSync(req.file.path);
+  
+  if (req.transaction) await req.transaction.rollback();
 
   if (err instanceof APIError) {
     return res.status(err.statusCode).json({

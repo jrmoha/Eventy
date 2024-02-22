@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import { sequelize } from "./../../database/index";
+import { sequelize } from "../../database/index";
 import Poll from "./poll.model";
 
 class Poll_Options extends Poll {
@@ -39,8 +39,11 @@ Poll_Options.init(
 Poll_Options.belongsTo(Poll, {
   foreignKey: "poll_id",
   targetKey: "id",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
+});
+
+Poll.hasMany(Poll_Options, {
+  foreignKey: "poll_id",
+  sourceKey: "id",
 });
 
 export default Poll_Options;
