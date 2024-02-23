@@ -17,6 +17,7 @@ import Image from "../image/image.model";
 import EventImage from "../image/event.image.model";
 import StatusCodes from "http-status-codes";
 import { CreateEventInput } from "./event.validator";
+import { APIError } from "../../types/APIError.error";
 
 export const get = async_(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -47,6 +48,9 @@ export const get = async_(
         },
       ],
     });
+
+    if (!event) throw new APIError("Event not found", StatusCodes.NOT_FOUND);
+
     res.status(StatusCodes.OK).json({ success: true, data: event });
   },
 );
@@ -58,6 +62,7 @@ export const create = async_(
     next: NextFunction,
   ) => {
     const t = await sequelize.transaction();
+    req.transaction = t;
     const user_id = req.user?.id;
     const {
       content,
@@ -94,7 +99,7 @@ export const create = async_(
       {
         id: post.id,
         location,
-        date,
+        date: new Date(date),
         time,
       },
       { transaction: t },
@@ -129,7 +134,7 @@ export const create = async_(
       await CommunityMembership.create(
         {
           community_id: community.id,
-          user_id
+          user_id,
         },
         { transaction: t },
       );
@@ -146,41 +151,34 @@ export const create = async_(
     );
 
     for (const category of categories) {
-      const exists = await Category.findOne({
-        where: {
-          name: sequelize.where(
-            sequelize.fn("LOWER", sequelize.col("name")),
-            "LIKE",
-            category.toLowerCase(),
-          ),
-        },
+      const category_exists = await Category.findOne({
+        where: sequelize.where(
+          sequelize.fn("lower", sequelize.col("name")),
+          "=",
+          category.toLowerCase(),
+        ),
       });
-
-      if (exists) {
+      if (category_exists) {
         await EventCategory.findOrCreate({
           where: {
-            event_id: event.id,
-            category: exists.name,
+            event_id: event?.id,
+            category: category_exists.name,
           },
           defaults: {
-            event_id: event.id,
-            category: exists.name,
+            event_id: event?.id,
+            category: category_exists.name,
           },
           transaction: t,
         });
       } else {
-        const new_category = await Category.create(
-          {
-            name: category,
-          },
+        const formattedCategoryName =
+          category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
+        const category_ = await Category.create(
+          { name: formattedCategoryName },
           { transaction: t },
         );
-
         await EventCategory.create(
-          {
-            event_id: event.id,
-            category: new_category.name,
-          },
+          { event_id: event.id, category: category_.name },
           { transaction: t },
         );
       }
