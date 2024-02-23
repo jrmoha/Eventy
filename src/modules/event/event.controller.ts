@@ -22,29 +22,36 @@ import { APIError } from "../../types/APIError.error";
 export const get = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     const id = Number(req.params.id);
-    const event = await Event.findByPk(id, {
+    console.log(id);
+    
+    const event = await Post.findByPk(id, {
       include: [
         {
-          model: Event_Phone,
-        },
-        {
-          model: Ticket,
-        },
-        {
-          model: Event_Agenda,
-        },
-        {
-          model: EventCategory,
-        },
-        {
-          model: EventFAQ,
-        },
-        {
-          model: EventImage,
-        },
-        {
-          model: Community,
-          include: [CommunityMembership],
+          model: Event,
+          include: [
+            {
+              model: Event_Phone,
+            },
+            {
+              model: Ticket,
+            },
+            {
+              model: Event_Agenda,
+            },
+            {
+              model: EventCategory,
+            },
+            {
+              model: EventFAQ,
+            },
+            {
+              model: EventImage,
+            },
+            {
+              model: Community,
+              include: [CommunityMembership],
+            },
+          ],
         },
       ],
     });

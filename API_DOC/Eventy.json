@@ -81,7 +81,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"query\":\"mostafa.dash34@gmail.com\",\r\n    \"password\":\"HYo9VamaaVMWAmt\"\r\n}",
+							"raw": "{\r\n    \"query\":\"sci.mostafamohamed12788@alexu.edu.eg\",\r\n    \"password\":\"2EvU54vFK69dsfb\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -549,6 +549,323 @@
 								"v1",
 								"users",
 								"update"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "event",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6IkhlcnNoZWwuR2VyaG9sZCIsImZpcnN0X25hbWUiOiJEaWxsb24iLCJsYXN0X25hbWUiOiJIYXVjayIsInJvbGUiOiJ1IiwiaWF0IjoxNzA4NjM0MTk0LCJleHAiOjE3MDg3MjA1OTR9.-uYAXQFbEE-rSk_qqYyTg59tdDaqIf7BLHyhT0CSCZw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "content",
+									"value": "First Event",
+									"type": "text"
+								},
+								{
+									"key": "location",
+									"value": "Alexandria, Egypt",
+									"type": "text"
+								},
+								{
+									"key": "date",
+									"value": "{{$randomDateFuture}}",
+									"type": "text"
+								},
+								{
+									"key": "time",
+									"value": "09:00am",
+									"type": "text"
+								},
+								{
+									"key": "phone_numbers[0]",
+									"value": "{{$randomPhoneNumber}}",
+									"type": "text"
+								},
+								{
+									"key": "phone_numbers[1]",
+									"value": "{{$randomPhoneNumber}}",
+									"type": "text"
+								},
+								{
+									"key": "agenda[0][description]",
+									"value": "first talk",
+									"type": "text"
+								},
+								{
+									"key": "agenda[0][start_time]",
+									"value": "09:00am",
+									"type": "text"
+								},
+								{
+									"key": "agenda[0][end_time]",
+									"value": "11:30am",
+									"type": "text"
+								},
+								{
+									"key": "images",
+									"type": "file",
+									"src": "/D:/Gallery/190217838.jpg"
+								},
+								{
+									"key": "tickets[0][price]",
+									"value": "{{$randomPrice}}",
+									"type": "text"
+								},
+								{
+									"key": "tickets[0][class]",
+									"value": "Gold",
+									"type": "text"
+								},
+								{
+									"key": "tickets[0][available]",
+									"value": "100",
+									"type": "text"
+								},
+								{
+									"key": "tickets[0][quantity]",
+									"value": "100",
+									"type": "text"
+								},
+								{
+									"key": "tickets[1][price]",
+									"value": "{{$randomPrice}}",
+									"type": "text"
+								},
+								{
+									"key": "tickets[1][class]",
+									"value": "Silver",
+									"type": "text"
+								},
+								{
+									"key": "tickets[1][available]",
+									"value": "200",
+									"type": "text"
+								},
+								{
+									"key": "tickets[1][quantity]",
+									"value": "200",
+									"type": "text"
+								},
+								{
+									"key": "categories[0]",
+									"value": "Music",
+									"type": "text"
+								},
+								{
+									"key": "categories[1]",
+									"value": "music",
+									"type": "text"
+								},
+								{
+									"key": "faqs[0][question]",
+									"value": "{{$randomFullName}}?",
+									"type": "text"
+								},
+								{
+									"key": "faqs[0][answer]",
+									"value": "{{$randomFullName}}",
+									"type": "text"
+								},
+								{
+									"key": "faqs[1][question]",
+									"value": "{{$randomFullName}}?",
+									"type": "text"
+								},
+								{
+									"key": "faqs[1][answer]",
+									"value": "{{$randomFullName}}",
+									"type": "text"
+								},
+								{
+									"key": "allow_community",
+									"value": "true",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/events/create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"events",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6IkhlcnNoZWwuR2VyaG9sZCIsImZpcnN0X25hbWUiOiJEaWxsb24iLCJsYXN0X25hbWUiOiJIYXVjayIsInJvbGUiOiJ1IiwiaWF0IjoxNzA4NjM0MTk0LCJleHAiOjE3MDg3MjA1OTR9.-uYAXQFbEE-rSk_qqYyTg59tdDaqIf7BLHyhT0CSCZw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "content",
+									"value": "First Event",
+									"type": "text"
+								},
+								{
+									"key": "location",
+									"value": "Alexandria, Egypt",
+									"type": "text"
+								},
+								{
+									"key": "date",
+									"value": "{{$randomDateFuture}}",
+									"type": "text"
+								},
+								{
+									"key": "time",
+									"value": "09:00am",
+									"type": "text"
+								},
+								{
+									"key": "phone_numbers[0]",
+									"value": "{{$randomPhoneNumber}}",
+									"type": "text"
+								},
+								{
+									"key": "phone_numbers[1]",
+									"value": "{{$randomPhoneNumber}}",
+									"type": "text"
+								},
+								{
+									"key": "agenda[0][description]",
+									"value": "first talk",
+									"type": "text"
+								},
+								{
+									"key": "agenda[0][start_time]",
+									"value": "09:00am",
+									"type": "text"
+								},
+								{
+									"key": "agenda[0][end_time]",
+									"value": "11:30am",
+									"type": "text"
+								},
+								{
+									"key": "images",
+									"type": "file",
+									"src": "/D:/Gallery/190217838.jpg"
+								},
+								{
+									"key": "tickets[0][price]",
+									"value": "{{$randomPrice}}",
+									"type": "text"
+								},
+								{
+									"key": "tickets[0][class]",
+									"value": "Gold",
+									"type": "text"
+								},
+								{
+									"key": "tickets[0][available]",
+									"value": "100",
+									"type": "text"
+								},
+								{
+									"key": "tickets[0][quantity]",
+									"value": "100",
+									"type": "text"
+								},
+								{
+									"key": "tickets[1][price]",
+									"value": "{{$randomPrice}}",
+									"type": "text"
+								},
+								{
+									"key": "tickets[1][class]",
+									"value": "Silver",
+									"type": "text"
+								},
+								{
+									"key": "tickets[1][available]",
+									"value": "200",
+									"type": "text"
+								},
+								{
+									"key": "tickets[1][quantity]",
+									"value": "200",
+									"type": "text"
+								},
+								{
+									"key": "categories[0]",
+									"value": "Music",
+									"type": "text"
+								},
+								{
+									"key": "categories[1]",
+									"value": "music",
+									"type": "text"
+								},
+								{
+									"key": "faqs[0][question]",
+									"value": "{{$randomFullName}}?",
+									"type": "text"
+								},
+								{
+									"key": "faqs[0][answer]",
+									"value": "{{$randomFullName}}",
+									"type": "text"
+								},
+								{
+									"key": "faqs[1][question]",
+									"value": "{{$randomFullName}}?",
+									"type": "text"
+								},
+								{
+									"key": "faqs[1][answer]",
+									"value": "{{$randomFullName}}",
+									"type": "text"
+								},
+								{
+									"key": "allow_community",
+									"value": "true",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/events/create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"events",
+								"create"
 							]
 						}
 					},
