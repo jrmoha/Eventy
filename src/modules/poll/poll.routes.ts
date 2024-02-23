@@ -1,0 +1,23 @@
+import { Router } from "express";
+import { create, get, unvote, vote } from "./poll.controller";
+import { authenticate } from "../../interfaces/middleware/authentication.middleware";
+import { validate } from "../../interfaces/middleware/validator.middleware";
+import { voteSchema } from "./poll.validator";
+
+const router = Router();
+
+router.post("/create", authenticate("u", "o"), create);
+router.get("/:id", get);
+router.post(
+  "/:poll_id/vote/:option_id",
+  authenticate("u", "o"),
+  validate(voteSchema),
+  vote,
+);
+router.patch(
+  "/:poll_id/unvote/:option_id",
+  authenticate("u", "o"),
+  validate(voteSchema),
+  unvote,
+);
+export default router;

@@ -19,49 +19,6 @@ import StatusCodes from "http-status-codes";
 import { CreateEventInput } from "./event.validator";
 import { APIError } from "../../types/APIError.error";
 
-export const get = async_(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const id = Number(req.params.id);
-    console.log(id);
-    
-    const event = await Post.findByPk(id, {
-      include: [
-        {
-          model: Event,
-          include: [
-            {
-              model: Event_Phone,
-            },
-            {
-              model: Ticket,
-            },
-            {
-              model: Event_Agenda,
-            },
-            {
-              model: EventCategory,
-            },
-            {
-              model: EventFAQ,
-            },
-            {
-              model: EventImage,
-            },
-            {
-              model: Community,
-              include: [CommunityMembership],
-            },
-          ],
-        },
-      ],
-    });
-
-    if (!event) throw new APIError("Event not found", StatusCodes.NOT_FOUND);
-
-    res.status(StatusCodes.OK).json({ success: true, data: event });
-  },
-);
-
 export const create = async_(
   async (
     req: Request<{}, {}, CreateEventInput>,
@@ -245,5 +202,46 @@ export const create = async_(
         images: images_array,
       },
     });
+  },
+);
+export const get = async_(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = Number(req.params.id);
+
+    const event = await Post.findByPk(id, {
+      include: [
+        {
+          model: Event,
+          include: [
+            {
+              model: Event_Phone,
+            },
+            {
+              model: Ticket,
+            },
+            {
+              model: Event_Agenda,
+            },
+            {
+              model: EventCategory,
+            },
+            {
+              model: EventFAQ,
+            },
+            {
+              model: EventImage,
+            },
+            {
+              model: Community,
+              include: [CommunityMembership],
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!event) throw new APIError("Event not found", StatusCodes.NOT_FOUND);
+
+    res.status(StatusCodes.OK).json({ success: true, data: event });
   },
 );
