@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import fs from "fs";
 import { sequelize } from "../../database";
 import { async_ } from "../../interfaces/middleware/async.middleware";
 import Post from "../post/post.model";
@@ -27,6 +28,7 @@ export const create = async_(
   ) => {
     const t = await sequelize.transaction();
     req.transaction = t;
+
     const user_id = req.user?.id;
     const {
       content,
@@ -163,7 +165,7 @@ export const create = async_(
         const { public_id, secure_url, url } = await cloudinary.uploader.upload(
           img.path,
           {
-            folder: `eventy/events/${event.id}`,
+            folder: `eventy/posts/events/${event.id}`,
             resource_type: "image",
           },
         );
@@ -177,6 +179,7 @@ export const create = async_(
           },
           { transaction: t },
         );
+        fs.unlinkSync(img.path);
         return image;
       }),
     );

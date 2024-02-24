@@ -148,7 +148,7 @@ export const unvote = async_(
     await already_vote.destroy();
     option.votes--;
     await option.save();
-    
+
     return res.status(StatusCode.OK).json({
       success: true,
     });
