@@ -56,11 +56,9 @@ export const emailVerificationSchema = object({
 });
 export const forgotPasswordSchema = object({
   body: object({
-    email: string({
+    query: string({
       required_error: "Email Is Required",
-    })
-      .email()
-      .trim(),
+    }).trim(),
   }),
 });
 export const resetPasswordSchema = object({

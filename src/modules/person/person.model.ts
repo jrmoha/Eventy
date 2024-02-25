@@ -76,11 +76,8 @@ Person.init(
       },
     },
     birthdate: {
-      type: DataTypes.DATE,
+      type: DataTypes.STRING,
       allowNull: false,
-      validate: {
-        isDate: true,
-      },
     },
     gender: {
       type: DataTypes.ENUM("male", "female"),

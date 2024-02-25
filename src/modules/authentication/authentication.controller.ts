@@ -203,9 +203,17 @@ export const forgotPassword = async_(
     res: Response,
     next: NextFunction,
   ) => {
-    const { email } = req.body;
+    const { query } = req.body;
 
-    const person = await Person.findOne({ where: { email } });
+    const person = await Person.findOne({
+      where: {
+        [Op.or]: [
+          { email: query },
+          { phone_number: query },
+          { username: query },
+        ],
+      },
+    });
     if (!person)
       throw new APIError("User does not exist", StatusCodes.NOT_FOUND);
 
