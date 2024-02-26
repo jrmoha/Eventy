@@ -8,6 +8,8 @@ import User from "../user/user.model";
 import Block from "../block/block.model";
 import Person from "../person/person.model";
 import { FollowInput } from "./follow.validator";
+import Settings from "../user/user.settings.model";
+import Friendship from "../friendship/friendship.model";
 
 export const follow = async_(
   async (
@@ -113,8 +115,109 @@ export const unfollow = async_(
 );
 
 export const followers = async_(
-  async (req: Request, res: Response, next: NextFunction) => {},
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { username } = req.params;
+
+    const user = await Person.findOne({ where: { username } });
+    console.log(user?.id, req.user?.id);
+
+    if (user?.id == req.user?.id) {
+      const followers = await Follow.findAll({
+        where: { followed_id: user?.id },
+        include: [
+          {
+            model: User,
+          },
+        ],
+      });
+      return res
+        .status(StatusCodes.OK)
+        .json({ success: true, data: followers });
+    }
+
+    if (!user) throw new APIError("User not found", StatusCodes.NOT_FOUND);
+    if (!user.confirmed)
+      throw new APIError("User not confirmed", StatusCodes.BAD_REQUEST);
+
+    const settings = await Settings.findOne({
+      where: { user_id: user.id },
+    });
+    if (settings?.followers_visibility == "none")
+      throw new APIError("Access denied", StatusCodes.NOT_FOUND);
+
+    if (settings?.followers_visibility == "friends") {
+      const isFriends = await Friendship.findOne({
+        where: {
+          [Op.or]: [
+            { sender_id: user.id, receiver_id: req.user?.id },
+            { receiver_id: req.user?.id, sender_id: user.id },
+          ],
+        },
+      });
+      if (!isFriends)
+        throw new APIError("Access denied", StatusCodes.NOT_FOUND);
+    }
+    const followers = await Follow.findAll({
+      where: { followed_id: user.id },
+      include: [
+        {
+          model: User,
+        },
+      ],
+    });
+    return res.status(StatusCodes.OK).json({ success: true, data: followers });
+  },
 );
 export const followings = async_(
-  async (req: Request, res: Response, next: NextFunction) => {},
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { username } = req.params;
+
+    const user = await Person.findOne({ where: { username } });
+
+    if (user?.id == req.user?.id) {
+      const followings = await Follow.findAll({
+        where: { follower_id: user?.id },
+        include: [
+          {
+            model: User,
+          },
+        ],
+      });
+      return res
+        .status(StatusCodes.OK)
+        .json({ success: true, data: followings });
+    }
+
+    if (!user) throw new APIError("User not found", StatusCodes.NOT_FOUND);
+    if (!user.confirmed)
+      throw new APIError("User not confirmed", StatusCodes.BAD_REQUEST);
+
+    const settings = await Settings.findOne({
+      where: { user_id: user.id },
+    });
+    if (settings?.following_visibility == "none")
+      throw new APIError("Access denied", StatusCodes.NOT_FOUND);
+
+    if (settings?.following_visibility == "friends") {
+      const isFriends = await Friendship.findOne({
+        where: {
+          [Op.or]: [
+            { sender_id: user.id, receiver_id: req.user?.id },
+            { receiver_id: req.user?.id, sender_id: user.id },
+          ],
+        },
+      });
+      if (!isFriends)
+        throw new APIError("Access denied", StatusCodes.NOT_FOUND);
+    }
+    const followings = await Follow.findAll({
+      where: { follower_id: user.id },
+      include: [
+        {
+          model: User,
+        },
+      ],
+    });
+    return res.status(StatusCodes.OK).json({ success: true, data: followings });
+  },
 );

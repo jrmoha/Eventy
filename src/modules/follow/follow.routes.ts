@@ -8,18 +8,18 @@ const router = Router();
 
 router.post(
   "/follow/:id",
-  authenticate("u", "o"),
+  authenticate(false, "u", "o"),
   validate(followSchema),
   FC.follow,
 );
 router.delete(
   "/unfollow/:id",
-  authenticate("u", "o"),
+  authenticate(false, "u", "o"),
   validate(followSchema),
   FC.unfollow,
 );
 
-router.get("/followers/:username", FC.followers);
-router.get("/followings/:username", FC.followings);
+router.get("/followers/:username", authenticate(true), FC.followers);
+router.get("/followings/:username", authenticate(true), FC.followings);
 
 export default router;

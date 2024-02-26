@@ -9,7 +9,7 @@ const router = Router();
 //send
 router.post(
   "/send/:id",
-  authenticate("o", "u"),
+  authenticate(false, "o", "u"),
   validate(friendRequestSchema),
   send,
 );
@@ -17,7 +17,7 @@ router.post(
 //accept
 router.patch(
   "/accept/:id",
-  authenticate("o", "u"),
+  authenticate(false, "o", "u"),
   validate(friendRequestSchema),
   accept,
 );
@@ -25,7 +25,7 @@ router.patch(
 //cancel
 router.delete(
   "/cancel/:id",
-  authenticate("o", "u"),
+  authenticate(false, "o", "u"),
   validate(friendRequestSchema),
   cancel,
 );
