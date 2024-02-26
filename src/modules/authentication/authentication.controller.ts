@@ -21,6 +21,7 @@ import {
   sendVerificationEmail,
 } from "../../interfaces/handlers/email/email.handler";
 import { nanoid } from "nanoid";
+import Settings from "../user/user.settings.model";
 
 export const signup = async_(
   async (
@@ -78,6 +79,7 @@ export const signup = async_(
     else {
       person.confirmed = true;
       await person.save();
+      await Settings.create({ user_id: person.id });
     }
 
     return res
@@ -131,7 +133,9 @@ export const login = async_(
       expiresIn: config.get<string>("jwt.expiresIn"),
     });
 
-    return res.status(StatusCodes.OK).json({ success: true, token });
+    return res
+      .status(StatusCodes.OK)
+      .json({ success: true, token, user: payload });
   },
 );
 
@@ -161,6 +165,8 @@ export const emailVerification = async_(
 
     person.confirmed = true;
     await person.save();
+
+    await Settings.create({ user_id: person.id });
 
     return res.status(StatusCodes.ACCEPTED).json({ success: true });
   },

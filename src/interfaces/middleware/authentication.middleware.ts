@@ -6,9 +6,14 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "config";
 import Person from "../../modules/person/person.model";
 
-export const authenticate = (...roles: string[]) => {
+export const authenticate = (optional = false, ...roles: string[]) => {
   return async_(async (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers["x-access-token"] as string;
+
+    if (!token && optional) {
+      req.user = undefined;
+      return next();
+    }
 
     if (!token)
       throw new APIError("No Token Provided", StatusCodes.BAD_REQUEST);

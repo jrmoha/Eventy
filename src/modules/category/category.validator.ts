@@ -16,6 +16,12 @@ export const deleteCategorySchema = object({
     name: string({ required_error: "Category name is required" }),
   }),
 });
+export const getEventCategoriesSchema = object({
+  params: object({
+    id: string({ required_error: "Event id is required" }),
+  }),
+});
 
 export type AddCategoriesInput = TypeOf<typeof addCategoriesSchema>["body"];
 export type DeleteCategoryInput = TypeOf<typeof deleteCategorySchema>["params"];
+export type GetEventCategoriesInput = TypeOf<typeof getEventCategoriesSchema>["params"];

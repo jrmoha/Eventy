@@ -4,6 +4,8 @@ import { DataTypes, Model } from "sequelize";
 
 class Community extends Model {
   public declare id: number;
+  public declare name: string;
+  public declare status: "active" | "archived";
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 }
@@ -13,6 +15,15 @@ Community.init(
     id: {
       type: DataTypes.BIGINT,
       primaryKey: true,
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    status: {
+      type: DataTypes.ENUM("active", "archived"),
+      allowNull: false,
+      defaultValue: "active",
     },
   },
   {

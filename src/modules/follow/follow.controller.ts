@@ -46,7 +46,7 @@ export const follow = async_(
     });
     if (follow)
       throw new APIError("Already following", StatusCodes.BAD_REQUEST);
-    
+
     const isBlocked = await Block.findOne({
       where: {
         [Op.or]: [
@@ -57,7 +57,6 @@ export const follow = async_(
     });
     if (isBlocked)
       throw new APIError("You are blocked by this user", StatusCodes.FORBIDDEN);
-
 
     await Follow.create({ follower_id, followed_id });
     await User.increment("following_count", {
@@ -111,4 +110,11 @@ export const unfollow = async_(
     });
     return res.status(StatusCodes.OK).json({ success: true });
   },
+);
+
+export const followers = async_(
+  async (req: Request, res: Response, next: NextFunction) => {},
+);
+export const followings = async_(
+  async (req: Request, res: Response, next: NextFunction) => {},
 );

@@ -1,10 +1,16 @@
 import { validate } from "./../../interfaces/middleware/validator.middleware";
 import { Router } from "express";
-import { addCategory, deleteCategory } from "./category.controller";
+import {
+  addUserCategories,
+  deleteUserCategory,
+  getEventCategories,
+  getUserCategories,
+} from "./category.controller";
 import { authenticate } from "../../interfaces/middleware/authentication.middleware";
 import {
   addCategoriesSchema,
   deleteCategorySchema,
+  getEventCategoriesSchema,
 } from "./category.validator";
 
 const router = Router();
@@ -13,13 +19,18 @@ router.post(
   "/add",
   authenticate("u", "o"),
   validate(addCategoriesSchema),
-  addCategory,
+  addUserCategories,
 );
 router.delete(
   "/delete/:name",
   authenticate("u", "o"),
   validate(deleteCategorySchema),
-  deleteCategory,
+  deleteUserCategory,
 );
-
+router.get(
+  "/event/:id",
+  validate(getEventCategoriesSchema),
+  getEventCategories,
+);
+router.get("/me", authenticate("u", "o"), getUserCategories);
 export default router;
