@@ -6,17 +6,17 @@ import { voteSchema } from "./poll.validator";
 
 const router = Router();
 
-router.post("/create", authenticate("u", "o"), create);
+router.post("/create", authenticate(false,"u", "o"), create);
 router.get("/:id", get);
 router.post(
   "/:poll_id/vote/:option_id",
-  authenticate("u", "o"),
+  authenticate(false,"u", "o"),
   validate(voteSchema),
   vote,
 );
 router.patch(
   "/:poll_id/unvote/:option_id",
-  authenticate("u", "o"),
+  authenticate(false,"u", "o"),
   validate(voteSchema),
   unvote,
 );

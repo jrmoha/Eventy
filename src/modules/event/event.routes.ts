@@ -10,7 +10,7 @@ const router = Router();
 
 router.post(
   "/create",
-  authenticate("o", "u"),
+  authenticate(false, "o", "u"),
   upload("image", "images").array(
     "images",
     config.get<number>("maxImageCount"),

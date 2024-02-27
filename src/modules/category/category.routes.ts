@@ -17,13 +17,13 @@ const router = Router();
 
 router.post(
   "/add",
-  authenticate("u", "o"),
+  authenticate(false, "u", "o"),
   validate(addCategoriesSchema),
   addUserCategories,
 );
 router.delete(
   "/delete/:name",
-  authenticate("u", "o"),
+  authenticate(false, "u", "o"),
   validate(deleteCategorySchema),
   deleteUserCategory,
 );
@@ -32,5 +32,5 @@ router.get(
   validate(getEventCategoriesSchema),
   getEventCategories,
 );
-router.get("/me", authenticate("u", "o"), getUserCategories);
+router.get("/me", authenticate(false, "u", "o"), getUserCategories);
 export default router;

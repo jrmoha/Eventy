@@ -139,6 +139,16 @@ export const followers = async_(
     if (!user.confirmed)
       throw new APIError("User not confirmed", StatusCodes.BAD_REQUEST);
 
+    const isBlocked = await Block.findOne({
+      where: {
+        [Op.or]: [
+          { blocked_id: user.id, blocker_id: req.user?.id },
+          { blocked_id: req.user?.id, blocker_id: user.id },
+        ],
+      },
+    });
+    if (isBlocked) throw new APIError("Access denied", StatusCodes.FORBIDDEN);
+
     const settings = await Settings.findOne({
       where: { user_id: user.id },
     });
@@ -191,6 +201,16 @@ export const followings = async_(
     if (!user) throw new APIError("User not found", StatusCodes.NOT_FOUND);
     if (!user.confirmed)
       throw new APIError("User not confirmed", StatusCodes.BAD_REQUEST);
+
+    const isBlocked = await Block.findOne({
+      where: {
+        [Op.or]: [
+          { blocked_id: user.id, blocker_id: req.user?.id },
+          { blocked_id: req.user?.id, blocker_id: user.id },
+        ],
+      },
+    });
+    if (isBlocked) throw new APIError("Access denied", StatusCodes.FORBIDDEN);
 
     const settings = await Settings.findOne({
       where: { user_id: user.id },

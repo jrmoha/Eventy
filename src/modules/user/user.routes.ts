@@ -15,14 +15,14 @@ router.use("/friendship", friendshipRoutes);
 
 router.post(
   "/upload/image",
-  authenticate("u", "o"),
+  authenticate(false,"u", "o"),
   multer("image", "images").single("image"),
   validate(uploadImageSchema),
   uploadImage,
 );
 router.patch(
   "/update",
-  authenticate("u", "o"),
+  authenticate(false,"u", "o"),
   validate(updateUserSchema),
   update,
 );

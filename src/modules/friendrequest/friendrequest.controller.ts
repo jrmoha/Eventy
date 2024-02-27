@@ -18,7 +18,7 @@ export const send = async_(
   ) => {
     const sender_id = req.user?.id;
     const receiver_id = +req.params.id;
-    
+
     if (sender_id == receiver_id)
       throw new APIError(
         "You cannot send a friend request to yourself",
@@ -41,6 +41,17 @@ export const send = async_(
     if (!receiver) throw new APIError("User not found", StatusCodes.NOT_FOUND);
     if (!receiver.confirmed)
       throw new APIError("User not confirmed", StatusCodes.BAD_REQUEST);
+
+    const isBlocked = await Block.findOne({
+      where: {
+        [Op.or]: [
+          { blocked_id: sender_id, blocker_id: receiver_id },
+          { blocked_id: receiver_id, blocker_id: sender_id },
+        ],
+      },
+    });
+    if (isBlocked)
+      throw new APIError("You are blocked by this user", StatusCodes.FORBIDDEN);
 
     const already_sent = await FriendRequest.findOne({
       where: {
@@ -70,17 +81,6 @@ export const send = async_(
         "Cannot send friend request to a friend",
         StatusCodes.BAD_REQUEST,
       );
-
-    const isBlocked = await Block.findOne({
-      where: {
-        [Op.or]: [
-          { blocked_id: sender_id, blocker_id: receiver_id },
-          { blocked_id: receiver_id, blocker_id: sender_id },
-        ],
-      },
-    });
-    if (isBlocked)
-      throw new APIError("You are blocked by this user", StatusCodes.FORBIDDEN);
 
     const friend_request = await FriendRequest.create({
       sender_id,

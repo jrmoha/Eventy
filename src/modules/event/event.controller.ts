@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable quotes */
 import { NextFunction, Request, Response } from "express";
 import fs from "fs";
 import { sequelize } from "../../database";
@@ -19,6 +21,8 @@ import EventImage from "../image/event.image.model";
 import StatusCodes from "http-status-codes";
 import { CreateEventInput } from "./event.validator";
 import { APIError } from "../../types/APIError.error";
+import Person from "../person/person.model";
+import User from "../user/user.model";
 
 export const create = async_(
   async (
@@ -211,32 +215,95 @@ export const get = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     const id = Number(req.params.id);
 
-    const event = await Post.findByPk(id, {
+    const event: any = await Post.findByPk(id, {
+      attributes: ["id", "content"],
       include: [
         {
-          model: Event,
+          model: Organizer,
           include: [
             {
-              model: Event_Phone,
+              model: User,
+              attributes: [],
+              include: [
+                {
+                  model: Person,
+                  required: true,
+                  attributes: [],
+                },
+              ],
+              required: true,
             },
-            {
-              model: Ticket,
-            },
-            {
-              model: Event_Agenda,
-            },
+          ],
+          attributes: [
+            [
+              sequelize.literal('"Organizer->User->Person".first_name'),
+              "first_name",
+            ],
+            [
+              sequelize.literal('"Organizer->User->Person".last_name'),
+              "last_name",
+            ],
+            [
+              sequelize.literal('"Organizer->User->Person".username'),
+              "username",
+            ],
+            [
+              sequelize.literal('"Organizer->User".followers_count'),
+              "followers_count",
+            ],
+            [sequelize.literal('"Organizer".rate'), "rate"],
+            [sequelize.literal('"Organizer".events_count'), "events_count"],
+          ],
+        },
+        {
+          model: Event,
+          required: true,
+          attributes: [
+            "location",
+            "date",
+            "time",
+            "likes_count",
+            "comments_count",
+            "interests_count",
+            "attendees_count",
+          ],
+          include: [
             {
               model: EventCategory,
-            },
-            {
-              model: EventFAQ,
+              attributes: ["category"],
             },
             {
               model: EventImage,
+              include: [
+                {
+                  model: Image,
+                  required: true,
+                  attributes: [],
+                },
+              ],
+              attributes: [
+                [
+                  sequelize.literal('"Event->EventImages->Image".public_id'),
+                  "public_id",
+                ],
+                [sequelize.literal('"Event->EventImages->Image".url'), "url"],
+                [
+                  sequelize.literal('"Event->EventImages->Image".secure_url'),
+                  "secure_url",
+                ],
+              ],
             },
             {
-              model: Community,
-              include: [CommunityMembership],
+              model: Event_Phone,
+              attributes: ["phone"],
+            },
+            {
+              model: EventFAQ,
+              attributes: ["question", "answer"],
+            },
+            {
+              model: Event_Agenda,
+              attributes: ["description", "start_time", "end_time"],
             },
           ],
         },
@@ -245,6 +312,11 @@ export const get = async_(
 
     if (!event) throw new APIError("Event not found", StatusCodes.NOT_FOUND);
 
-    res.status(StatusCodes.OK).json({ success: true, data: event });
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      data: {
+        post:event
+      },
+    });
   },
 );

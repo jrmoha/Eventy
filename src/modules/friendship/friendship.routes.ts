@@ -8,7 +8,7 @@ const router = Router();
 
 router.delete(
   "/unfriend/:id",
-  authenticate("u", "o"),
+  authenticate(false,"u", "o"),
   validate(unfriendSchema),
   unfriend,
 );
