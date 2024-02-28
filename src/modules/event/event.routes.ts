@@ -5,8 +5,11 @@ import upload from "../../utils/multer";
 import config from "config";
 import { validate } from "../../interfaces/middleware/validator.middleware";
 import { createEventSchema } from "./event.validator";
+import likeRoutes from "../like/like.routes";
 
 const router = Router();
+
+router.use("/:event_id", likeRoutes);
 
 router.post(
   "/create",

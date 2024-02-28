@@ -47,6 +47,8 @@ export const create = async_(
       faqs,
     } = req.body;
 
+    const categories_set = new Set(categories);
+
     const images = req.files as Express.Multer.File[];
 
     const organizer = await Organizer.findOrCreate({
@@ -97,6 +99,7 @@ export const create = async_(
       const community = await Community.create(
         {
           id: event.id,
+          name: content,
         },
         { transaction: t },
       );
@@ -120,7 +123,7 @@ export const create = async_(
       { transaction: t },
     );
 
-    for (const category of categories) {
+    for (const category of categories_set) {
       const category_exists = await Category.findOne({
         where: sequelize.where(
           sequelize.fn("lower", sequelize.col("name")),
@@ -194,6 +197,9 @@ export const create = async_(
       })),
       { transaction: t },
     );
+
+    organizer[0].events_count++;
+    await organizer[0].save({ transaction: t });
 
     await t.commit();
     res.status(StatusCodes.CREATED).json({
@@ -315,7 +321,7 @@ export const get = async_(
     return res.status(StatusCodes.OK).json({
       success: true,
       data: {
-        post:event
+        post: event,
       },
     });
   },
