@@ -47,7 +47,26 @@ export const create = async_(
       faqs,
     } = req.body;
 
-    const categories_set = new Set(categories);
+    const categories_set = new Set(Array.isArray(categories) ? categories : []);
+    const phone_numbers_set = new Set(
+      Array.isArray(phone_numbers) ? phone_numbers : [],
+    );
+
+    console.log(
+      content,
+      location,
+      date,
+      time,
+      phone_numbers,
+      agenda,
+      allow_community,
+      tickets,
+      categories,
+      faqs,
+      user_id,
+      [...categories_set],
+      [...phone_numbers_set],
+    );
 
     const images = req.files as Express.Multer.File[];
 
@@ -78,22 +97,24 @@ export const create = async_(
     );
 
     const event_phone_numbers = await Event_Phone.bulkCreate(
-      phone_numbers.map((phone: string) => ({
+      [...phone_numbers_set].map((phone: string) => ({
         event_id: event.id,
         phone,
       })),
       { transaction: t },
     );
 
-    const event_agenda = await Event_Agenda.bulkCreate(
-      agenda.map((agenda) => ({
-        event_id: event.id,
-        description: agenda.description,
-        start_time: agenda.start_time,
-        end_time: agenda.end_time,
-      })),
-      { transaction: t },
-    );
+    if (agenda) {
+      await Event_Agenda.bulkCreate(
+        agenda.map((agenda) => ({
+          event_id: event.id,
+          description: agenda.description,
+          start_time: agenda.start_time,
+          end_time: agenda.end_time,
+        })),
+        { transaction: t },
+      );
+    }
 
     if (allow_community) {
       const community = await Community.create(
@@ -156,7 +177,8 @@ export const create = async_(
         );
       }
     }
-    for (const faq of faqs) {
+
+    for (const faq of faqs || []) {
       await EventFAQ.create(
         {
           event_id: event.id,
@@ -209,7 +231,6 @@ export const create = async_(
         post,
         organizer,
         event_phone_numbers,
-        event_agenda,
         event_tickets,
         event_images,
         images: images_array,
