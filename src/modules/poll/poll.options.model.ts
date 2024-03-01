@@ -44,6 +44,7 @@ Poll_Options.belongsTo(Poll, {
 Poll.hasMany(Poll_Options, {
   foreignKey: "poll_id",
   sourceKey: "id",
+  as:"options"
 });
 
 export default Poll_Options;

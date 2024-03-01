@@ -54,27 +54,76 @@ export const create = async_(
 export const get = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
-    const post = await Post.findByPk(id, {
+    const user_id = req.user?.id;
+    const post = await Post.findOne({
+      where: {
+        id,
+        status: "published",
+      },
       include: [
         {
           model: Poll,
           include: [
             {
               model: Post,
+              required: true,
+              attributes: [],
             },
             {
               model: Poll_Options,
+              as: "options",
+              attributes: [
+                "id",
+                "option",
+                "votes",
+                [
+                  sequelize.literal(
+                    `CASE WHEN ${user_id ? user_id : null} IN (SELECT user_id FROM poll_selection WHERE option_id = "Poll->options".id) THEN 'true' ELSE 'false' END`,
+                  ),
+                  "voted",
+                ],
+              ],
             },
           ],
+          attributes: ["id"],
         },
+      ],
+      attributes: [
+        "id",
+        "content",
+        "createdAt",
+        [sequelize.col("Poll.multi_selection"), "multi_selection"],
+        [sequelize.col("Poll.Post.content"), "content"],
       ],
     });
 
     if (!post) throw new APIError("Poll not found", StatusCode.NOT_FOUND);
 
+    const result = {
+      id: post.id,
+      content: post.content,
+      createdAt: post.createdAt.toLocaleString(),
+      multi_selection: post.dataValues?.multi_selection,
+      options: post.dataValues.Poll.options.map(
+        (option: {
+          id: number;
+          option: string;
+          votes: number;
+          voted: boolean;
+        }) => {
+          return {
+            id: option.id,
+            option: option.option,
+            votes: option.votes,
+            voted: option.voted,
+          };
+        },
+      ),
+    };
+
     return res.status(StatusCode.OK).json({
       success: true,
-      data: post,
+      data: result,
     });
   },
 );
