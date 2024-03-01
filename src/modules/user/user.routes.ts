@@ -4,7 +4,7 @@ import friendRequestRoutes from "../friendrequest/friendrequest.routes";
 import friendshipRoutes from "../friendship/friendship.routes";
 import { authenticate } from "../../interfaces/middleware/authentication.middleware";
 import multer from "../../utils/multer";
-import { update, uploadImage } from "./user.controller";
+import { get, update, uploadImage } from "./user.controller";
 import { validate } from "../../interfaces/middleware/validator.middleware";
 import { updateUserSchema, uploadImageSchema } from "./user.validator";
 
@@ -15,16 +15,17 @@ router.use("/friendship", friendshipRoutes);
 
 router.post(
   "/upload/image",
-  authenticate(false,"u", "o"),
+  authenticate(false, "u", "o"),
   multer("image", "images").single("image"),
   validate(uploadImageSchema),
   uploadImage,
 );
 router.patch(
   "/update",
-  authenticate(false,"u", "o"),
+  authenticate(false, "u", "o"),
   validate(updateUserSchema),
   update,
 );
+router.get("/:username", authenticate(true, "u", "o"), get);
 
 export default router;

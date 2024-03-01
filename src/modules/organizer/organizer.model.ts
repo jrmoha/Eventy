@@ -15,6 +15,10 @@ Organizer.init(
       autoIncrement: true,
       allowNull: false,
     },
+    bio: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     rate: {
       type: DataTypes.INTEGER,
       allowNull: false,

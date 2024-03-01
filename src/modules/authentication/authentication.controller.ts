@@ -22,6 +22,7 @@ import {
 } from "../../interfaces/handlers/email/email.handler";
 import { nanoid } from "nanoid";
 import Settings from "../user/user.settings.model";
+import logger from "../../utils/logger";
 
 export const signup = async_(
   async (
@@ -73,9 +74,11 @@ export const signup = async_(
 
     await User.create({ id: person.id });
     if (config.get<string>("NODE_ENV") !== "development")
-      await sendVerificationEmail(person, {
+      sendVerificationEmail(person, {
         origin: req.get("origin") || req.protocol + "://" + req.get("host"),
-      });
+      })
+        .then(() => logger.info("Email sent"))
+        .catch((err) => logger.error(err.message));
     else {
       person.confirmed = true;
       await person.save();
