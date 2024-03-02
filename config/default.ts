@@ -60,4 +60,8 @@ export default {
   PASSWORD_RESET_CODE_LENGTH: PASSWORD_RESET_CODE_LENGTH,
   PASSWORD_RESET_CODE_EXPIRES_IN: PASSWORD_RESET_CODE_EXPIRES_IN,
   maxImageCount: 5,
+  images: {
+    default_user_image: "eventy/default_user",
+    covers_max_length: 5,
+  },
 };

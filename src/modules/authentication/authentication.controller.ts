@@ -23,6 +23,7 @@ import {
 import { nanoid } from "nanoid";
 import Settings from "../user/user.settings.model";
 import logger from "../../utils/logger";
+import UserImage from "../image/user.image.model";
 
 export const signup = async_(
   async (
@@ -83,6 +84,10 @@ export const signup = async_(
       person.confirmed = true;
       await person.save();
       await Settings.create({ user_id: person.id });
+      await UserImage.create({
+        public_id: config.get<string>("images.default_user_image"),
+        user_id: person.id,
+      });
     }
 
     return res
@@ -170,6 +175,10 @@ export const emailVerification = async_(
     await person.save();
 
     await Settings.create({ user_id: person.id });
+    await UserImage.create({
+      public_id: config.get<string>("images.default_user_image"),
+      user_id: person.id,
+    });
 
     return res.status(StatusCodes.ACCEPTED).json({ success: true });
   },
