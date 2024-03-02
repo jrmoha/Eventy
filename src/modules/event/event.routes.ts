@@ -1,10 +1,10 @@
 import { authenticate } from "./../../interfaces/middleware/authentication.middleware";
 import { Router } from "express";
-import { create, get } from "./event.controller";
+import { create, get, interest } from "./event.controller";
 import upload from "../../utils/multer";
 import config from "config";
 import { validate } from "../../interfaces/middleware/validator.middleware";
-import { createEventSchema } from "./event.validator";
+import { createEventSchema, interestSchema } from "./event.validator";
 import likeRoutes from "../like/like.routes";
 
 const router = Router();
@@ -22,4 +22,11 @@ router.post(
   create,
 );
 router.get("/event/:id", get);
+router.post(
+  "/:id/interest",
+  authenticate(false, "o", "u"),
+  validate(interestSchema),
+  interest,
+);
+
 export default router;

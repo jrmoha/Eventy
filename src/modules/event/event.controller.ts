@@ -19,10 +19,12 @@ import cloudinary from "../../utils/cloudinary";
 import Image from "../image/image.model";
 import EventImage from "../image/event.image.model";
 import StatusCodes from "http-status-codes";
-import { CreateEventInput } from "./event.validator";
+import { CreateEventInput, InterestInput } from "./event.validator";
 import { APIError } from "../../types/APIError.error";
 import Person from "../person/person.model";
 import User from "../user/user.model";
+import Like from "../like/like.model";
+import Event_Interest from "./event.interest.model";
 
 export const create = async_(
   async (
@@ -339,10 +341,64 @@ export const get = async_(
 
     if (!event) throw new APIError("Event not found", StatusCodes.NOT_FOUND);
 
+    if (!req.user) {
+      event.Event.dataValues.is_liked = false;
+    } else {
+      const is_liked = await Like.findOne({
+        where: {
+          post_id: id,
+          user_id: req.user.id,
+        },
+      });
+      event.Event.dataValues.is_liked = is_liked ? true : false;
+    }
+
+    event.Event.dataValues.date = new Date(
+      event.Event.dataValues.date,
+    ).toDateString();
+
     return res.status(StatusCodes.OK).json({
       success: true,
       data: {
         post: event,
+      },
+    });
+  },
+);
+
+export const interest = async_(
+  async (
+    req: Request<InterestInput, {}, {}>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const { id } = req.params;
+    const user_id = req.user?.id;
+    const event = await Event.findByPk(id);
+    if (!event) throw new APIError("Event not found", StatusCodes.NOT_FOUND);
+
+    const already_interested = await Event_Interest.findOne({
+      where: {
+        event_id: id,
+        user_id,
+      },
+    });
+
+    if (already_interested) {
+      await already_interested.destroy();
+      event.interests_count--;
+    } else {
+      await Event_Interest.create({
+        event_id: id,
+        user_id,
+      });
+      event.interests_count++;
+    }
+    await event.save();
+    res.status(StatusCodes.OK).json({
+      success: true,
+      data: {
+        event,
       },
     });
   },

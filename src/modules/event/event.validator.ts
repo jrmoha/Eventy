@@ -121,5 +121,14 @@ export const createEventSchema = z.object({
       message: "At least one file is required",
     }),
 });
+export const interestSchema = z.object({
+  params: z.object({
+    id: z.preprocess(
+      (id) => parseInt(z.string().parse(id), 10),
+      z.number().gte(1, "Must be 1 and above"),
+    ),
+  }),
+});
 
 export type CreateEventInput = TypeOf<typeof createEventSchema>["body"];
+export type InterestInput = TypeOf<typeof interestSchema>["params"];
