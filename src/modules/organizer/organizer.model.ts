@@ -3,7 +3,9 @@ import { sequelize } from "../../database";
 import User from "../user/user.model";
 
 class Organizer extends User {
+  declare bio: string;
   declare rate: number;
+  declare rates_count: number;
   declare events_count: number;
 }
 
