@@ -693,7 +693,7 @@
 						"header": [
 							{
 								"key": "x-access-token",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJ1c2VybmFtZSI6Ik15cmEuS2luZzM3IiwiZmlyc3RfbmFtZSI6IkxlbGFoIiwibGFzdF9uYW1lIjoiQm9nYW4iLCJyb2xlIjoibyIsImlhdCI6MTcwOTIyMzY2OCwiZXhwIjoxNzA5MzEwMDY4fQ.TedW6escyCXmo2zYk5zqqhs7aZ2Vtrfft7wudGqMLwY",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJ1c2VybmFtZSI6Ik15cmEuS2luZzM3IiwiZmlyc3RfbmFtZSI6IkxlbGFoIiwibGFzdF9uYW1lIjoiQm9nYW4iLCJyb2xlIjoibyIsImlhdCI6MTcwOTM3MTkyMCwiZXhwIjoxNzA5NDU4MzIwfQ.WomIJe72EnKXZnH57Kst7tkWv243LvhE3RB44ts5REU",
 								"type": "text"
 							}
 						],
@@ -702,7 +702,7 @@
 							"formdata": [
 								{
 									"key": "content",
-									"value": "First Event",
+									"value": "Eventttttttttttttttttttttttty",
 									"type": "text"
 								},
 								{
@@ -753,11 +753,7 @@
 								{
 									"key": "images",
 									"type": "file",
-									"src": [
-										"/D:/Gallery/190217838.jpg",
-										"/D:/Gallery/4b05d4a7-16a2-4cf5-9792-86ae5d063b8b.jpg",
-										"/D:/Gallery/271908161_1610276755990081_5705082368719404644_n.jpg"
-									]
+									"src": "/D:/Gallery/Archaeology & Art on Twitter.png"
 								},
 								{
 									"key": "tickets[0][price]",
@@ -838,8 +834,7 @@
 								{
 									"key": "allow_community",
 									"value": "true",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								}
 							]
 						},
@@ -876,134 +871,15 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "content",
-									"value": "First Event",
-									"type": "text"
-								},
-								{
-									"key": "location",
-									"value": "Alexandria, Egypt",
-									"type": "text"
-								},
-								{
-									"key": "date",
-									"value": "{{$randomDateFuture}}",
-									"type": "text"
-								},
-								{
-									"key": "time",
-									"value": "09:00am",
-									"type": "text"
-								},
-								{
-									"key": "phone_numbers[0]",
-									"value": "{{$randomPhoneNumber}}",
-									"type": "text"
-								},
-								{
-									"key": "phone_numbers[1]",
-									"value": "{{$randomPhoneNumber}}",
-									"type": "text"
-								},
-								{
-									"key": "agenda[0][description]",
-									"value": "first talk",
-									"type": "text"
-								},
-								{
-									"key": "agenda[0][start_time]",
-									"value": "09:00am",
-									"type": "text"
-								},
-								{
-									"key": "agenda[0][end_time]",
-									"value": "11:30am",
-									"type": "text"
-								},
-								{
-									"key": "images",
-									"type": "file",
-									"src": "/D:/Gallery/190217838.jpg"
-								},
-								{
-									"key": "tickets[0][price]",
-									"value": "{{$randomPrice}}",
-									"type": "text"
-								},
-								{
-									"key": "tickets[0][class]",
-									"value": "Gold",
-									"type": "text"
-								},
-								{
-									"key": "tickets[0][available]",
-									"value": "100",
-									"type": "text"
-								},
-								{
-									"key": "tickets[0][quantity]",
-									"value": "100",
-									"type": "text"
-								},
-								{
-									"key": "tickets[1][price]",
-									"value": "{{$randomPrice}}",
-									"type": "text"
-								},
-								{
-									"key": "tickets[1][class]",
-									"value": "Silver",
-									"type": "text"
-								},
-								{
-									"key": "tickets[1][available]",
-									"value": "200",
-									"type": "text"
-								},
-								{
-									"key": "tickets[1][quantity]",
-									"value": "200",
-									"type": "text"
-								},
-								{
-									"key": "categories[0]",
-									"value": "Music",
-									"type": "text"
-								},
-								{
-									"key": "categories[1]",
-									"value": "music",
-									"type": "text"
-								},
-								{
-									"key": "faqs[0][question]",
-									"value": "{{$randomFullName}}?",
-									"type": "text"
-								},
-								{
-									"key": "faqs[0][answer]",
-									"value": "{{$randomFullName}}",
-									"type": "text"
-								},
-								{
-									"key": "faqs[1][question]",
-									"value": "{{$randomFullName}}?",
-									"type": "text"
-								},
-								{
-									"key": "faqs[1][answer]",
-									"value": "{{$randomFullName}}",
-									"type": "text"
-								},
-								{
 									"key": "allow_community",
 									"value": "true",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								}
 							]
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/events/event/6",
+							"raw": "{{base_url}}/api/v1/events/event/55",
 							"host": [
 								"{{base_url}}"
 							],
@@ -1012,7 +888,34 @@
 								"v1",
 								"events",
 								"event",
-								"6"
+								"55"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "interest / uninterest",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJ1c2VybmFtZSI6Ik15cmEuS2luZzM3IiwiZmlyc3RfbmFtZSI6IkxlbGFoIiwibGFzdF9uYW1lIjoiQm9nYW4iLCJyb2xlIjoibyIsImlhdCI6MTcwOTM3MTkyMCwiZXhwIjoxNzA5NDU4MzIwfQ.WomIJe72EnKXZnH57Kst7tkWv243LvhE3RB44ts5REU",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/events/6/interest",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"events",
+								"6",
+								"interest"
 							]
 						}
 					},
@@ -1278,6 +1181,30 @@
 								"events",
 								"43",
 								"likes"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "feed",
+			"item": [
+				{
+					"name": "home",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/home",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"home"
 							]
 						}
 					},
