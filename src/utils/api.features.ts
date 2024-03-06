@@ -5,31 +5,32 @@ type queryString = {
   limit?: number;
   sort?: string;
   // filter?: string;
-  //   search?: string;
+  // search?: string;
   select?: string;
 };
 
 export class APIFeatures {
   query: FindOptions;
-  queryObject: queryString;
+  queryString: queryString;
 
-  constructor(queryObject: queryString = {}) {
+  constructor(queryString: queryString = {}) {
     this.query = {};
-    this.queryObject = queryObject;
+    this.queryString = queryString;
   }
 
   paginate() {
-    const page = this.queryObject.page || 1;
-    const limit = this.queryObject.limit || 10;
+    const page = this.queryString.page || 1;
+    const limit = this.queryString.limit || 10;
     const skip = (page - 1) * limit;
+    console.log(page, limit, skip);
     this.query.offset = skip;
     this.query.limit = limit;
     return this;
   }
 
   sort() {
-    if (this.queryObject.sort) {
-      const sortBy = this.queryObject.sort.split(",").map((el) => {
+    if (this.queryString.sort) {
+      const sortBy = this.queryString.sort.split(",").map((el) => {
         if (el.startsWith("-")) {
           return [el.slice(1), "DESC"];
         }
@@ -41,13 +42,13 @@ export class APIFeatures {
   }
 
   filter() {
-    // if (this.queryObject.filter) {
+    // if (this.queryString.filter) {
     // }
     return this;
   }
 
   select() {
-    const selectFields = this.queryObject.select;
+    const selectFields = this.queryString.select;
     if (selectFields) {
       const fields = selectFields.split(",");
       this.query.attributes = fields;

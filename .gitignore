@@ -131,3 +131,7 @@ dist
 
 #media 
 uploads
+
+#mocks
+any.js
+data.json

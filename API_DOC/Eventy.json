@@ -81,7 +81,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"query\":\"mostafa.dash34@gmail.com\",\r\n    \"password\":\"Mostafa\"\r\n}",
+							"raw": "{\r\n    \"query\":\"sci.mostafamohamed12788@alexu.edu.eg\",\r\n    \"password\":\"mostafa1@1\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -680,6 +680,38 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "inboxes",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6IkhlcnNoZWwuR2VyaG9sZCIsImZpcnN0X25hbWUiOiJEaWxsb24iLCJsYXN0X25hbWUiOiJIYXVjayIsInJvbGUiOiJvIiwiaWF0IjoxNzA5NzU2ODE1LCJleHAiOjE3MDk4NDMyMTV9.g0BvBSXvdH0afCAUikZE2Nk8Aa3XuR7M1FmaLCAO0WI",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/inbox?page=1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"inbox"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -693,7 +725,7 @@
 						"header": [
 							{
 								"key": "x-access-token",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJ1c2VybmFtZSI6Ik15cmEuS2luZzM3IiwiZmlyc3RfbmFtZSI6IkxlbGFoIiwibGFzdF9uYW1lIjoiQm9nYW4iLCJyb2xlIjoibyIsImlhdCI6MTcwOTM3MTkyMCwiZXhwIjoxNzA5NDU4MzIwfQ.WomIJe72EnKXZnH57Kst7tkWv243LvhE3RB44ts5REU",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJ1c2VybmFtZSI6Ik15cmEuS2luZzM3IiwiZmlyc3RfbmFtZSI6IkxlbGFoIiwibGFzdF9uYW1lIjoiQm9nYW4iLCJyb2xlIjoibyIsImlhdCI6MTcwOTcxNjI4MSwiZXhwIjoxNzA5ODAyNjgxfQ.kGMZNq1UMN-jpatWnsEeSDEqsplvXo8M5mR13jx4YlE",
 								"type": "text"
 							}
 						],
@@ -702,7 +734,7 @@
 							"formdata": [
 								{
 									"key": "content",
-									"value": "Eventttttttttttttttttttttttty",
+									"value": "Musical Concert",
 									"type": "text"
 								},
 								{
@@ -723,37 +755,37 @@
 								{
 									"key": "phone_numbers[0]",
 									"value": "{{$randomPhoneNumber}}",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "phone_numbers[1]",
 									"value": "{{$randomPhoneNumber}}",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "agenda[0][description]",
 									"value": "first talk",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "agenda[0][start_time]",
 									"value": "09:00am",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "agenda[0][end_time]",
 									"value": "11:30am",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "images",
 									"type": "file",
-									"src": "/D:/Gallery/Archaeology & Art on Twitter.png"
+									"src": [
+										"/D:/College/Eventy/Eventy/uploads/1.jpg",
+										"/D:/College/Eventy/Eventy/uploads/2.jpg",
+										"/D:/College/Eventy/Eventy/uploads/3.jpg",
+										"/D:/College/Eventy/Eventy/uploads/4.jpg"
+									]
 								},
 								{
 									"key": "tickets[0][price]",
@@ -798,38 +830,32 @@
 								{
 									"key": "categories[0]",
 									"value": "gggg",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "categories[1]",
 									"value": "gggg",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "faqs[0][question]",
 									"value": "{{$randomFullName}}?",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "faqs[0][answer]",
 									"value": "{{$randomFullName}}",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "faqs[1][question]",
 									"value": "{{$randomFullName}}?",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "faqs[1][answer]",
 									"value": "{{$randomFullName}}",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "allow_community",
@@ -879,7 +905,7 @@
 							]
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/events/event/55",
+							"raw": "{{base_url}}/api/v1/events/event/84",
 							"host": [
 								"{{base_url}}"
 							],
@@ -888,7 +914,7 @@
 								"v1",
 								"events",
 								"event",
-								"55"
+								"84"
 							]
 						}
 					},

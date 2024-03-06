@@ -7,9 +7,11 @@ import multer from "../../utils/multer";
 import { get, update, uploadImage } from "./user.controller";
 import { validate } from "../../interfaces/middleware/validator.middleware";
 import { updateUserSchema, uploadImageSchema } from "./user.validator";
+import inboxRoutes from "../inbox/inbox.routes";
 
 const router = Router();
 router.use(followRoutes);
+router.use(inboxRoutes);
 router.use("/friend/request", friendRequestRoutes);
 router.use("/friendship", friendshipRoutes);
 
@@ -26,6 +28,7 @@ router.patch(
   validate(updateUserSchema),
   update,
 );
+
 router.get("/:username", authenticate(true, "u", "o"), get);
 
 export default router;

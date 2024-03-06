@@ -1,5 +1,7 @@
 import { sequelize } from "../../database/index";
 import { DataTypes, Model } from "sequelize";
+import Inbox from "../inbox/inbox.model";
+import User from "../user/user.model";
 
 class Message extends Model {
   declare id: number;
@@ -43,5 +45,33 @@ Message.init(
   },
 );
 
+Message.belongsTo(Inbox, {
+  foreignKey: "inbox_id",
+  targetKey: "id",
+});
+Inbox.hasMany(Message, {
+  foreignKey: "inbox_id",
+  sourceKey: "id",
+});
+
+Message.belongsTo(User, {
+  foreignKey: "sender_id",
+  targetKey: "id",
+});
+
+Message.belongsTo(User, {
+  foreignKey: "receiver_id",
+  targetKey: "id",
+});
+
+User.hasMany(Message, {
+  foreignKey: "sender_id",
+  sourceKey: "id",
+});
+
+User.hasMany(Message, {
+  foreignKey: "receiver_id",
+  sourceKey: "id",
+});
 
 export default Message;

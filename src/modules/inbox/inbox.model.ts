@@ -1,3 +1,4 @@
+import User from "../user/user.model";
 import { sequelize } from "./../../database/index";
 import { DataTypes, Model } from "sequelize";
 
@@ -42,6 +43,28 @@ Inbox.init(
     timestamps: true,
   },
 );
+Inbox.belongsTo(User, {
+  foreignKey: "sender_id",
+  targetKey: "id",
+  as: "sender",
+});
 
+Inbox.belongsTo(User, {
+  foreignKey: "receiver_id",
+  targetKey: "id",
+  as: "receiver",
+});
+
+User.hasMany(Inbox, {
+  foreignKey: "sender_id",
+  sourceKey: "id",
+  as: "sender",
+});
+
+User.hasMany(Inbox, {
+  foreignKey: "receiver_id",
+  sourceKey: "id",
+  as: "receiver",
+});
 
 export default Inbox;
