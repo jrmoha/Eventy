@@ -131,6 +131,7 @@ export const create = async_(
         {
           community_id: community.id,
           user_id,
+          role: "admin",
         },
         { transaction: t },
       );

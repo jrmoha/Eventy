@@ -4,21 +4,23 @@ import Category from "./category.model";
 import User from "../user/user.model";
 
 class UserCategory extends Model {
-  declare id: number;
-  declare name: string;
+  declare category: string;
+  declare user_id: number;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 }
 
 UserCategory.init(
   {
-    id: {
-      type: DataTypes.BIGINT,
-      primaryKey: true,
-      allowNull: false,
-    },
-    name: {
+    category: {
       type: DataTypes.STRING,
-      primaryKey: true,
       allowNull: false,
+      primaryKey: true,
+    },
+    user_id: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      primaryKey: true,
     },
   },
   {

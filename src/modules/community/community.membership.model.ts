@@ -6,6 +6,7 @@ import User from "../user/user.model";
 class CommunityMembership extends Model {
   declare community_id: number;
   declare user_id: number;
+  declare role: string;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 }
@@ -21,6 +22,11 @@ CommunityMembership.init(
       type: DataTypes.BIGINT,
       primaryKey: true,
       allowNull: false,
+    },
+    role: {
+      type: DataTypes.ENUM("admin", "member"),
+      allowNull: false,
+      defaultValue: "member",
     },
   },
   {
