@@ -5,7 +5,6 @@ import { async_ } from "../../interfaces/middleware/async.middleware";
 import { APIError } from "../../types/APIError.error";
 import Follow from "./follow.model";
 import User from "../user/user.model";
-import Block from "../block/block.model";
 import Person from "../person/person.model";
 import { FollowInput } from "./follow.validator";
 import Settings from "../user/user.settings.model";
@@ -50,17 +49,6 @@ export const follow = async_(
     });
     if (follow)
       throw new APIError("Already following", StatusCodes.BAD_REQUEST);
-
-    const isBlocked = await Block.findOne({
-      where: {
-        [Op.or]: [
-          { blocked_id: followed_id, blocker_id: follower_id },
-          { blocked_id: follower_id, blocker_id: followed_id },
-        ],
-      },
-    });
-    if (isBlocked)
-      throw new APIError("You are blocked by this user", StatusCodes.FORBIDDEN);
 
     await Follow.create({ follower_id, followed_id });
     await User.increment("following_count", {
@@ -172,18 +160,6 @@ export const followers = async_(
     if (!user.confirmed)
       throw new APIError("User not confirmed", StatusCodes.BAD_REQUEST);
 
-    const isBlocked = req.user?.id
-      ? await Block.findOne({
-          where: {
-            [Op.or]: [
-              { blocked_id: user.id, blocker_id: req.user?.id },
-              { blocked_id: req.user?.id, blocker_id: user.id },
-            ],
-          },
-        })
-      : null;
-    if (isBlocked) throw new APIError("Access denied", StatusCodes.FORBIDDEN);
-
     const settings = await Settings.findOne({
       where: { user_id: user.id },
     });
@@ -278,16 +254,6 @@ export const followings = async_(
     if (!user) throw new APIError("User not found", StatusCodes.NOT_FOUND);
     if (!user.confirmed)
       throw new APIError("User not confirmed", StatusCodes.BAD_REQUEST);
-
-    const isBlocked = await Block.findOne({
-      where: {
-        [Op.or]: [
-          { blocked_id: user.id, blocker_id: req.user?.id },
-          { blocked_id: req.user?.id, blocker_id: user.id },
-        ],
-      },
-    });
-    if (isBlocked) throw new APIError("Access denied", StatusCodes.FORBIDDEN);
 
     const settings = await Settings.findOne({
       where: { user_id: user.id },
