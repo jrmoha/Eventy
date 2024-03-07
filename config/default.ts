@@ -62,6 +62,7 @@ export default {
   maxImageCount: 5,
   images: {
     default_user_image: "eventy/default_user",
+    default_group_image: "eventy/kwdmhxefncz67i9mhblr",
     covers_max_length: 5,
   },
 };
