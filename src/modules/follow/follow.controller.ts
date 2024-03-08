@@ -106,12 +106,11 @@ export const unfollow = async_(
 
 export const followers = async_(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { username } = req.params;
-    const user = await Person.findOne({ where: { username } });
+    const { id } = req.params;
 
-    if (user?.id == req.user?.id) {
+    if (+id == req.user?.id) {
       const followers = await Follow.findAll({
-        where: { followed_id: user?.id },
+        where: { followed_id: +id },
         include: [
           {
             model: User,
@@ -156,6 +155,16 @@ export const followers = async_(
         .json({ success: true, data: followers });
     }
 
+    const user = await Person.findByPk(+id, {
+      include: [
+        {
+          model: User,
+          required: true,
+          attributes: [],
+        },
+      ],
+    });
+
     if (!user) throw new APIError("User not found", StatusCodes.NOT_FOUND);
     if (!user.confirmed)
       throw new APIError("User not confirmed", StatusCodes.BAD_REQUEST);
@@ -179,6 +188,16 @@ export const followers = async_(
         : null;
       if (!isFriends)
         throw new APIError("Access denied", StatusCodes.NOT_FOUND);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let literal: any = [];
+    if (req.user?.id) {
+      literal = [
+        sequelize.literal(
+          `CASE WHEN "User"."id" IN (SELECT 1 FROM "follow" WHERE "follow"."follower_id" = ${req.user?.id} AND "follow"."followed_id" = "User"."id" LIMIT 1) THEN true ELSE false END`,
+        ),
+        "followed",
+      ];
     }
     const followers = await Follow.findAll({
       where: { followed_id: user.id },
@@ -220,12 +239,7 @@ export const followers = async_(
           "full_name",
         ],
         [sequelize.col("User.UserImages.Image.url"), "image_url"],
-        [
-          sequelize.literal(
-            `CASE WHEN "User"."id" IN (SELECT 1 FROM "follow" WHERE "follow"."follower_id" = ${req.user?.id} AND "follow"."followed_id" = "User"."id" LIMIT 1) THEN true ELSE false END`,
-          ),
-          "followed",
-        ],
+        ...literal,
       ],
     });
     return res.status(StatusCodes.OK).json({ success: true, data: followers });
@@ -233,23 +247,64 @@ export const followers = async_(
 );
 export const followings = async_(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { username } = req.params;
+    const { id } = req.params;
 
-    const user = await Person.findOne({ where: { username } });
-
-    if (user?.id == req.user?.id) {
+    if (+id == req.user?.id) {
       const followings = await Follow.findAll({
-        where: { follower_id: user?.id },
+        where: { follower_id: +id },
         include: [
           {
             model: User,
+            attributes: [],
+            include: [
+              {
+                model: Person,
+                required: true,
+                attributes: [],
+              },
+              {
+                model: UserImage,
+                required: true,
+                attributes: [],
+                include: [
+                  {
+                    model: Image,
+                    required: true,
+                    attributes: [],
+                  },
+                ],
+              },
+            ],
           },
+        ],
+        attributes: [
+          [sequelize.col("User.id"), "id"],
+          [
+            sequelize.fn(
+              "concat",
+              sequelize.col("User.Person.first_name"),
+              " ",
+              sequelize.col("User.Person.last_name"),
+            ),
+            "full_name",
+          ],
+          [sequelize.col("User.UserImages.Image.url"), "image_url"],
         ],
       });
       return res
         .status(StatusCodes.OK)
         .json({ success: true, data: followings });
     }
+
+    const user = await Person.findByPk(+id, {
+      include: [
+        {
+          model: User,
+          required: true,
+          attributes: [],
+        },
+      ],
+    });
 
     if (!user) throw new APIError("User not found", StatusCodes.NOT_FOUND);
     if (!user.confirmed)
@@ -262,23 +317,70 @@ export const followings = async_(
       throw new APIError("Access denied", StatusCodes.NOT_FOUND);
 
     if (settings?.following_visibility == "friends") {
-      const isFriends = await Friendship.findOne({
-        where: {
-          [Op.or]: [
-            { sender_id: user.id, receiver_id: req.user?.id },
-            { receiver_id: req.user?.id, sender_id: user.id },
-          ],
-        },
-      });
+      const isFriends = req.user?.id
+        ? await Friendship.findOne({
+            where: {
+              [Op.or]: [
+                { sender_id: user.id, receiver_id: req.user?.id },
+                { receiver_id: req.user?.id, sender_id: user.id },
+              ],
+            },
+          })
+        : null;
       if (!isFriends)
         throw new APIError("Access denied", StatusCodes.NOT_FOUND);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let literal: any = [];
+    if (req.user?.id) {
+      literal = [
+        sequelize.literal(
+          `CASE WHEN "User"."id" IN (SELECT 1 FROM "follow" WHERE "follow"."follower_id" = ${req.user?.id} AND "follow"."followed_id" = "User"."id" LIMIT 1) THEN true ELSE false END`,
+        ),
+        "followed",
+      ];
     }
     const followings = await Follow.findAll({
       where: { follower_id: user.id },
       include: [
         {
           model: User,
+          attributes: [],
+          required: true,
+          include: [
+            {
+              model: Person,
+              required: true,
+              attributes: [],
+            },
+            {
+              model: UserImage,
+              required: true,
+              attributes: [],
+              include: [
+                {
+                  model: Image,
+                  required: true,
+                  attributes: [],
+                },
+              ],
+            },
+          ],
         },
+      ],
+      attributes: [
+        [sequelize.col("User.id"), "id"],
+        [
+          sequelize.fn(
+            "concat",
+            sequelize.col("User.Person.first_name"),
+            " ",
+            sequelize.col("User.Person.last_name"),
+          ),
+          "full_name",
+        ],
+        [sequelize.col("User.UserImages.Image.url"), "image_url"],
+        ...literal,
       ],
     });
     return res.status(StatusCodes.OK).json({ success: true, data: followings });

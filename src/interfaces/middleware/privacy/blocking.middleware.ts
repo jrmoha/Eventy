@@ -10,13 +10,14 @@ export const blocking = (target: string) => {
   return async_(async (req: Request, res: Response, next: NextFunction) => {
     const current_user_id = req.user?.id;
     let target_id;
-    
+
     if (target == ":id") target_id = req.params.id;
     else if (target == ":username") {
       const person = await Person.findOne({
         where: { username: req.params.username },
       });
       if (!person) throw new APIError("User not found", StatusCodes.NOT_FOUND);
+      req.params.id = `${person.id}`;
       target_id = person.id;
     }
 
