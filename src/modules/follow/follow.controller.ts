@@ -13,6 +13,7 @@ import UserImage from "../image/user.image.model";
 import Image from "../image/image.model";
 import { sequelize } from "../../database";
 import { Literal } from "sequelize/types/utils";
+import { APIFeatures } from "../../utils/api.features";
 
 export const follow = async_(
   async (
@@ -109,6 +110,8 @@ export const followers = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
+    const apifeatures = new APIFeatures(req.query).paginate();
+
     let literal!: [Literal, string];
     if (req.user?.id) {
       literal = [
@@ -151,6 +154,7 @@ export const followers = async_(
         ],
         attributes: [
           [sequelize.col("follower.id"), "id"],
+          [sequelize.col("follower.followers_count"), "followers_count"],
           [
             sequelize.fn(
               "concat",
@@ -163,6 +167,8 @@ export const followers = async_(
           [sequelize.col("follower.UserImages.Image.url"), "image_url"],
           ...(literal.length ? [literal] : []),
         ],
+        order: [["createdAt", "DESC"]],
+        ...apifeatures.query,
         raw: true,
         subQuery: false,
       });
@@ -205,7 +211,7 @@ export const followers = async_(
       if (!isFriends)
         throw new APIError("Access denied", StatusCodes.NOT_FOUND);
     }
-    
+
     const followers = await Follow.findAll({
       where: { followed_id: id },
       include: [
@@ -248,8 +254,11 @@ export const followers = async_(
           "full_name",
         ],
         [sequelize.col("follower.UserImages.Image.url"), "image_url"],
+        [sequelize.col("follower.followers_count"), "followers_count"],
         ...(literal.length ? [literal] : []),
       ],
+      order: [["createdAt", "DESC"]],
+      ...apifeatures.query,
       raw: true,
       subQuery: false,
     });
@@ -260,6 +269,7 @@ export const followers = async_(
 export const followings = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
+    const apifeatures = new APIFeatures(req.query).paginate();
 
     if (+id == req.user?.id) {
       const followings = await Follow.findAll({
@@ -293,6 +303,7 @@ export const followings = async_(
         ],
         attributes: [
           [sequelize.col("following.id"), "id"],
+          [sequelize.col("following.followers_count"), "followers_count"],
           [
             sequelize.fn(
               "concat",
@@ -305,6 +316,8 @@ export const followings = async_(
           [sequelize.col("following.UserImages.Image.url"), "image_url"],
           [sequelize.literal("true"), "followed"],
         ],
+        order: [["createdAt", "DESC"]],
+        ...apifeatures.query,
         raw: true,
         subQuery: false,
       });
@@ -390,6 +403,7 @@ export const followings = async_(
       ],
       attributes: [
         [sequelize.col("following.id"), "id"],
+        [sequelize.col("following.followers_count"), "followers_count"],
         [
           sequelize.fn(
             "concat",
@@ -402,6 +416,8 @@ export const followings = async_(
         [sequelize.col("following.UserImages.Image.url"), "image_url"],
         ...(literal.length ? [literal] : []),
       ],
+      order: [["createdAt", "DESC"]],
+      ...apifeatures.query,
       raw: true,
       subQuery: false,
     });

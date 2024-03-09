@@ -57,11 +57,13 @@ Inbox.hasMany(Message, {
 Message.belongsTo(User, {
   foreignKey: "sender_id",
   targetKey: "id",
+  as: "sender",
 });
 
 Message.belongsTo(User, {
   foreignKey: "receiver_id",
   targetKey: "id",
+  as: "receiver",
 });
 
 User.hasMany(Message, {

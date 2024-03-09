@@ -14,4 +14,5 @@ router.use("/api/v1/categories", categoryRoutes);
 router.use("/api/v1/events", eventRoutes);
 router.use("/api/v1/polls", pollRoutes);
 router.use("/api/v1", feedRoutes);
+
 export default router;
