@@ -178,6 +178,7 @@ export const emailVerification = async_(
     await UserImage.create({
       public_id: config.get<string>("images.default_user_image"),
       user_id: person.id,
+      is_profile: true,
     });
 
     return res.status(StatusCodes.ACCEPTED).json({ success: true });

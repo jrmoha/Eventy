@@ -115,6 +115,7 @@ export const followers = async_(
           {
             model: User,
             attributes: [],
+            as: "follower",
             include: [
               {
                 model: Person,
@@ -132,22 +133,23 @@ export const followers = async_(
                     attributes: [],
                   },
                 ],
+                where: { is_profile: true },
               },
             ],
           },
         ],
         attributes: [
-          [sequelize.col("User.id"), "id"],
+          [sequelize.col("follower.id"), "id"],
           [
             sequelize.fn(
               "concat",
-              sequelize.col("User.Person.first_name"),
+              sequelize.col("follower.Person.first_name"),
               " ",
-              sequelize.col("User.Person.last_name"),
+              sequelize.col("follower.Person.last_name"),
             ),
             "full_name",
           ],
-          [sequelize.col("User.UserImages.Image.url"), "image_url"],
+          [sequelize.col("follower.UserImages.Image.url"), "image_url"],
         ],
       });
       return res
@@ -167,7 +169,7 @@ export const followers = async_(
 
     if (!user) throw new APIError("User not found", StatusCodes.NOT_FOUND);
     if (!user.confirmed)
-      throw new APIError("User not confirmed", StatusCodes.BAD_REQUEST);
+      throw new APIError("Error occurred", StatusCodes.BAD_REQUEST);
 
     const settings = await Settings.findOne({
       where: { user_id: user.id },
@@ -200,12 +202,13 @@ export const followers = async_(
       ];
     }
     const followers = await Follow.findAll({
-      where: { followed_id: user.id },
+      where: { followed_id: id },
       include: [
         {
           model: User,
           attributes: [],
           required: true,
+          as: "follower",
           include: [
             {
               model: Person,
@@ -216,6 +219,7 @@ export const followers = async_(
               model: UserImage,
               required: true,
               attributes: [],
+              where: { is_profile: true },
               include: [
                 {
                   model: Image,
@@ -228,23 +232,24 @@ export const followers = async_(
         },
       ],
       attributes: [
-        [sequelize.col("User.id"), "id"],
+        [sequelize.col("follower.id"), "id"],
         [
           sequelize.fn(
             "concat",
-            sequelize.col("User.Person.first_name"),
+            sequelize.col("follower.Person.first_name"),
             " ",
-            sequelize.col("User.Person.last_name"),
+            sequelize.col("follower.Person.last_name"),
           ),
           "full_name",
         ],
-        [sequelize.col("User.UserImages.Image.url"), "image_url"],
+        [sequelize.col("follower.UserImages.Image.url"), "image_url"],
         ...literal,
       ],
     });
     return res.status(StatusCodes.OK).json({ success: true, data: followers });
   },
 );
+
 export const followings = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
@@ -256,6 +261,7 @@ export const followings = async_(
           {
             model: User,
             attributes: [],
+            as: "following",
             include: [
               {
                 model: Person,
@@ -273,23 +279,27 @@ export const followings = async_(
                     attributes: [],
                   },
                 ],
+                where: { is_profile: true },
               },
             ],
           },
         ],
         attributes: [
-          [sequelize.col("User.id"), "id"],
+          [sequelize.col("following.id"), "id"],
           [
             sequelize.fn(
               "concat",
-              sequelize.col("User.Person.first_name"),
+              sequelize.col("following.Person.first_name"),
               " ",
-              sequelize.col("User.Person.last_name"),
+              sequelize.col("following.Person.last_name"),
             ),
             "full_name",
           ],
-          [sequelize.col("User.UserImages.Image.url"), "image_url"],
+          [sequelize.col("following.UserImages.Image.url"), "image_url"],
+          [sequelize.literal("true"), "followed"],
         ],
+        raw: true,
+        subQuery: false,
       });
       return res
         .status(StatusCodes.OK)
@@ -308,7 +318,7 @@ export const followings = async_(
 
     if (!user) throw new APIError("User not found", StatusCodes.NOT_FOUND);
     if (!user.confirmed)
-      throw new APIError("User not confirmed", StatusCodes.BAD_REQUEST);
+      throw new APIError("Error occurred", StatusCodes.BAD_REQUEST);
 
     const settings = await Settings.findOne({
       where: { user_id: user.id },
@@ -341,12 +351,13 @@ export const followings = async_(
       ];
     }
     const followings = await Follow.findAll({
-      where: { follower_id: user.id },
+      where: { follower_id: id },
       include: [
         {
           model: User,
           attributes: [],
           required: true,
+          as: "following",
           include: [
             {
               model: Person,
@@ -357,6 +368,7 @@ export const followings = async_(
               model: UserImage,
               required: true,
               attributes: [],
+              where: { is_profile: true },
               include: [
                 {
                   model: Image,
@@ -369,19 +381,21 @@ export const followings = async_(
         },
       ],
       attributes: [
-        [sequelize.col("User.id"), "id"],
+        [sequelize.col("following.id"), "id"],
         [
           sequelize.fn(
             "concat",
-            sequelize.col("User.Person.first_name"),
+            sequelize.col("following.Person.first_name"),
             " ",
-            sequelize.col("User.Person.last_name"),
+            sequelize.col("following.Person.last_name"),
           ),
           "full_name",
         ],
-        [sequelize.col("User.UserImages.Image.url"), "image_url"],
+        [sequelize.col("following.UserImages.Image.url"), "image_url"],
         ...literal,
       ],
+      raw: true,
+      subQuery: false,
     });
     return res.status(StatusCodes.OK).json({ success: true, data: followings });
   },

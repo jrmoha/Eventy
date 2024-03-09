@@ -37,14 +37,17 @@ User.hasMany(Follow, {
 Follow.belongsTo(User, {
   foreignKey: "follower_id",
   targetKey: "id",
+  as: "follower",
 });
 User.hasMany(Follow, {
   foreignKey: "followed_id",
   sourceKey: "id",
 });
+
 Follow.belongsTo(User, {
   foreignKey: "followed_id",
   targetKey: "id",
+  as: "following",
 });
 
 export default Follow;

@@ -33,6 +33,7 @@ FriendRequest.init(
 FriendRequest.belongsTo(User, {
   foreignKey: "sender_id",
   targetKey: "id",
+  as: "sender",
 });
 User.hasMany(FriendRequest, {
   foreignKey: "sender_id",
@@ -41,9 +42,11 @@ User.hasMany(FriendRequest, {
 FriendRequest.belongsTo(User, {
   foreignKey: "receiver_id",
   targetKey: "id",
+  as: "receiver",
 });
 User.hasMany(FriendRequest, {
   foreignKey: "receiver_id",
   sourceKey: "id",
 });
+
 export default FriendRequest;

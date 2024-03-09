@@ -6,6 +6,11 @@ import { Op } from "sequelize";
 import { APIError } from "../../types/APIError.error";
 import StatusCodes from "http-status-codes";
 import User from "../user/user.model";
+import { sequelize } from "../../database";
+import Person from "../person/person.model";
+import UserImage from "../image/user.image.model";
+import Image from "../image/image.model";
+import Settings from "../user/user.settings.model";
 
 export const unfriend = async_(
   async (
@@ -38,7 +43,226 @@ export const unfriend = async_(
         [Op.or]: [{ id: user_id }, { id: other_id }],
       },
     });
-    
+
     return res.status(StatusCodes.OK).json({ success: true });
+  },
+);
+
+export const get_friends = async_(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+
+    if (+id == req.user?.id) {
+      const friends = await Friendship.findAll({
+        where: {
+          [Op.or]: [{ sender_id: id }, { receiver_id: id }],
+        },
+        include: [
+          {
+            model: User,
+            as: "sender",
+            attributes: [],
+            include: [
+              {
+                model: Person,
+                required: true,
+                attributes: [],
+              },
+              {
+                model: UserImage,
+                required: true,
+                attributes: [],
+                where: { is_profile: true },
+                include: [
+                  {
+                    model: Image,
+                    required: true,
+                    attributes: [],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            model: User,
+            as: "receiver",
+            attributes: [],
+            include: [
+              {
+                model: Person,
+                required: true,
+                attributes: [],
+              },
+              {
+                model: UserImage,
+                required: true,
+                attributes: [],
+                where: { is_profile: true },
+                include: [
+                  {
+                    model: Image,
+                    required: true,
+                    attributes: [],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+        attributes: [
+          [sequelize.literal("true"), "is_friends"],
+          [
+            sequelize.literal(
+              `CASE WHEN "sender"."id" = ${id} THEN "receiver"."id" ELSE "sender"."id" END`,
+            ),
+            "id",
+          ],
+          [
+            sequelize.literal(
+              `CASE WHEN "sender"."id" = ${id} THEN CONCAT("receiver->Person"."first_name", ' ', "receiver->Person"."last_name") ELSE CONCAT("sender->Person"."first_name", ' ', "sender->Person"."last_name") END`,
+            ),
+            "full_name",
+          ],
+          [
+            sequelize.literal(
+              `CASE WHEN "sender"."id" = ${id} THEN "receiver->UserImages->Image"."url" ELSE "sender->UserImages->Image"."url" END`,
+            ),
+            "profile_picture",
+          ],
+        ],
+        raw: true,
+        subQuery: false,
+      });
+
+      return res.status(StatusCodes.OK).json({ success: true, data: friends });
+    }
+
+    const user = await Person.findByPk(+id, {
+      include: [
+        {
+          model: User,
+          required: true,
+          attributes: [],
+        },
+      ],
+    });
+
+    if (!user) throw new APIError("User not found", StatusCodes.NOT_FOUND);
+    if (!user.confirmed)
+      throw new APIError("Error occurred", StatusCodes.BAD_REQUEST);
+
+    const settings = await Settings.findOne({
+      where: { user_id: user.id },
+    });
+    if (settings?.friends_visibility == "none")
+      throw new APIError("Access denied", StatusCodes.NOT_FOUND);
+
+    if (settings?.friends_visibility == "friends") {
+      const isFriends = req.user?.id
+        ? await Friendship.findOne({
+            where: {
+              [Op.or]: [
+                { sender_id: user.id, receiver_id: req.user?.id },
+                { receiver_id: req.user?.id, sender_id: user.id },
+              ],
+            },
+          })
+        : null;
+      if (!isFriends)
+        throw new APIError("Access denied", StatusCodes.NOT_FOUND);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let literal: any = [];
+    if (req.user?.id) {
+      literal = [
+        sequelize.literal(
+          `CASE WHEN "sender"."id" = ${req.user?.id} OR "receiver"."id" = ${req.user?.id} THEN true ELSE false END`,
+        ),
+        "is_friends",
+      ];
+    }
+    const friends = await Friendship.findAll({
+      where: {
+        [Op.or]: [{ sender_id: id }, { receiver_id: id }],
+      },
+      include: [
+        {
+          model: User,
+          as: "sender",
+          attributes: [],
+          include: [
+            {
+              model: Person,
+              required: true,
+              attributes: [],
+            },
+            {
+              model: UserImage,
+              required: true,
+              attributes: [],
+              where: { is_profile: true },
+              include: [
+                {
+                  model: Image,
+                  required: true,
+                  attributes: [],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          model: User,
+          as: "receiver",
+          attributes: [],
+          include: [
+            {
+              model: Person,
+              required: true,
+              attributes: [],
+            },
+            {
+              model: UserImage,
+              required: true,
+              attributes: [],
+              where: { is_profile: true },
+              include: [
+                {
+                  model: Image,
+                  required: true,
+                  attributes: [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      attributes: [
+        [
+          sequelize.literal(
+            `CASE WHEN "sender"."id" = ${id} THEN "receiver"."id" ELSE "sender"."id" END`,
+          ),
+          "id",
+        ],
+        [
+          sequelize.literal(
+            `CASE WHEN "sender"."id" = ${id} THEN CONCAT("receiver->Person"."first_name", ' ', "receiver->Person"."last_name") ELSE CONCAT("sender->Person"."first_name", ' ', "sender->Person"."last_name") END`,
+          ),
+          "full_name",
+        ],
+        [
+          sequelize.literal(
+            `CASE WHEN "sender"."id" = ${id} THEN "receiver->UserImages->Image"."url" ELSE "sender->UserImages->Image"."url" END`,
+          ),
+          "image_url",
+        ],
+        ...(literal ? [literal] : []),
+      ],
+      raw: true,
+      subQuery: false,
+    });
+
+    return res.status(StatusCodes.OK).json({ success: true, data: friends });
   },
 );

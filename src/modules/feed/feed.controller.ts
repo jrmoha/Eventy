@@ -31,6 +31,19 @@ export const get_home = async_(
           required: true,
           attributes: [],
         },
+        {
+          model: UserImage,
+          required: true,
+          attributes: [],
+          include: [
+            {
+              model: Image,
+              required: true,
+              attributes: [],
+            },
+          ],
+          where: { is_profile: true },
+        },
       ],
       attributes: [
         "id",
@@ -41,26 +54,12 @@ export const get_home = async_(
         [sequelize.col("Organizer.bio"), "bio"],
         [sequelize.col("Organizer.rate"), "rate"],
         [sequelize.col("Organizer.events_count"), "events_count"],
+        [sequelize.col("UserImages.Image.url"), "image"],
       ],
       subQuery: false,
     });
     for (let i = 0; i < organizers.length; i++) {
       const organizer = organizers[i];
-      const img = await UserImage.findOne({
-        where: { user_id: organizer.id },
-        include: [
-          {
-            model: Image,
-            required: true,
-            attributes: [],
-          },
-        ],
-        attributes: [[sequelize.col("Image.url"), "url"]],
-        order: [["createdAt", "DESC"]],
-      });
-      if (img) {
-        organizer.setDataValue("image", img.url);
-      }
       if (!req.user) organizer.setDataValue("is_followed", false);
       else {
         const is_followed = await Follow.findOne({
@@ -130,7 +129,8 @@ export const get_home = async_(
       order: sequelize.random(),
       limit: 20,
     });
-    for (const event of events) {
+    
+    const promises = events.map(async (event) => {
       const image = await EventImage.findOne({
         where: { event_id: event.id },
         include: [
@@ -145,7 +145,10 @@ export const get_home = async_(
       });
       event.setDataValue("image", image?.dataValues.url);
       event.setDataValue("date", event.date.toDateString());
-    }
+    });
+
+    await Promise.all(promises);
+
     return res
       .status(StatusCodes.OK)
       .json({ success: true, data: { covers, organizers, events } });

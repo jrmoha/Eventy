@@ -109,9 +109,15 @@ export const uploadImage = async_(
       format,
     });
 
+    await UserImage.update(
+      { is_profile: false },
+      { where: { user_id, is_profile: true } },
+    );
+
     await UserImage.create({
       public_id,
       user_id,
+      is_profile: true,
     });
 
     return res.status(StatusCodes.CREATED).json({
@@ -169,7 +175,7 @@ export const get = async_(
                   attributes: [],
                 },
               ],
-              order: [["createdAt", "DESC"]],
+              where: { is_profile: true },
             },
           ],
         },

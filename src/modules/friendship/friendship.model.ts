@@ -33,6 +33,7 @@ Friendship.init(
 Friendship.belongsTo(User, {
   foreignKey: "sender_id",
   targetKey: "id",
+  as: "sender",
 });
 User.hasMany(Friendship, {
   foreignKey: "sender_id",
@@ -41,6 +42,7 @@ User.hasMany(Friendship, {
 Friendship.belongsTo(User, {
   foreignKey: "receiver_id",
   targetKey: "id",
+  as: "receiver",
 });
 User.hasMany(Friendship, {
   foreignKey: "receiver_id",

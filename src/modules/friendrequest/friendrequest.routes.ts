@@ -2,9 +2,12 @@ import { Router } from "express";
 import { authenticate } from "../../interfaces/middleware/authentication.middleware";
 import { validate } from "../../interfaces/middleware/validator.middleware";
 import { friendRequestSchema } from "./friendrequest.validator";
-import { accept, cancel, send } from "./friendrequest.controller";
+import { accept, cancel, send ,get_all} from "./friendrequest.controller";
 
 const router = Router();
+
+//get all friend requests
+router.get("/all", authenticate(false, "o", "u"), get_all);
 
 //send
 router.post(

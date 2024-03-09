@@ -5,6 +5,7 @@ import User from "../user/user.model";
 
 class UserImage extends Image {
   declare user_id: number;
+  declare is_profile: boolean;
 }
 
 UserImage.init(
@@ -18,6 +19,11 @@ UserImage.init(
       type: DataTypes.BIGINT,
       allowNull: false,
       primaryKey: true,
+    },
+    is_profile: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
   },
   {
