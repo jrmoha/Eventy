@@ -75,6 +75,7 @@ export const get_inboxes = async_(
       attributes: [
         "id",
         "last_message",
+        "last_message_time",
         [
           sequelize.literal(
             `CASE WHEN "sender"."id" = ${user_id} THEN CONCAT("receiver->Person"."first_name", ' ', "receiver->Person"."last_name") ELSE CONCAT("sender->Person"."first_name", ' ', "sender->Person"."last_name") END`,
