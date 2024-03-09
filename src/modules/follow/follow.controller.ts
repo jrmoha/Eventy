@@ -12,6 +12,7 @@ import Friendship from "../friendship/friendship.model";
 import UserImage from "../image/user.image.model";
 import Image from "../image/image.model";
 import { sequelize } from "../../database";
+import { Literal } from "sequelize/types/utils";
 
 export const follow = async_(
   async (
@@ -108,6 +109,16 @@ export const followers = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
+    let literal!: [Literal, string];
+    if (req.user?.id) {
+      literal = [
+        sequelize.literal(
+          `CASE WHEN "follower"."id" IN (SELECT "followed_id" FROM "follow" WHERE "follower_id" = ${req.user?.id}) THEN true ELSE false END`,
+        ),
+        "followed",
+      ];
+    }
+
     if (+id == req.user?.id) {
       const followers = await Follow.findAll({
         where: { followed_id: +id },
@@ -150,7 +161,10 @@ export const followers = async_(
             "full_name",
           ],
           [sequelize.col("follower.UserImages.Image.url"), "image_url"],
+          ...(literal.length ? [literal] : []),
         ],
+        raw: true,
+        subQuery: false,
       });
       return res
         .status(StatusCodes.OK)
@@ -191,16 +205,7 @@ export const followers = async_(
       if (!isFriends)
         throw new APIError("Access denied", StatusCodes.NOT_FOUND);
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let literal: any = [];
-    if (req.user?.id) {
-      literal = [
-        sequelize.literal(
-          `CASE WHEN "User"."id" IN (SELECT 1 FROM "follow" WHERE "follow"."follower_id" = ${req.user?.id} AND "follow"."followed_id" = "User"."id" LIMIT 1) THEN true ELSE false END`,
-        ),
-        "followed",
-      ];
-    }
+    
     const followers = await Follow.findAll({
       where: { followed_id: id },
       include: [
@@ -243,8 +248,10 @@ export const followers = async_(
           "full_name",
         ],
         [sequelize.col("follower.UserImages.Image.url"), "image_url"],
-        ...literal,
+        ...(literal.length ? [literal] : []),
       ],
+      raw: true,
+      subQuery: false,
     });
     return res.status(StatusCodes.OK).json({ success: true, data: followers });
   },
@@ -340,16 +347,17 @@ export const followings = async_(
       if (!isFriends)
         throw new APIError("Access denied", StatusCodes.NOT_FOUND);
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let literal: any = [];
+
+    let literal!: [Literal, string];
     if (req.user?.id) {
       literal = [
         sequelize.literal(
-          `CASE WHEN "User"."id" IN (SELECT 1 FROM "follow" WHERE "follow"."follower_id" = ${req.user?.id} AND "follow"."followed_id" = "User"."id" LIMIT 1) THEN true ELSE false END`,
+          `CASE WHEN "following"."id" IN (SELECT "followed_id" FROM "follow" WHERE "follower_id" = ${req.user?.id}) THEN true ELSE false END`,
         ),
         "followed",
       ];
     }
+
     const followings = await Follow.findAll({
       where: { follower_id: id },
       include: [
@@ -392,7 +400,7 @@ export const followings = async_(
           "full_name",
         ],
         [sequelize.col("following.UserImages.Image.url"), "image_url"],
-        ...literal,
+        ...(literal.length ? [literal] : []),
       ],
       raw: true,
       subQuery: false,

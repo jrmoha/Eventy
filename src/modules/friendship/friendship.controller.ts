@@ -11,6 +11,60 @@ import Person from "../person/person.model";
 import UserImage from "../image/user.image.model";
 import Image from "../image/image.model";
 import Settings from "../user/user.settings.model";
+import { APIFeatures } from "../../utils/api.features";
+
+const includes = {
+  sender: {
+    model: User,
+    as: "sender",
+    attributes: [],
+    include: [
+      {
+        model: Person,
+        required: true,
+        attributes: [],
+      },
+      {
+        model: UserImage,
+        required: true,
+        attributes: [],
+        where: { is_profile: true },
+        include: [
+          {
+            model: Image,
+            required: true,
+            attributes: [],
+          },
+        ],
+      },
+    ],
+  },
+  receiver: {
+    model: User,
+    as: "receiver",
+    attributes: [],
+    include: [
+      {
+        model: Person,
+        required: true,
+        attributes: [],
+      },
+      {
+        model: UserImage,
+        required: true,
+        attributes: [],
+        where: { is_profile: true },
+        include: [
+          {
+            model: Image,
+            required: true,
+            attributes: [],
+          },
+        ],
+      },
+    ],
+  },
+};
 
 export const unfriend = async_(
   async (
@@ -51,66 +105,22 @@ export const unfriend = async_(
 export const get_friends = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
+    const apifeatures = new APIFeatures(req.query).paginate();
 
     if (+id == req.user?.id) {
       const friends = await Friendship.findAll({
         where: {
           [Op.or]: [{ sender_id: id }, { receiver_id: id }],
         },
-        include: [
-          {
-            model: User,
-            as: "sender",
-            attributes: [],
-            include: [
-              {
-                model: Person,
-                required: true,
-                attributes: [],
-              },
-              {
-                model: UserImage,
-                required: true,
-                attributes: [],
-                where: { is_profile: true },
-                include: [
-                  {
-                    model: Image,
-                    required: true,
-                    attributes: [],
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            model: User,
-            as: "receiver",
-            attributes: [],
-            include: [
-              {
-                model: Person,
-                required: true,
-                attributes: [],
-              },
-              {
-                model: UserImage,
-                required: true,
-                attributes: [],
-                where: { is_profile: true },
-                include: [
-                  {
-                    model: Image,
-                    required: true,
-                    attributes: [],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
+        include: [includes.sender, includes.receiver],
         attributes: [
           [sequelize.literal("true"), "is_friends"],
+          [
+            sequelize.literal(
+              `CASE WHEN "sender"."id" = ${id} THEN "receiver"."followers_count" ELSE "sender"."followers_count" END`,
+            ),
+            "followers_count",
+          ],
           [
             sequelize.literal(
               `CASE WHEN "sender"."id" = ${id} THEN "receiver"."id" ELSE "sender"."id" END`,
@@ -130,6 +140,8 @@ export const get_friends = async_(
             "profile_picture",
           ],
         ],
+        order: [["createdAt", "DESC"]],
+        ...apifeatures.query,
         raw: true,
         subQuery: false,
       });
@@ -186,58 +198,7 @@ export const get_friends = async_(
       where: {
         [Op.or]: [{ sender_id: id }, { receiver_id: id }],
       },
-      include: [
-        {
-          model: User,
-          as: "sender",
-          attributes: [],
-          include: [
-            {
-              model: Person,
-              required: true,
-              attributes: [],
-            },
-            {
-              model: UserImage,
-              required: true,
-              attributes: [],
-              where: { is_profile: true },
-              include: [
-                {
-                  model: Image,
-                  required: true,
-                  attributes: [],
-                },
-              ],
-            },
-          ],
-        },
-        {
-          model: User,
-          as: "receiver",
-          attributes: [],
-          include: [
-            {
-              model: Person,
-              required: true,
-              attributes: [],
-            },
-            {
-              model: UserImage,
-              required: true,
-              attributes: [],
-              where: { is_profile: true },
-              include: [
-                {
-                  model: Image,
-                  required: true,
-                  attributes: [],
-                },
-              ],
-            },
-          ],
-        },
-      ],
+      include: [includes.sender, includes.receiver],
       attributes: [
         [
           sequelize.literal(
@@ -245,6 +206,13 @@ export const get_friends = async_(
           ),
           "id",
         ],
+        [
+          sequelize.literal(
+            `CASE WHEN "sender"."id" = ${id} THEN "receiver"."followers_count" ELSE "sender"."followers_count" END`,
+          ),
+          "followers_count",
+        ],
+
         [
           sequelize.literal(
             `CASE WHEN "sender"."id" = ${id} THEN CONCAT("receiver->Person"."first_name", ' ', "receiver->Person"."last_name") ELSE CONCAT("sender->Person"."first_name", ' ', "sender->Person"."last_name") END`,
@@ -255,9 +223,9 @@ export const get_friends = async_(
           sequelize.literal(
             `CASE WHEN "sender"."id" = ${id} THEN "receiver->UserImages->Image"."url" ELSE "sender->UserImages->Image"."url" END`,
           ),
-          "image_url",
+          "profile_image",
         ],
-        ...(literal ? [literal] : []),
+        ...(literal.length ? [literal] : []),
       ],
       raw: true,
       subQuery: false,
