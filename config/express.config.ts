@@ -13,7 +13,7 @@ import {
   err_logger,
 } from "../src/interfaces/middleware/logger.middleware";
 import logger from "../src/utils/logger";
-// import { SocketService } from "../src/services/socket";
+import { SocketService } from "../src/services/socket";
 export class ExpressConfig {
   private app: Express;
   private port: number;
@@ -26,7 +26,8 @@ export class ExpressConfig {
   public async init(): Promise<void> {
     try {
       const server = new Server(this.app);
-      // const io = new SocketService(server);
+      new SocketService().init(server);
+
       this.app.use(express.json());
       this.app.use(cors());
       this.app.use(req_logger);

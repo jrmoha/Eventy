@@ -1,5 +1,5 @@
 import { Server } from "http";
-import { Server as SocketIOServer } from "socket.io";
+import { ServerOptions, Server as SocketIOServer } from "socket.io";
 import { socketMiddleware } from "../interfaces/middleware/socket.middleware";
 import Inbox from "../modules/inbox/inbox.model";
 import { Op } from "sequelize";
@@ -7,20 +7,25 @@ import Message from "../modules/message/message.model";
 import Friendship from "../modules/friendship/friendship.model";
 import { APIError } from "../types/APIError.error";
 import { StatusCodes } from "http-status-codes";
-
+export interface SocketServiceConfig {
+  cors?: ServerOptions["cors"];
+}
 export class SocketService {
-  private io: SocketIOServer;
+  private io!: SocketIOServer;
 
-  constructor(server: Server) {
+  // constructor() {
+
+  // }
+  public async init(server: Server, config?: SocketServiceConfig) {
     this.io = new SocketIOServer(server, {
       cors: {
         origin: "*",
-        methods: ["GET", "POST"],
+        methods: ["POST"],
         credentials: true,
         allowedHeaders: ["x-access-token"],
+        ...config?.cors,
       },
     });
-
     this.io.use(socketMiddleware);
 
     this.io.on("connection", (socket) => {
@@ -95,6 +100,7 @@ export class SocketService {
         console.log("Client disconnected");
       });
     });
+    return this.io;
   }
   public getIO() {
     return this.io;
