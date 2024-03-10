@@ -13,19 +13,20 @@ export interface SocketServiceConfig {
 export class SocketService {
   private io!: SocketIOServer;
 
-  // constructor() {
-
-  // }
-  public async init(server: Server, config?: SocketServiceConfig) {
-    this.io = new SocketIOServer(server, {
-      cors: {
-        origin: "*",
-        methods: ["POST"],
-        credentials: true,
-        allowedHeaders: ["x-access-token"],
-        ...config?.cors,
-      },
-    });
+  constructor(server?: Server, config?: SocketServiceConfig) {
+    if (!this.io) {
+      this.io = new SocketIOServer(server, {
+        cors: {
+          origin: "*",
+          methods: ["POST"],
+          credentials: true,
+          allowedHeaders: ["x-access-token"],
+          ...config?.cors,
+        },
+      });
+    }
+  }
+  public async init() {
     this.io.use(socketMiddleware);
 
     this.io.on("connection", (socket) => {

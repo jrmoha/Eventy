@@ -26,7 +26,8 @@ export class ExpressConfig {
   public async init(): Promise<void> {
     try {
       const server = new Server(this.app);
-      new SocketService().init(server);
+      const io = new SocketService(server);
+      await io.init();
 
       this.app.use(express.json());
       this.app.use(cors());

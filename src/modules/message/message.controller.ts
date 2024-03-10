@@ -86,6 +86,7 @@ export const send_message = async_(
     const user_id = req.user?.id;
 
     const inbox = await Inbox.findByPk(inbox_id);
+
     if (!inbox) throw new APIError("Inbox not found", StatusCodes.NOT_FOUND);
     if (inbox.sender_id !== user_id && inbox.receiver_id !== user_id)
       throw new APIError("Unauthorized", StatusCodes.UNAUTHORIZED);
@@ -132,6 +133,7 @@ export const send_message = async_(
     await inbox.save();
 
     const io = new SocketService().getIO();
+
     io.to(
       String(inbox.sender_id == user_id ? inbox.receiver_id : inbox.sender_id),
     ).emit("new-message", {
