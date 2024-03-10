@@ -133,5 +133,5 @@ dist
 uploads
 
 #mocks
-any.js
+src/any.ts
 data.json

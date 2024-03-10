@@ -28,6 +28,7 @@ export class ExpressConfig {
       const server = new Server(this.app);
       const io = new SocketService(server);
       await io.init();
+      global.io = io.getIO();
 
       this.app.use(express.json());
       this.app.use(cors());

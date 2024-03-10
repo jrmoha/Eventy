@@ -8,7 +8,6 @@ import { APIError } from "../../types/APIError.error";
 import { StatusCodes } from "http-status-codes";
 import { APIFeatures } from "../../utils/api.features";
 import Message from "./message.model";
-import { SocketService } from "../../services/socket";
 
 export const get_messages = async_(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -132,18 +131,18 @@ export const send_message = async_(
     inbox.last_message_time = new Date();
     await inbox.save();
 
-    const io = new SocketService().getIO();
+    const to_user = String(
+      inbox.sender_id == user_id ? inbox.receiver_id : inbox.sender_id,
+    );
 
-    io.to(
-      String(inbox.sender_id == user_id ? inbox.receiver_id : inbox.sender_id),
-    ).emit("new-message", {
+    global.io.to(to_user).emit("new-message", {
       message,
       sender_id: user_id,
-      receiver_id:
-        inbox.sender_id == user_id ? inbox.receiver_id : inbox.sender_id,
+      receiver_id: to_user,
       inbox_id,
-      senderImage,
-      receiverImage,
+      createdAt: newMessage.createdAt,
+      sender_image: senderImage?.getDataValue("profile_image"),
+      receiver_image: receiverImage?.getDataValue("profile_image"),
     });
 
     return res

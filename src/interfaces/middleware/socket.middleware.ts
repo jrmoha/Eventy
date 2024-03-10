@@ -1,5 +1,4 @@
 import StatusCodes from "http-status-codes";
-import { APIError } from "../../types/APIError.error";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "config";
 import Person from "../../modules/person/person.model";
@@ -10,10 +9,16 @@ export const socketMiddleware = async (socket: Socket, next: Function) => {
     const token = socket.handshake.auth.headers["x-access-token"] as string;
 
     if (!token)
-      throw new APIError("No Token Provided", StatusCodes.BAD_REQUEST);
+      socket.emit("error", {
+        message: "You must provide a token",
+        status: StatusCodes.UNAUTHORIZED,
+      });
 
     if (!token.startsWith(config.get<string>("jwt.bearer")))
-      throw new APIError("Wrong Signature", StatusCodes.BAD_REQUEST);
+      socket.emit("error", {
+        message: "Invalid token",
+        status: StatusCodes.UNAUTHORIZED,
+      });
 
     const baseToken = token.split(" ")[1];
 
@@ -23,21 +28,27 @@ export const socketMiddleware = async (socket: Socket, next: Function) => {
     ) as JwtPayload;
 
     if (!decoded?.id)
-      throw new APIError("Invalid token", StatusCodes.UNAUTHORIZED);
+      socket.emit("error", {
+        message: "Invalid token",
+        status: StatusCodes.UNAUTHORIZED,
+      });
 
     const user = await Person.findByPk(decoded.id);
 
     if (!user)
-      throw new APIError("This user doesn't exist", StatusCodes.NOT_FOUND);
+      socket.emit("error", {
+        message: "User not found",
+        status: StatusCodes.NOT_FOUND,
+      });
 
-    if (!user.confirmed)
-      throw new APIError(
-        "Please confirm your email first",
-        StatusCodes.NON_AUTHORITATIVE_INFORMATION,
-      );
+    if (!user?.confirmed)
+      socket.emit("error", {
+        message: "User not confirmed",
+        status: StatusCodes.FORBIDDEN,
+      });
 
     socket.data.user = decoded;
-    
+
     next();
   } catch (e) {
     next(e);
