@@ -137,7 +137,7 @@ export const get_friends = async_(
             sequelize.literal(
               `CASE WHEN "sender"."id" = ${id} THEN "receiver->UserImages->Image"."url" ELSE "sender->UserImages->Image"."url" END`,
             ),
-            "profile_picture",
+            "image_url",
           ],
         ],
         order: [["createdAt", "DESC"]],

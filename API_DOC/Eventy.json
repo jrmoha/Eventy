@@ -81,7 +81,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"query\":\"mostafa.dash34@gmail.com\",\r\n    \"password\":\"Mostafa\"\r\n}",
+							"raw": "{\r\n    \"query\":\"sci.mostafamohamed12788@alexu.edu.eg\",\r\n    \"password\":\"Mostafa1@1\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -110,7 +110,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"query\":\"mostafa.dash34@gmail.com\"\r\n}",
+							"raw": "{\r\n    \"query\":\"sci.mostafamohamed12788@alexu.edu.eg\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -233,7 +233,7 @@
 						"header": [
 							{
 								"key": "x-access-token",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJ1c2VybmFtZSI6Ik15cmEuS2luZzM3IiwiZmlyc3RfbmFtZSI6IkxlbGFoIiwibGFzdF9uYW1lIjoiQm9nYW4iLCJyb2xlIjoibyIsImlhdCI6MTcwOTg0MDkwMywiZXhwIjoxNzA5OTI3MzAzfQ.E8W08vlR-OPFk_COoW-doNfEqrlfXTJvbHnI0vsWNZ0",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJ1c2VybmFtZSI6Ik15cmEuS2luZzM3IiwiZmlyc3RfbmFtZSI6IkxlbGFoIiwibGFzdF9uYW1lIjoiQm9nYW4iLCJyb2xlIjoibyIsImlhdCI6MTcwOTk5NjgwNiwiZXhwIjoxNzEwMDgzMjA2fQ.gXUw5eyhx8XpiNlTZp-QJyO2CTBgV85ynN5czPQCpX0",
 								"type": "text",
 								"disabled": true
 							}
@@ -261,13 +261,13 @@
 						"header": [
 							{
 								"key": "x-access-token",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJ1c2VybmFtZSI6Ik15cmEuS2luZzM3IiwiZmlyc3RfbmFtZSI6IkxlbGFoIiwibGFzdF9uYW1lIjoiQm9nYW4iLCJyb2xlIjoibyIsImlhdCI6MTcwOTk4MDk1MCwiZXhwIjoxNzEwMDY3MzUwfQ.svGy3Wb5cORhNyaVDkffALMTxN1yKx6O4tjtEJjWDtE",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJ1c2VybmFtZSI6Ik15cmEuS2luZzM3IiwiZmlyc3RfbmFtZSI6IkxlbGFoIiwibGFzdF9uYW1lIjoiQm9nYW4iLCJyb2xlIjoibyIsImlhdCI6MTcwOTk5NjgwNiwiZXhwIjoxNzEwMDgzMjA2fQ.gXUw5eyhx8XpiNlTZp-QJyO2CTBgV85ynN5czPQCpX0",
 								"type": "text",
 								"disabled": true
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/users/followings/Myra.King37",
+							"raw": "{{base_url}}/api/v1/users/followings/Keon.Koch24",
 							"host": [
 								"{{base_url}}"
 							],
@@ -276,7 +276,7 @@
 								"v1",
 								"users",
 								"followings",
-								"Myra.King37"
+								"Keon.Koch24"
 							]
 						}
 					},
@@ -442,12 +442,13 @@
 						"header": [
 							{
 								"key": "x-access-token",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJ1c2VybmFtZSI6Ik15cmEuS2luZzM3IiwiZmlyc3RfbmFtZSI6IkxlbGFoIiwibGFzdF9uYW1lIjoiQm9nYW4iLCJyb2xlIjoibyIsImlhdCI6MTcwOTk4MDk1MCwiZXhwIjoxNzEwMDY3MzUwfQ.svGy3Wb5cORhNyaVDkffALMTxN1yKx6O4tjtEJjWDtE",
-								"type": "text"
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJ1c2VybmFtZSI6Ik15cmEuS2luZzM3IiwiZmlyc3RfbmFtZSI6IkxlbGFoIiwibGFzdF9uYW1lIjoiQm9nYW4iLCJyb2xlIjoibyIsImlhdCI6MTcwOTk5NjgwNiwiZXhwIjoxNzEwMDgzMjA2fQ.gXUw5eyhx8XpiNlTZp-QJyO2CTBgV85ynN5czPQCpX0",
+								"type": "text",
+								"disabled": true
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/users/friendship/friends/Hershel.Gerhold",
+							"raw": "{{base_url}}/api/v1/users/friendship/friends/Myra.King37",
 							"host": [
 								"{{base_url}}"
 							],
@@ -457,7 +458,7 @@
 								"users",
 								"friendship",
 								"friends",
-								"Hershel.Gerhold"
+								"Myra.King37"
 							],
 							"query": [
 								{
@@ -753,12 +754,12 @@
 						"header": [
 							{
 								"key": "x-access-token",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJ1c2VybmFtZSI6Ik15cmEuS2luZzM3IiwiZmlyc3RfbmFtZSI6IkxlbGFoIiwibGFzdF9uYW1lIjoiQm9nYW4iLCJyb2xlIjoibyIsImlhdCI6MTcwOTg5NTA3NiwiZXhwIjoxNzA5OTgxNDc2fQ.sOrHdiMCvaodgfp36baGgkR1wfOFpljGIB-4-Ya1RCc",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJ1c2VybmFtZSI6Ik15cmEuS2luZzM3IiwiZmlyc3RfbmFtZSI6IkxlbGFoIiwibGFzdF9uYW1lIjoiQm9nYW4iLCJyb2xlIjoibyIsImlhdCI6MTcxMDA5NDc1MSwiZXhwIjoxNzEwMTgxMTUxfQ.G8nthKMGqwFHdkH20oh1FhizPnfbM26e3JOldGNhaoU",
 								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/users/inbox?page=1",
+							"raw": "{{base_url}}/api/v1/users/inbox/",
 							"host": [
 								"{{base_url}}"
 							],
@@ -766,13 +767,73 @@
 								"api",
 								"v1",
 								"users",
-								"inbox"
+								"inbox",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "messages",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJ1c2VybmFtZSI6Ik15cmEuS2luZzM3IiwiZmlyc3RfbmFtZSI6IkxlbGFoIiwibGFzdF9uYW1lIjoiQm9nYW4iLCJyb2xlIjoibyIsImlhdCI6MTcxMDA5NDc1MSwiZXhwIjoxNzEwMTgxMTUxfQ.G8nthKMGqwFHdkH20oh1FhizPnfbM26e3JOldGNhaoU",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/inbox/3/messages",
+							"host": [
+								"{{base_url}}"
 							],
-							"query": [
-								{
-									"key": "page",
-									"value": "1"
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"inbox",
+								"3",
+								"messages"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "send-message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJ1c2VybmFtZSI6Ik15cmEuS2luZzM3IiwiZmlyc3RfbmFtZSI6IkxlbGFoIiwibGFzdF9uYW1lIjoiQm9nYW4iLCJyb2xlIjoibyIsImlhdCI6MTcxMDA5NDc1MSwiZXhwIjoxNzEwMTgxMTUxfQ.G8nthKMGqwFHdkH20oh1FhizPnfbM26e3JOldGNhaoU",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"message\":\"hello there again from postman\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/inbox/1/send",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"inbox",
+								"1",
+								"send"
 							]
 						}
 					},
@@ -954,7 +1015,7 @@
 						"header": [
 							{
 								"key": "x-access-token",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6IkhlcnNoZWwuR2VyaG9sZCIsImZpcnN0X25hbWUiOiJEaWxsb24iLCJsYXN0X25hbWUiOiJIYXVjayIsInJvbGUiOiJ1IiwiaWF0IjoxNzA4NjM0MTk0LCJleHAiOjE3MDg3MjA1OTR9.-uYAXQFbEE-rSk_qqYyTg59tdDaqIf7BLHyhT0CSCZw",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6IkhlcnNoZWwuR2VyaG9sZCIsImZpcnN0X25hbWUiOiJEaWxsb24iLCJsYXN0X25hbWUiOiJIYXVjayIsInJvbGUiOiJvIiwiaWF0IjoxNzEwMTU5NTIyLCJleHAiOjE3MTAyNDU5MjJ9.kfRbyH-BqdY-oX5XEdtVfzDvmhAo8TlrLg62Z-9IADk",
 								"type": "text"
 							}
 						],
@@ -1286,7 +1347,13 @@
 					"name": "home",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6IkhlcnNoZWwuR2VyaG9sZCIsImZpcnN0X25hbWUiOiJEaWxsb24iLCJsYXN0X25hbWUiOiJIYXVjayIsInJvbGUiOiJvIiwiaWF0IjoxNzEwMTU5NTIyLCJleHAiOjE3MTAyNDU5MjJ9.kfRbyH-BqdY-oX5XEdtVfzDvmhAo8TlrLg62Z-9IADk",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{base_url}}/api/v1/home",
 							"host": [
