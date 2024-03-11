@@ -21,7 +21,7 @@ router.post(
   validate(createEventSchema),
   create,
 );
-router.get("/event/:id", get);
+router.get("/event/:id", authenticate(true, "u", "o"), get);
 router.post(
   "/:id/interest",
   authenticate(false, "o", "u"),

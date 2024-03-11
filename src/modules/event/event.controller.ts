@@ -23,8 +23,8 @@ import { CreateEventInput, InterestInput } from "./event.validator";
 import { APIError } from "../../types/APIError.error";
 import Person from "../person/person.model";
 import User from "../user/user.model";
-import Like from "../like/like.model";
 import Event_Interest from "./event.interest.model";
+import { Literal } from "sequelize/types/utils";
 
 export const create = async_(
   async (
@@ -52,22 +52,6 @@ export const create = async_(
     const categories_set = new Set(Array.isArray(categories) ? categories : []);
     const phone_numbers_set = new Set(
       Array.isArray(phone_numbers) ? phone_numbers : [],
-    );
-
-    console.log(
-      content,
-      location,
-      date,
-      time,
-      phone_numbers,
-      agenda,
-      allow_community,
-      tickets,
-      categories,
-      faqs,
-      user_id,
-      [...categories_set],
-      [...phone_numbers_set],
     );
 
     const images = req.files as Express.Multer.File[];
@@ -245,7 +229,25 @@ export const get = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     const id = Number(req.params.id);
 
-    const event: any = await Post.findByPk(id, {
+    let literal!: [[Literal, string]];
+    if (req.user?.id) {
+      literal = [
+        [
+          sequelize.literal(
+            `CASE WHEN EXISTS (SELECT 1 FROM likes WHERE event_id = ${id} AND user_id = ${req.user?.id}) THEN true ELSE false END`,
+          ),
+          "is_liked",
+        ],
+      ];
+      literal.push([
+        sequelize.literal(
+          `CASE WHEN EXISTS (SELECT 1 FROM event_interest WHERE event_id = ${id} AND user_id = ${req.user?.id}) THEN true ELSE false END`,
+        ),
+        "is_interested",
+      ]);
+    }
+
+    const event = await Post.findByPk(id, {
       attributes: ["id", "content"],
       include: [
         {
@@ -296,6 +298,7 @@ export const get = async_(
             "comments_count",
             "interests_count",
             "attendees_count",
+            ...(literal ? literal : []),
           ],
           include: [
             {
@@ -342,20 +345,8 @@ export const get = async_(
 
     if (!event) throw new APIError("Event not found", StatusCodes.NOT_FOUND);
 
-    if (!req.user) {
-      event.Event.dataValues.is_liked = false;
-    } else {
-      const is_liked = await Like.findOne({
-        where: {
-          post_id: id,
-          user_id: req.user.id,
-        },
-      });
-      event.Event.dataValues.is_liked = is_liked ? true : false;
-    }
-
-    event.Event.dataValues.date = new Date(
-      event.Event.dataValues.date,
+    event.dataValues.Event.dataValues.date = new Date(
+      event.dataValues.Event.dataValues.date,
     ).toDateString();
 
     return res.status(StatusCodes.OK).json({

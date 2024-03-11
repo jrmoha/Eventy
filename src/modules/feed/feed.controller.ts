@@ -13,6 +13,7 @@ import Follow from "../follow/follow.model";
 import Event from "../event/event.model";
 import EventImage from "../image/event.image.model";
 import Post from "../post/post.model";
+import { Literal } from "sequelize/types/utils";
 
 export const get_home = async_(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -71,7 +72,23 @@ export const get_home = async_(
         organizer.setDataValue("is_followed", is_followed ? true : false);
       }
     }
-
+    let literal!: [[Literal, string]];
+    if (req.user?.id) {
+      literal = [
+        [
+          sequelize.literal(
+            `EXISTS (SELECT 1 FROM likes WHERE event_id = "Post"."id" AND user_id = ${req.user?.id})`,
+          ),
+          "is_liked",
+        ],
+      ];
+      literal.push([
+        sequelize.literal(
+          `EXISTS (SELECT 1 FROM event_interest WHERE event_id = "Post"."id" AND user_id = ${req.user?.id})`,
+        ),
+        "is_interested",
+      ]);
+    }
     const events = await Event.findAll({
       include: [
         {
@@ -106,6 +123,7 @@ export const get_home = async_(
         "location",
         "date",
         "time",
+        ...(literal?.length ? literal : []),
         [sequelize.col("Post.content"), "content"],
         [sequelize.col("Post.status"), "status"],
         [sequelize.col("Post.Organizer.rate"), "rate"],
@@ -129,7 +147,7 @@ export const get_home = async_(
       order: sequelize.random(),
       limit: 20,
     });
-    
+
     const promises = events.map(async (event) => {
       const image = await EventImage.findOne({
         where: { event_id: event.id },
