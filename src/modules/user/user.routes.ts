@@ -4,11 +4,12 @@ import friendRequestRoutes from "../friendrequest/friendrequest.routes";
 import friendshipRoutes from "../friendship/friendship.routes";
 import { authenticate } from "../../interfaces/middleware/authentication.middleware";
 import multer from "../../utils/multer";
-import { get, update, uploadImage } from "./user.controller";
+import { get, interest, likes, update, uploadImage } from "./user.controller";
 import { validate } from "../../interfaces/middleware/validator.middleware";
 import { updateUserSchema, uploadImageSchema } from "./user.validator";
 import inboxRoutes from "../inbox/inbox.routes";
 import organizerRoutes from "../organizer/organizer.routes";
+import { blocking } from "../../interfaces/middleware/privacy/blocking.middleware";
 
 const router = Router();
 router.use("/o", organizerRoutes);
@@ -32,5 +33,16 @@ router.patch(
 );
 
 router.get("/:username", authenticate(true, "u", "o"), get);
-
+router.get(
+  "/likes/:username",
+  authenticate(true, "u", "o"),
+  blocking(":username"),
+  likes,
+);
+router.get(
+  "/interests/:username",
+  authenticate(true, "u", "o"),
+  blocking(":username"),
+  interest,
+);
 export default router;

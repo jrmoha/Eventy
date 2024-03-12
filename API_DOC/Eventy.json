@@ -746,6 +746,60 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "likes",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6IkhlcnNoZWwuR2VyaG9sZCIsImZpcnN0X25hbWUiOiJEaWxsb24iLCJsYXN0X25hbWUiOiJIYXVjayIsInJvbGUiOiJvIiwiaWF0IjoxNzEwMjUwMjQzLCJleHAiOjE3MTAzMzY2NDN9.XwNgEnJzKRXqnTbSS6uW9xO6x2P30YyeTl4-wO9lJNU",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/likes/Myra.King37",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"likes",
+								"Myra.King37"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "interests",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6IkhlcnNoZWwuR2VyaG9sZCIsImZpcnN0X25hbWUiOiJEaWxsb24iLCJsYXN0X25hbWUiOiJIYXVjayIsInJvbGUiOiJvIiwiaWF0IjoxNzEwMjUwMjQzLCJleHAiOjE3MTAzMzY2NDN9.XwNgEnJzKRXqnTbSS6uW9xO6x2P30YyeTl4-wO9lJNU",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/interests/Myra.King37",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"interests",
+								"Myra.King37"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1400,6 +1454,62 @@
 								"v1",
 								"users",
 								"o",
+								"Myra.King37"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "likes",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6IkhlcnNoZWwuR2VyaG9sZCIsImZpcnN0X25hbWUiOiJEaWxsb24iLCJsYXN0X25hbWUiOiJIYXVjayIsInJvbGUiOiJvIiwiaWF0IjoxNzEwMjUwMjQzLCJleHAiOjE3MTAzMzY2NDN9.XwNgEnJzKRXqnTbSS6uW9xO6x2P30YyeTl4-wO9lJNU",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/o/likes/Myra.King37",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"o",
+								"likes",
+								"Myra.King37"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "interests",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6IkhlcnNoZWwuR2VyaG9sZCIsImZpcnN0X25hbWUiOiJEaWxsb24iLCJsYXN0X25hbWUiOiJIYXVjayIsInJvbGUiOiJvIiwiaWF0IjoxNzEwMjUwMjQzLCJleHAiOjE3MTAzMzY2NDN9.XwNgEnJzKRXqnTbSS6uW9xO6x2P30YyeTl4-wO9lJNU",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/o/interests/Myra.King37",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"o",
+								"interests",
 								"Myra.King37"
 							]
 						}

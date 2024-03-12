@@ -202,4 +202,3 @@ export const events = async_(
       .json({ success: true, data: { upcoming, past } });
   },
 );
- 
