@@ -8,8 +8,10 @@ import { get, update, uploadImage } from "./user.controller";
 import { validate } from "../../interfaces/middleware/validator.middleware";
 import { updateUserSchema, uploadImageSchema } from "./user.validator";
 import inboxRoutes from "../inbox/inbox.routes";
+import organizerRoutes from "../organizer/organizer.routes";
 
 const router = Router();
+router.use("/o", organizerRoutes);
 router.use(followRoutes);
 router.use(inboxRoutes);
 router.use("/friend/request", friendRequestRoutes);
