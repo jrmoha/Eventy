@@ -733,7 +733,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/v1/users/Myra.King37",
+							"raw": "{{base_url}}/api/v1/users/u/Myra.King37",
 							"host": [
 								"{{base_url}}"
 							],
@@ -741,6 +741,7 @@
 								"api",
 								"v1",
 								"users",
+								"u",
 								"Myra.King37"
 							]
 						}
@@ -755,11 +756,12 @@
 							{
 								"key": "x-access-token",
 								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6IkhlcnNoZWwuR2VyaG9sZCIsImZpcnN0X25hbWUiOiJEaWxsb24iLCJsYXN0X25hbWUiOiJIYXVjayIsInJvbGUiOiJvIiwiaWF0IjoxNzEwMjUwMjQzLCJleHAiOjE3MTAzMzY2NDN9.XwNgEnJzKRXqnTbSS6uW9xO6x2P30YyeTl4-wO9lJNU",
-								"type": "text"
+								"type": "text",
+								"disabled": true
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/users/likes/Myra.King37",
+							"raw": "{{base_url}}/api/v1/users/u/likes/Myra.King37",
 							"host": [
 								"{{base_url}}"
 							],
@@ -767,6 +769,7 @@
 								"api",
 								"v1",
 								"users",
+								"u",
 								"likes",
 								"Myra.King37"
 							]
@@ -782,11 +785,12 @@
 							{
 								"key": "x-access-token",
 								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6IkhlcnNoZWwuR2VyaG9sZCIsImZpcnN0X25hbWUiOiJEaWxsb24iLCJsYXN0X25hbWUiOiJIYXVjayIsInJvbGUiOiJvIiwiaWF0IjoxNzEwMjUwMjQzLCJleHAiOjE3MTAzMzY2NDN9.XwNgEnJzKRXqnTbSS6uW9xO6x2P30YyeTl4-wO9lJNU",
-								"type": "text"
+								"type": "text",
+								"disabled": true
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/users/interests/Myra.King37",
+							"raw": "{{base_url}}/api/v1/users/u/interests/Myra.King37",
 							"host": [
 								"{{base_url}}"
 							],
@@ -794,6 +798,7 @@
 								"api",
 								"v1",
 								"users",
+								"u",
 								"interests",
 								"Myra.King37"
 							]

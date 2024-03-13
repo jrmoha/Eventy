@@ -9,7 +9,7 @@ export class SocketService {
     this.io = new SocketIOServer(server, {
       cors: {
         origin: "*",
-        methods: ["POST"],
+        methods: ["POST", "GET"],
         credentials: true,
         allowedHeaders: ["x-access-token"],
       },
@@ -20,7 +20,7 @@ export class SocketService {
 
     this.io.on("connection", (socket) => {
       socket.join(socket.data.user.id);
-
+      
       socket.on("disconnect", () => {
         socket.leave(socket.data.user.id);
       });

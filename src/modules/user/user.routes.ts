@@ -32,15 +32,15 @@ router.patch(
   update,
 );
 
-router.get("/:username", authenticate(true, "u", "o"), get);
+router.get("/u/:username", authenticate(true, "u", "o"), get);
 router.get(
-  "/likes/:username",
+  "/u/likes/:username",
   authenticate(true, "u", "o"),
   blocking(":username"),
   likes,
 );
 router.get(
-  "/interests/:username",
+  "/u/interests/:username",
   authenticate(true, "u", "o"),
   blocking(":username"),
   interest,
