@@ -67,9 +67,9 @@ export const get_all = async_(
             " ",
             sequelize.col("sender.Person.last_name"),
           ),
-          "name",
+          "full_name",
         ],
-        [sequelize.col("sender.UserImages.Image.secure_url"), "profile_image"],
+        [sequelize.col("sender.UserImages.Image.secure_url"), "image_url"],
       ],
       order: [["createdAt", "DESC"]],
       ...apifeatures.query,
@@ -170,8 +170,8 @@ export const accept = async_(
     res: Response,
     next: NextFunction,
   ) => {
-    const sender_id = req.user?.id;
-    const receiver_id = +req.params.id;
+    const receiver_id = req.user?.id;
+    const sender_id = +req.params.id;
 
     if (sender_id == receiver_id)
       throw new APIError(
