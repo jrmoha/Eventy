@@ -6,6 +6,8 @@ class Community extends Model {
   public declare id: number;
   public declare name: string;
   public declare status: "active" | "archived";
+  public declare last_message: string;
+  public declare last_message_time: Date;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 }
@@ -24,6 +26,14 @@ Community.init(
       type: DataTypes.ENUM("active", "archived"),
       allowNull: false,
       defaultValue: "active",
+    },
+    last_message: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    last_message_time: {
+      type: DataTypes.DATE,
+      allowNull: true,
     },
   },
   {
