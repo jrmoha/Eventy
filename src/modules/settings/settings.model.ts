@@ -1,8 +1,8 @@
-import { sequelize } from "./../../database/index";
+import { sequelize } from "../../database/index";
 import { DataTypes, Model } from "sequelize";
-import User from "./user.model";
+import User from "../user/user.model";
 
-enum Visibility {
+export enum Visibility {
   Anyone = "anyone",
   Friends = "friends",
   None = "none",

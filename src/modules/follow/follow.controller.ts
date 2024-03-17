@@ -7,7 +7,7 @@ import Follow from "./follow.model";
 import User from "../user/user.model";
 import Person from "../person/person.model";
 import { FollowInput } from "./follow.validator";
-import Settings from "../user/user.settings.model";
+import Settings from "../settings/settings.model";
 import Friendship from "../friendship/friendship.model";
 import UserImage from "../image/user.image.model";
 import Image from "../image/image.model";

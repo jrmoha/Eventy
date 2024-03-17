@@ -8,7 +8,7 @@ import Image from "../image/image.model";
 import { APIError } from "../../types/APIError.error";
 import { StatusCodes } from "http-status-codes";
 import { sequelize } from "../../database";
-import Settings from "../user/user.settings.model";
+import Settings from "../settings/settings.model";
 import { Literal } from "sequelize/types/utils";
 import Event from "../event/event.model";
 import EventImage from "../image/event.image.model";

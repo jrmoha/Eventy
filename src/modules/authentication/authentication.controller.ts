@@ -21,7 +21,7 @@ import {
   sendVerificationEmail,
 } from "../../interfaces/handlers/email/email.handler";
 import { nanoid } from "nanoid";
-import Settings from "../user/user.settings.model";
+import Settings from "../settings/settings.model";
 import logger from "../../utils/logger";
 import UserImage from "../image/user.image.model";
 

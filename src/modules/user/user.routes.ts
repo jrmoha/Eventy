@@ -11,6 +11,7 @@ import inboxRoutes from "../inbox/inbox.routes";
 import organizerRoutes from "../organizer/organizer.routes";
 import { blocking } from "../../interfaces/middleware/privacy/blocking.middleware";
 import communityRoutes from "../community/community.routes";
+import settingRoute from "../settings/settings.routes";
 
 const router = Router();
 router.use("/o", organizerRoutes);
@@ -19,6 +20,7 @@ router.use(inboxRoutes);
 router.use("/community", communityRoutes);
 router.use("/friend/request", friendRequestRoutes);
 router.use("/friendship", friendshipRoutes);
+router.use("/settings", settingRoute);
 
 router.post(
   "/upload/image",
