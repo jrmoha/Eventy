@@ -1,3 +1,4 @@
+import config from "config";
 import { NextFunction, Request, Response } from "express";
 import StatusCodes from "http-status-codes";
 import { async_ } from "../../interfaces/middleware/async.middleware";
@@ -7,7 +8,7 @@ import fs from "fs";
 import UserImage from "../image/user.image.model";
 import Person from "../person/person.model";
 import { APIError } from "../../types/APIError.error";
-import { UpdateUserInput } from "./user.validator";
+import { ChangePasswordInput, UpdateUserInput } from "./user.validator";
 import { sequelize } from "../../database";
 import User from "./user.model";
 import Organizer from "../organizer/organizer.model";
@@ -21,6 +22,7 @@ import Post from "../post/post.model";
 import EventImage from "../image/event.image.model";
 import { Literal } from "sequelize/types/utils";
 import Event_Interest from "../event/event.interest.model";
+import bcrypt from "bcryptjs";
 
 export const update = async_(
   async (
@@ -94,7 +96,33 @@ export const update = async_(
     });
   },
 );
+export const change_password = async_(
+  async (
+    req: Request<{}, {}, ChangePasswordInput>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const user_id = req.user?.id;
+    const { old_password, new_password } = req.body;
 
+    const user = await Person.findByPk(user_id);
+    if (!user) throw new APIError("User not found", StatusCodes.NOT_FOUND);
+
+    const isMatch = await bcrypt.compare(old_password, user.password as string);
+
+    if (!isMatch)
+      throw new APIError("Invalid password", StatusCodes.UNAUTHORIZED);
+
+    user.password = await bcrypt.hash(
+      new_password,
+      +config.get<string>("bcrypt.SALT_ROUNDS"),
+    );
+
+    await user.save();
+
+    return res.status(StatusCodes.OK).json({ success: true });
+  },
+);
 export const uploadImage = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     const user_id = req.user?.id;

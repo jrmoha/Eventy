@@ -10,6 +10,8 @@ import { APIError } from "../../types/APIError.error";
 import Event from "../event/event.model";
 import Post from "../post/post.model";
 import { sequelize } from "../../database";
+import CommunityMessage from "./community.message.model";
+import { sendMessageInCommunityInput } from "./community.validator";
 
 export const get_communities = async_(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -129,6 +131,79 @@ export const leave = async_(
       return res.status(StatusCodes.OK).json({
         success: true,
       });
+    });
+  },
+);
+
+export const send_message = async_(
+  async (
+    req: Request<
+      sendMessageInCommunityInput["params"],
+      {},
+      sendMessageInCommunityInput["body"]
+    >,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const user_id = req.user?.id;
+    const community_id = req.params.id;
+    const { message } = req.body;
+
+    const community = await Community.findByPk(community_id);
+
+    if (!community)
+      throw new APIError("Community not found", StatusCodes.NOT_FOUND);
+
+    const membership = await CommunityMembership.findOne({
+      where: {
+        user_id,
+        community_id,
+      },
+    });
+
+    if (!membership)
+      throw new APIError("Not a member", StatusCodes.BAD_REQUEST);
+
+    const t = await sequelize.transaction();
+
+    await CommunityMessage.create(
+      {
+        community_id,
+        sender_id: user_id,
+        message,
+      },
+      { transaction: t },
+    );
+
+    community.last_message = message;
+    community.last_message_time = new Date();
+    await community.save({ transaction: t });
+    await t.commit();
+
+    CommunityMembership.findAll({
+      where: {
+        community_id,
+      },
+      attributes: ["user_id"],
+    })
+      .then((members) => members.map((member) => member.user_id))
+      .then((members_ids) => {
+        for (const member_id of members_ids) {
+          console.log(`Sending message to ${member_id}`);
+
+          if (member_id !== user_id) {
+            global.io.to(member_id.toString()).emit("new-message", {
+              community_id,
+              message,
+              sender_id: user_id,
+            });
+          }
+        }
+      });
+
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      // data: community_message,
     });
   },
 );

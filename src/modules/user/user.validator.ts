@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { APIError } from "../../types/APIError.error";
+import { StatusCodes } from "http-status-codes";
 
 export const uploadImageSchema = z.object({
   file: z.object(
@@ -38,5 +40,43 @@ export const updateUserSchema = z.object({
       },
     ),
 });
+export const changePasswordSchema = z.object({
+  body: z
+    .object({
+      old_password: z
+        .string({
+          required_error: "old_password is required",
+        })
+        .min(6)
+        .max(100),
+      new_password: z
+        .string({
+          required_error: "new_password is required",
+        })
+        .min(6)
+        .max(100),
+      new_password_confirmation: z.string({
+        required_error: "new_password_confirmation is required",
+      }),
+    })
+    .refine(
+      (data) => {
+        if (data.new_password !== data.new_password_confirmation)
+          throw new APIError("Passwords do not match", StatusCodes.BAD_REQUEST);
+
+        if (data.old_password === data.new_password)
+          throw new APIError(
+            "New password cannot be the same as the old password",
+            StatusCodes.BAD_REQUEST,
+          );
+
+        return true;
+      },
+      {
+        message: "Passwords do not match",
+      },
+    ),
+});
 
 export type UpdateUserInput = z.TypeOf<typeof updateUserSchema>["body"];
+export type ChangePasswordInput = z.TypeOf<typeof changePasswordSchema>["body"];
