@@ -5,6 +5,7 @@ import friendshipRoutes from "../friendship/friendship.routes";
 import { authenticate } from "../../interfaces/middleware/authentication.middleware";
 import multer from "../../utils/multer";
 import {
+  basic_info,
   change_password,
   get,
   interest,
@@ -52,6 +53,8 @@ router.patch(
   validate(changePasswordSchema),
   change_password,
 );
+
+router.get("/basic_info", authenticate(false, "u", "o"), basic_info);
 
 router.get("/u/:username", authenticate(true, "u", "o"), get);
 router.get(

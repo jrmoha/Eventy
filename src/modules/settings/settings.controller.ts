@@ -5,6 +5,22 @@ import { APIError } from "../../types/APIError.error";
 import { StatusCodes } from "http-status-codes";
 import { EditSettingsInput } from "./settings.validator";
 
+export const get_settings = async_(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user_id = req.user?.id;
+
+    const settings = await Settings.findOne({
+      where: { user_id },
+      attributes: { exclude: ["user_id", "createdAt", "updatedAt"] },
+    });
+
+    if (!settings)
+      throw new APIError("Settings not found", StatusCodes.NOT_FOUND);
+
+    return res.status(StatusCodes.OK).json({ success: true, data: settings });
+  },
+);
+
 export const edit_settings = async_(
   async (
     req: Request<{}, {}, EditSettingsInput>,
@@ -19,7 +35,6 @@ export const edit_settings = async_(
       followers_visibility,
       following_visibility,
     } = req.body;
- 
 
     const settings = await Settings.findOne({
       where: { user_id },
@@ -28,10 +43,11 @@ export const edit_settings = async_(
     if (!settings)
       throw new APIError("Settings not found", StatusCodes.NOT_FOUND);
     //set allow_marketing_emails to settings.allow_marketing_emails if allow_marketing_emails is not provided
-    allow_marketing_emails!=undefined &&
+    allow_marketing_emails != undefined &&
       (settings.allow_marketing_emails = allow_marketing_emails);
     //set allow_reminders to settings.allow_reminders if allow_reminders is not provided
-    allow_reminders!=undefined && (settings.allow_reminders = allow_reminders);
+    allow_reminders != undefined &&
+      (settings.allow_reminders = allow_reminders);
     //set friends_visibility to settings.friends_visibility if friends_visibility is not provided
     friends_visibility && (settings.friends_visibility = friends_visibility);
     //set followers_visibility to settings.followers_visibility if followers_visibility is not provided

@@ -398,3 +398,26 @@ export const interest = async_(
     });
   },
 );
+
+export const basic_info = async_(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user_id = req.user?.id;
+    const user = await Person.findByPk(user_id, {
+      attributes: [
+        "id",
+        "first_name",
+        "last_name",
+        "username",
+        "email",
+        "phone_number",
+        "gender",
+        "birthdate",
+      ],
+    });
+
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      data: user,
+    });
+  },
+);
