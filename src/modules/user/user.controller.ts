@@ -415,6 +415,19 @@ export const basic_info = async_(
       ],
     });
 
+    const profile_image = await UserImage.findOne({
+      where: { user_id, is_profile: true },
+      include: [
+        {
+          model: Image,
+          attributes: [],
+        },
+      ],
+      attributes: ["public_id", [sequelize.col("Image.secure_url"), "url"]],
+    });
+
+    user?.setDataValue("profile_image", profile_image);
+
     return res.status(StatusCodes.OK).json({
       success: true,
       data: user,

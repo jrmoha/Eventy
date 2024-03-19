@@ -24,6 +24,8 @@ import { nanoid } from "nanoid";
 import Settings from "../settings/settings.model";
 import logger from "../../utils/logger";
 import UserImage from "../image/user.image.model";
+import Image from "../image/image.model";
+import { sequelize } from "../../database";
 
 export const signup = async_(
   async (
@@ -129,12 +131,19 @@ export const login = async_(
 
     const organizer = await Organizer.findByPk(person.id);
 
+    const profile_image = await UserImage.findOne({
+      where: { user_id: person.id, is_profile: true },
+      include: [{ model: Image, required: true, attributes: [] }],
+      attributes: [[sequelize.col("Image.secure_url"), "secure_url"]],
+    });
+
     const payload: JwtPayload = {
       id: person.id,
       username: person.username,
       first_name: person.first_name,
       last_name: person.last_name,
       role: organizer ? "o" : "u",
+      profile_image: profile_image?.secure_url,
     };
 
     const token = jwt.sign(payload, config.get<string>("jwt.secret"), {

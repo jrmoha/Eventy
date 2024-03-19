@@ -1,13 +1,21 @@
 import { Router } from "express";
 import { authenticate } from "../../interfaces/middleware/authentication.middleware";
 import {
+  delete_community,
+  delete_member,
   get_communities,
   join,
   leave,
+  make_admin,
+  remove_admin,
   send_message,
 } from "./community.controller";
 import { validate } from "../../interfaces/middleware/validator.middleware";
-import { sendMessageInCommunitySchema } from "./community.validator";
+import {
+  communityMemberSchema,
+  communityMessageSchema,
+  deleteCommunitySchema,
+} from "./community.validator";
 
 const router = Router();
 
@@ -17,7 +25,36 @@ router.delete("/leave/:id", authenticate(false, "u", "o"), leave);
 router.post(
   "/send-message/:id",
   authenticate(false, "u", "o"),
-  validate(sendMessageInCommunitySchema),
+  validate(communityMessageSchema),
   send_message,
 );
+
+router.patch(
+  "/make-admin/:id",
+  authenticate(false, "o"),
+  validate(communityMemberSchema),
+  make_admin,
+);
+// remove_admin
+router.delete(
+  "/delete-admin/:id",
+  authenticate(false, "o"),
+  validate(communityMemberSchema),
+  remove_admin,
+);
+// delete_community
+router.delete(
+  "/delete-community/:id",
+  authenticate(false, "o"),
+  validate(deleteCommunitySchema),
+  delete_community,
+);
+// delete_member
+router.delete(
+  "/delete-member/:id",
+  authenticate(false, "o"),
+  validate(communityMemberSchema),
+  delete_member,
+);
+
 export default router;

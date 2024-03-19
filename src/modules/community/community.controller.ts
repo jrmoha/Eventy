@@ -11,7 +11,11 @@ import Event from "../event/event.model";
 import Post from "../post/post.model";
 import { sequelize } from "../../database";
 import CommunityMessage from "./community.message.model";
-import { sendMessageInCommunityInput } from "./community.validator";
+import {
+  CommunityMessageInput,
+  AdminInput,
+  DeleteCommunityInput,
+} from "./community.validator";
 
 export const get_communities = async_(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -134,13 +138,198 @@ export const leave = async_(
     });
   },
 );
+export const make_admin = async_(
+  async (
+    req: Request<AdminInput["params"], {}, AdminInput["body"]>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const user_id = req.user?.id;
+    const community_id = req.params.id;
+    const { member_id } = req.body;
 
+    const community = await Community.findByPk(community_id);
+
+    if (!community)
+      throw new APIError("Community not found", StatusCodes.NOT_FOUND);
+
+    const membership = await CommunityMembership.findOne({
+      where: {
+        user_id,
+        community_id,
+      },
+    });
+
+    if (!membership)
+      throw new APIError("Not a member", StatusCodes.BAD_REQUEST);
+
+    if (membership.role !== "admin")
+      throw new APIError("Not an admin", StatusCodes.BAD_REQUEST);
+
+    const member = await CommunityMembership.findOne({
+      where: {
+        user_id: member_id,
+        community_id,
+      },
+    });
+
+    if (!member) throw new APIError("Member not found", StatusCodes.NOT_FOUND);
+
+    member.role = "admin";
+    member.save().then(() => {
+      return res.status(StatusCodes.OK).json({
+        success: true,
+      });
+    });
+  },
+);
+export const remove_admin = async_(
+  async (
+    req: Request<AdminInput["params"], {}, AdminInput["body"]>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const user_id = req.user?.id;
+    const community_id = req.params.id;
+    const { member_id } = req.body;
+
+    const community = await Community.findByPk(community_id);
+
+    if (!community)
+      throw new APIError("Community not found", StatusCodes.NOT_FOUND);
+
+    const membership = await CommunityMembership.findOne({
+      where: {
+        user_id,
+        community_id,
+      },
+    });
+
+    if (!membership)
+      throw new APIError("Not a member", StatusCodes.BAD_REQUEST);
+
+    if (membership.role !== "admin")
+      throw new APIError("Not an admin", StatusCodes.BAD_REQUEST);
+
+    const member = await CommunityMembership.findOne({
+      where: {
+        user_id: member_id,
+        community_id,
+      },
+    });
+
+    if (!member) throw new APIError("Member not found", StatusCodes.NOT_FOUND);
+
+    member.role = "member";
+    member.save().then(() => {
+      return res.status(StatusCodes.OK).json({
+        success: true,
+      });
+    });
+  },
+);
+export const delete_community = async_(
+  async (
+    req: Request<DeleteCommunityInput, {}, {}>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const user_id = req.user?.id;
+    const community_id = req.params.id;
+
+    const community = await Community.findByPk(community_id);
+
+    if (!community)
+      throw new APIError("Community not found", StatusCodes.NOT_FOUND);
+
+    const membership = await CommunityMembership.findOne({
+      where: {
+        user_id,
+        community_id,
+      },
+    });
+
+    if (!membership)
+      throw new APIError("Not a member", StatusCodes.BAD_REQUEST);
+
+    if (membership.role !== "admin")
+      throw new APIError("Not an admin", StatusCodes.BAD_REQUEST);
+
+    const promises = [
+      CommunityMembership.destroy({
+        where: {
+          community_id,
+        },
+      }),
+      CommunityMessage.destroy({
+        where: {
+          community_id,
+        },
+      }),
+      Community.destroy({
+        where: {
+          id: community_id,
+        },
+      }),
+    ];
+
+    await Promise.all(promises).then(() => {
+      return res.status(StatusCodes.OK).json({
+        success: true,
+      });
+    });
+  },
+);
+export const delete_member = async_(
+  async (
+    req: Request<AdminInput["params"], {}, AdminInput["body"]>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const user_id = req.user?.id;
+    const community_id = req.params.id;
+    const { member_id } = req.body;
+
+    const community = await Community.findByPk(community_id);
+
+    if (!community)
+      throw new APIError("Community not found", StatusCodes.NOT_FOUND);
+
+    const membership = await CommunityMembership.findOne({
+      where: {
+        user_id,
+        community_id,
+      },
+    });
+
+    if (!membership)
+      throw new APIError("Not a member", StatusCodes.BAD_REQUEST);
+
+    if (membership.role !== "admin")
+      throw new APIError("Not an admin", StatusCodes.BAD_REQUEST);
+
+    const member = await CommunityMembership.findOne({
+      where: {
+        user_id: member_id,
+        community_id,
+      },
+    });
+
+    if (!member) throw new APIError("Member not found", StatusCodes.NOT_FOUND);
+
+    member.destroy().then(() => {
+      return res.status(StatusCodes.OK).json({
+        success: true,
+      });
+    });
+  },
+);
 export const send_message = async_(
   async (
     req: Request<
-      sendMessageInCommunityInput["params"],
+      CommunityMessageInput["params"],
       {},
-      sendMessageInCommunityInput["body"]
+      CommunityMessageInput["body"]
     >,
     res: Response,
     next: NextFunction,
