@@ -4,21 +4,9 @@ import friendRequestRoutes from "../friendrequest/friendrequest.routes";
 import friendshipRoutes from "../friendship/friendship.routes";
 import { authenticate } from "../../interfaces/middleware/authentication.middleware";
 import multer from "../../utils/multer";
-import {
-  basic_info,
-  change_password,
-  get,
-  interest,
-  likes,
-  update,
-  uploadImage,
-} from "./user.controller";
+import * as UC from "./user.controller";
 import { validate } from "../../interfaces/middleware/validator.middleware";
-import {
-  changePasswordSchema,
-  updateUserSchema,
-  uploadImageSchema,
-} from "./user.validator";
+import * as US from "./user.validator";
 import inboxRoutes from "../inbox/inbox.routes";
 import organizerRoutes from "../organizer/organizer.routes";
 import { blocking } from "../../interfaces/middleware/privacy/blocking.middleware";
@@ -38,35 +26,41 @@ router.post(
   "/upload/image",
   authenticate(false, "u", "o"),
   multer("image", "images").single("image"),
-  validate(uploadImageSchema),
-  uploadImage,
+  validate(US.uploadImageSchema),
+  UC.uploadImage,
 );
 router.patch(
   "/update",
   authenticate(false, "u", "o"),
-  validate(updateUserSchema),
-  update,
+  validate(US.updateUserSchema),
+  UC.update,
+);
+router.patch(
+  "/update/email",
+  authenticate(false, "u", "o"),
+  validate(US.updateEmailSchema),
+  UC.change_email,
 );
 router.patch(
   "/update/password",
   authenticate(false, "u", "o"),
-  validate(changePasswordSchema),
-  change_password,
+  validate(US.changePasswordSchema),
+  UC.change_password,
 );
 
-router.get("/basic_info", authenticate(false, "u", "o"), basic_info);
+router.get("/basic_info", authenticate(false, "u", "o"), UC.basic_info);
 
-router.get("/u/:username", authenticate(true, "u", "o"), get);
+router.get("/u/:username", authenticate(true, "u", "o"), UC.get);
 router.get(
   "/u/likes/:username",
   authenticate(true, "u", "o"),
   blocking(":username"),
-  likes,
+  UC.likes,
 );
 router.get(
   "/u/interests/:username",
   authenticate(true, "u", "o"),
   blocking(":username"),
-  interest,
+  UC.interest,
 );
 export default router;

@@ -1,7 +1,7 @@
 import { sequelize } from "./../../database/index";
 import Post from "../post/post.model";
 import { DataTypes } from "sequelize";
-
+import "./event.migration";
 class Event extends Post {
   declare location: string;
   declare date: Date;
@@ -10,6 +10,7 @@ class Event extends Post {
   declare comments_count: number;
   declare interests_count: number;
   declare attendees_count: number;
+  declare search: string;
 }
 Event.init(
   {
@@ -48,6 +49,10 @@ Event.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,
+    },
+    search: {
+      type: DataTypes.TSVECTOR,
+      allowNull: true,
     },
   },
   {

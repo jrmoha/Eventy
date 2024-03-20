@@ -8,7 +8,11 @@ import fs from "fs";
 import UserImage from "../image/user.image.model";
 import Person from "../person/person.model";
 import { APIError } from "../../types/APIError.error";
-import { ChangePasswordInput, UpdateUserInput } from "./user.validator";
+import {
+  ChangeEmailInput,
+  ChangePasswordInput,
+  UpdateUserInput,
+} from "./user.validator";
 import { sequelize } from "../../database";
 import User from "./user.model";
 import Organizer from "../organizer/organizer.model";
@@ -31,15 +35,8 @@ export const update = async_(
     next: NextFunction,
   ) => {
     const user_id = req.user?.id;
-    const {
-      first_name,
-      last_name,
-      username,
-      email,
-      phone_number,
-      gender,
-      birthdate,
-    } = req.body;
+    const { first_name, last_name, username, phone_number, gender, birthdate } =
+      req.body;
 
     const person = (await Person.findByPk(user_id, {
       attributes: { exclude: ["password"] },
@@ -62,17 +59,7 @@ export const update = async_(
         person.username = username;
       }
     }
-    if (email && email !== person.email) {
-      const email_exists = await Person.findOne({
-        where: { email },
-      });
 
-      if (email_exists) {
-        throw new APIError("Email already exists", StatusCodes.CONFLICT);
-      }
-
-      person.email = email;
-    }
     if (phone_number && phone_number !== person.phone_number) {
       const phone_number_exists = await Person.findOne({
         where: { phone_number },
@@ -83,6 +70,41 @@ export const update = async_(
       }
 
       person.phone_number = phone_number;
+    }
+
+    if (!person.changed())
+      throw new APIError("No changes detected", StatusCodes.BAD_REQUEST);
+
+    await person.save();
+
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      data: person,
+    });
+  },
+);
+export const change_email = async_(
+  async (
+    req: Request<{}, {}, ChangeEmailInput>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const user_id = req.user?.id;
+    const { email } = req.body;
+
+    const person = (await Person.findByPk(user_id, {
+      attributes: { exclude: ["password"] },
+    })) as Person;
+
+    if (email && email !== person.email) {
+      const email_exists = await Person.findOne({
+        where: { email },
+      });
+
+      if (email_exists)
+        throw new APIError("Email already exists", StatusCodes.CONFLICT);
+
+      person.email = email;
     }
 
     if (!person.changed())

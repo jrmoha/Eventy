@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { TypeOf, z } from "zod";
 import { APIError } from "../../types/APIError.error";
 import { StatusCodes } from "http-status-codes";
 
@@ -23,7 +23,6 @@ export const updateUserSchema = z.object({
       first_name: z.string().optional(),
       last_name: z.string().optional(),
       username: z.string().optional(),
-      email: z.string().email().optional(),
       phone_number: z.string().optional(),
       birthdate: z.string().optional(),
       gender: z.enum(["male", "female"]).optional(),
@@ -39,6 +38,15 @@ export const updateUserSchema = z.object({
         message: "At least one field is required",
       },
     ),
+});
+export const updateEmailSchema = z.object({
+  body: z.object({
+    email: z
+      .string({
+        required_error: "email is required",
+      })
+      .email(),
+  }),
 });
 export const changePasswordSchema = z.object({
   body: z
@@ -78,5 +86,6 @@ export const changePasswordSchema = z.object({
     ),
 });
 
-export type UpdateUserInput = z.TypeOf<typeof updateUserSchema>["body"];
-export type ChangePasswordInput = z.TypeOf<typeof changePasswordSchema>["body"];
+export type UpdateUserInput = TypeOf<typeof updateUserSchema>["body"];
+export type ChangePasswordInput = TypeOf<typeof changePasswordSchema>["body"];
+export type ChangeEmailInput = TypeOf<typeof updateEmailSchema>["body"];

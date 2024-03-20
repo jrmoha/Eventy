@@ -733,7 +733,7 @@
 						"header": [
 							{
 								"key": "x-access-token",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6Ikpvc2gyMCIsImZpcnN0X25hbWUiOiJFbW1hIiwibGFzdF9uYW1lIjoiUm93ZSIsInJvbGUiOiJ1IiwiaWF0IjoxNzA4Mjc1MTkwLCJleHAiOjE3MDgzNjE1OTB9.TU5NrFjHApehU72ogp1EINIE0GGXix1O8oY1E5KO1_w",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6IkhlcnNoZWwuR2VyaG9sZCIsImZpcnN0X25hbWUiOiJEaWxsb24iLCJsYXN0X25hbWUiOiJIYXVjayIsInJvbGUiOiJvIiwicHJvZmlsZV9pbWFnZSI6Imh0dHBzOi8vcmVzLmNsb3VkaW5hcnkuY29tL2RiM3Fta3Nmay9pbWFnZS91cGxvYWQvdjE3MDkzNzY3OTYvZXZlbnR5L2RlZmF1bHRfdXNlci5qcGciLCJpYXQiOjE3MTA5NTQ0OTUsImV4cCI6MTcxMTU1OTI5NX0.MP3IpzRfCk5O-Bm0ryc3tzNcDw8kybgf3bZ0XdxIGNA",
 								"type": "text"
 							}
 						],
@@ -756,6 +756,42 @@
 								"v1",
 								"users",
 								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update email",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6IkhlcnNoZWwuR2VyaG9sZCIsImZpcnN0X25hbWUiOiJEaWxsb24iLCJsYXN0X25hbWUiOiJIYXVjayIsInJvbGUiOiJvIiwicHJvZmlsZV9pbWFnZSI6Imh0dHBzOi8vcmVzLmNsb3VkaW5hcnkuY29tL2RiM3Fta3Nmay9pbWFnZS91cGxvYWQvdjE3MDkzNzY3OTYvZXZlbnR5L2RlZmF1bHRfdXNlci5qcGciLCJpYXQiOjE3MTA5NTQ0OTUsImV4cCI6MTcxMTU1OTI5NX0.MP3IpzRfCk5O-Bm0ryc3tzNcDw8kybgf3bZ0XdxIGNA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"sci.mostafamohamed12788@alexu.edu.eg\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/update/email",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"update",
+								"email"
 							]
 						}
 					},
@@ -1442,7 +1478,7 @@
 						"header": [
 							{
 								"key": "x-access-token",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6IkhlcnNoZWwuR2VyaG9sZCIsImZpcnN0X25hbWUiOiJEaWxsb24iLCJsYXN0X25hbWUiOiJIYXVjayIsInJvbGUiOiJvIiwiaWF0IjoxNzEwNjg1MDQ0LCJleHAiOjE3MTA3NzE0NDR9.Aw5ZkqBL0KZrxYcTZEuaWWGrrbJI_pMfNZ1cAz9YFb0",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6IkhlcnNoZWwuR2VyaG9sZCIsImZpcnN0X25hbWUiOiJEaWxsb24iLCJsYXN0X25hbWUiOiJIYXVjayIsInJvbGUiOiJvIiwicHJvZmlsZV9pbWFnZSI6Imh0dHBzOi8vcmVzLmNsb3VkaW5hcnkuY29tL2RiM3Fta3Nmay9pbWFnZS91cGxvYWQvdjE3MDkzNzY3OTYvZXZlbnR5L2RlZmF1bHRfdXNlci5qcGciLCJpYXQiOjE3MTA4OTMwNDMsImV4cCI6MTcxMTQ5Nzg0M30.LCbn6Q7XgMEh-6gJcmNCjQ1h4qIRQc7a8elg0VGDMw0",
 								"type": "text"
 							}
 						],
