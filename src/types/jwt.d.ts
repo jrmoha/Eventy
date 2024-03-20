@@ -9,6 +9,6 @@ declare module "jsonwebtoken" {
     last_name?: string;
     role: string;
     password_reset_code?: string;
-  
+    profile_image?: string;
   }
 }

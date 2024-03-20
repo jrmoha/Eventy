@@ -696,7 +696,7 @@
 						"header": [
 							{
 								"key": "x-access-token",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJ1c2VybmFtZSI6Ik15cmEuS2luZzM3IiwiZmlyc3RfbmFtZSI6IkxlbGFoIiwibGFzdF9uYW1lIjoiQm9nYW4iLCJyb2xlIjoibyIsImlhdCI6MTcwOTk4MDk1MCwiZXhwIjoxNzEwMDY3MzUwfQ.svGy3Wb5cORhNyaVDkffALMTxN1yKx6O4tjtEJjWDtE",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6IkhlcnNoZWwuR2VyaG9sZCIsImZpcnN0X25hbWUiOiJEaWxsb24iLCJsYXN0X25hbWUiOiJIYXVjayIsInJvbGUiOiJvIiwicHJvZmlsZV9pbWFnZSI6Imh0dHBzOi8vcmVzLmNsb3VkaW5hcnkuY29tL2RiM3Fta3Nmay9pbWFnZS91cGxvYWQvdjE3MDkzNzY3OTYvZXZlbnR5L2RlZmF1bHRfdXNlci5qcGciLCJpYXQiOjE3MTA5NTQ0OTUsImV4cCI6MTcxMTU1OTI5NX0.MP3IpzRfCk5O-Bm0ryc3tzNcDw8kybgf3bZ0XdxIGNA",
 								"type": "text"
 							}
 						],
@@ -706,7 +706,7 @@
 								{
 									"key": "image",
 									"type": "file",
-									"src": "/D:/Gallery/190217838.jpg"
+									"src": "/D:/Gallery/3117929860.jpg"
 								}
 							]
 						},
@@ -727,6 +727,43 @@
 					"response": []
 				},
 				{
+					"name": "delete-image",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6IkhlcnNoZWwuR2VyaG9sZCIsImZpcnN0X25hbWUiOiJEaWxsb24iLCJsYXN0X25hbWUiOiJIYXVjayIsInJvbGUiOiJvIiwicHJvZmlsZV9pbWFnZSI6Imh0dHBzOi8vcmVzLmNsb3VkaW5hcnkuY29tL2RiM3Fta3Nmay9pbWFnZS91cGxvYWQvdjE3MDkzNzY3OTYvZXZlbnR5L2RlZmF1bHRfdXNlci5qcGciLCJpYXQiOjE3MTA5NTQ0OTUsImV4cCI6MTcxMTU1OTI5NX0.MP3IpzRfCk5O-Bm0ryc3tzNcDw8kybgf3bZ0XdxIGNA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"public_id\":\"eventy/default_user\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/delete/image/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"delete",
+								"image",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "update",
 					"request": {
 						"method": "PATCH",
@@ -739,7 +776,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\":\"jrmohaa\",\r\n    \"first_name\":\"Mostafa\"\r\n}",
+							"raw": "{\r\n    \"username\":\"jrmohaa\",\r\n    \"first_name\":\"Mostafa\",\r\n    \"last_name\":\"Mohammed\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
