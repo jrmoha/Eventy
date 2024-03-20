@@ -1,3 +1,4 @@
+import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "config";
 import { NextFunction, Request, Response } from "express";
 import StatusCodes from "http-status-codes";
@@ -77,9 +78,23 @@ export const update = async_(
 
     await person.save();
 
+    const payload: JwtPayload = {
+      id: req.user?.id as number,
+      username: person.username,
+      first_name: person.first_name,
+      last_name: person.last_name,
+      role: req.user?.role || "u",
+      profile_image: req.user?.profile_image,
+    };
+
+    const token = jwt.sign(payload, config.get<string>("jwt.secret"), {
+      expiresIn: config.get<string>("jwt.expiresIn"),
+    });
+
     return res.status(StatusCodes.OK).json({
       success: true,
       data: person,
+      token,
     });
   },
 );
@@ -142,7 +157,20 @@ export const change_password = async_(
 
     await user.save();
 
-    return res.status(StatusCodes.OK).json({ success: true });
+    const payload: JwtPayload = {
+      id: req.user?.id as number,
+      username: req.user?.username,
+      first_name: req.user?.first_name,
+      last_name: req.user?.last_name,
+      role: req.user?.role || "u",
+      profile_image: req.user?.profile_image,
+    };
+
+    const token = jwt.sign(payload, config.get<string>("jwt.secret"), {
+      expiresIn: config.get<string>("jwt.expiresIn"),
+    });
+
+    return res.status(StatusCodes.OK).json({ success: true, token });
   },
 );
 export const uploadImage = async_(
@@ -177,13 +205,83 @@ export const uploadImage = async_(
       is_profile: true,
     });
 
+    const payload: JwtPayload = {
+      id: req.user?.id as number,
+      username: req.user?.username,
+      first_name: req.user?.first_name,
+      last_name: req.user?.last_name,
+      role: req.user?.role || "u",
+      profile_image: secure_url,
+    };
+
+    const token = jwt.sign(payload, config.get<string>("jwt.secret"), {
+      expiresIn: config.get<string>("jwt.expiresIn"),
+    });
+
     return res.status(StatusCodes.CREATED).json({
       success: true,
       data: { public_id: image.public_id, url: image.url },
+      token,
     });
   },
 );
+export const deleteImage = async_(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user_id = req.user?.id;
 
+    const userImage = await UserImage.findOne({
+      where: { user_id, is_profile: true },
+    });
+
+    if (!userImage)
+      throw new APIError("Profile image not found", StatusCodes.NOT_FOUND);
+
+    if (userImage.public_id == config.get<string>("images.default_user_image"))
+      throw new APIError(
+        "You can't delete the default profile image",
+        StatusCodes.BAD_REQUEST,
+      );
+
+    await cloudinary.uploader.destroy(userImage.public_id);
+    await userImage.destroy();
+
+    const newProfileImage = await UserImage.findOne({
+      where: { user_id },
+      include: [
+        {
+          model: Image,
+          attributes: [],
+        },
+      ],
+      attributes: [
+        "public_id",
+        "user_id",
+        [sequelize.col("Image.secure_url"), "secure_url"],
+      ],
+      order: [["createdAt", "DESC"]],
+    });
+
+    await newProfileImage!.update({ is_profile: true });
+
+    const payload: JwtPayload = {
+      id: req.user?.id as number,
+      username: req.user?.username,
+      first_name: req.user?.first_name,
+      last_name: req.user?.last_name,
+      role: req.user?.role || "u",
+      profile_image: newProfileImage?.secure_url,
+    };
+
+    const token = jwt.sign(payload, config.get<string>("jwt.secret"), {
+      expiresIn: config.get<string>("jwt.expiresIn"),
+    });
+
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      token,
+    });
+  },
+);
 export const get = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     const user_id = req.user?.id;

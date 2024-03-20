@@ -29,6 +29,11 @@ router.post(
   validate(US.uploadImageSchema),
   UC.uploadImage,
 );
+router.delete(
+  "/delete/image",
+  authenticate(false, "u", "o"),
+  UC.deleteImage,
+);
 router.patch(
   "/update",
   authenticate(false, "u", "o"),
