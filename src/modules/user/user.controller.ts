@@ -42,10 +42,11 @@ export const update = async_(
     const person = (await Person.findByPk(user_id, {
       attributes: { exclude: ["password"] },
     })) as Person;
+
     first_name && (person.first_name = first_name);
     last_name && (person.last_name = last_name);
     gender && (person.gender = gender);
-    birthdate && (person.birthdate = new Date(birthdate));
+    birthdate && (person.birthdate = birthdate);
 
     if (username && username !== person.username) {
       {

@@ -11,7 +11,7 @@ class Person extends Model {
   declare last_name: string;
   declare phone_number: string;
   declare password: string;
-  declare birthdate: Date;
+  declare birthdate: string;
   declare gender: gender;
   declare confirmed: boolean;
   declare password_reset_code: string | null;
