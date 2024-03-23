@@ -25,7 +25,7 @@ import { Literal } from "sequelize/types/utils";
 import Event_Interest from "../event/event.interest.model";
 import bcrypt from "bcryptjs";
 import Settings from "../settings/settings.model";
-import { Op } from "sequelize";
+import { FindAttributeOptions, Op } from "sequelize";
 
 export const update = async_(
   async (
@@ -428,7 +428,28 @@ export const profile = async_(
     return res.status(StatusCodes.OK).json({ success: true, data: user });
   },
 );
-
+const attrs = (literal?: [[Literal, string]]): FindAttributeOptions => [
+  "user_id",
+  [sequelize.col("Event.id"), "event_id"],
+  [
+    sequelize.fn(
+      "to_char",
+      sequelize.col("Event.date"),
+      "YYYY-MM-DD HH24:MI:SS",
+    ),
+    "date",
+  ],
+  [sequelize.col("Event.time"), "time"],
+  [sequelize.col("Event.Post.content"), "content"],
+  [
+    sequelize.literal(
+      `CASE WHEN "Event"."date" > now() THEN true ELSE false END`,
+    ),
+    "is_upcoming",
+  ],
+  ...(literal?.length ? literal : []),
+  [sequelize.col("Event.EventImages.Image.secure_url"), "image_url"],
+];
 export const likes = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
@@ -477,19 +498,7 @@ export const likes = async_(
           ],
         },
       ],
-      attributes: [
-        "user_id",
-        [sequelize.col("Event.id"), "event_id"],
-        [sequelize.col("Event.Post.content"), "content"],
-        [
-          sequelize.literal(
-            `CASE WHEN "Event"."date" > now() THEN true ELSE false END`,
-          ),
-          "is_upcoming",
-        ],
-        ...(literal?.length ? literal : []),
-        [sequelize.col("Event.EventImages.Image.secure_url"), "image_url"],
-      ],
+      attributes: attrs(literal),
       ...apifeatures.query,
       subQuery: false,
     });
@@ -548,19 +557,7 @@ export const interest = async_(
           ],
         },
       ],
-      attributes: [
-        "user_id",
-        [sequelize.col("Event.id"), "event_id"],
-        [sequelize.col("Event.Post.content"), "content"],
-        [
-          sequelize.literal(
-            `CASE WHEN "Event"."date" > now() THEN true ELSE false END`,
-          ),
-          "is_upcoming",
-        ],
-        ...(literal?.length ? literal : []),
-        [sequelize.col("Event.EventImages.Image.secure_url"), "image_url"],
-      ],
+      attributes: attrs(literal),
       ...apifeatures.query,
       subQuery: false,
     });
