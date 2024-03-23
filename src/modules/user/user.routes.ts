@@ -29,11 +29,7 @@ router.post(
   validate(US.uploadImageSchema),
   UC.uploadImage,
 );
-router.delete(
-  "/delete/image",
-  authenticate(false, "u", "o"),
-  UC.deleteImage,
-);
+router.delete("/delete/image", authenticate(false, "u", "o"), UC.deleteImage);
 router.patch(
   "/update",
   authenticate(false, "u", "o"),
@@ -55,7 +51,13 @@ router.patch(
 
 router.get("/basic_info", authenticate(false, "u", "o"), UC.basic_info);
 
-router.get("/u/:username", authenticate(true, "u", "o"), UC.get);
+router.get(
+  "/u/:username",
+  authenticate(true, "u", "o"),
+  blocking(":username"),
+  UC.profile,
+);
+
 router.get(
   "/u/likes/:username",
   authenticate(true, "u", "o"),

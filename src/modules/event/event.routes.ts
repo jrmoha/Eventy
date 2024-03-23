@@ -6,9 +6,11 @@ import config from "config";
 import { validate } from "../../interfaces/middleware/validator.middleware";
 import { createEventSchema, interestSchema } from "./event.validator";
 import likeRoutes from "../like/like.routes";
+import searchRoutes from "../search/search.routes";
 
 const router = Router();
 
+router.use("/search", searchRoutes);
 router.use("/:event_id", likeRoutes);
 
 router.post(

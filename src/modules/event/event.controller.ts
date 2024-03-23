@@ -209,9 +209,17 @@ export const create = async_(
 
     organizer[0].events_count++;
     await organizer[0].save({ transaction: t });
+    console.log(`post id: ${post.id}`);
 
-    await t.commit();
-    res.status(StatusCodes.CREATED).json({
+    await t.commit().then(() => {
+      console.log("Transaction committed");
+      Event.update({ id: post.id }, { where: { id: post.id } }).then(() => {
+        //mock update to trigger trigger
+        console.log("Event updated");
+      });
+    });
+
+    return res.status(StatusCodes.CREATED).json({
       success: true,
       data: {
         event,

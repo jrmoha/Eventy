@@ -16,10 +16,6 @@ import {
 } from "./user.validator";
 import { sequelize } from "../../database";
 import User from "./user.model";
-import Organizer from "../organizer/organizer.model";
-import Follow from "../follow/follow.model";
-import Friendship from "../friendship/friendship.model";
-import { Op } from "sequelize";
 import { APIFeatures } from "../../utils/api.features";
 import Like from "../like/like.model";
 import Event from "../event/event.model";
@@ -28,6 +24,8 @@ import EventImage from "../image/event.image.model";
 import { Literal } from "sequelize/types/utils";
 import Event_Interest from "../event/event.interest.model";
 import bcrypt from "bcryptjs";
+import Settings from "../settings/settings.model";
+import { Op } from "sequelize";
 
 export const update = async_(
   async (
@@ -77,7 +75,16 @@ export const update = async_(
     if (!person.changed())
       throw new APIError("No changes detected", StatusCodes.BAD_REQUEST);
 
-    await person.save();
+    await person.save().then(() => {
+      Post.findAll({
+        where: { organizer_id: user_id },
+        attributes: ["id"],
+      }).then((posts) => {
+        posts.map((post) => {
+          Event.update({ id: post.id }, { where: { id: post.id } });
+        });
+      });
+    });
 
     const payload: JwtPayload = {
       id: req.user?.id as number,
@@ -283,34 +290,36 @@ export const deleteImage = async_(
     });
   },
 );
-export const get = async_(
+export const profile = async_(
   async (req: Request, res: Response, next: NextFunction) => {
-    const user_id = req.user?.id;
-    const { username } = req.params;
+    const { id } = req.params;
 
-    const user = await Person.findOne({
-      where: { username },
-      attributes: [
-        "id",
-        "first_name",
-        "last_name",
-        "username",
-        "email",
-        "phone_number",
-        [sequelize.col("User.followers_count"), "followers_count"],
-        [sequelize.col("User.following_count"), "following_count"],
-        [sequelize.col("User.friends_count"), "friends_count"],
+    let literal!: [[Literal, string]];
+
+    if (req.user?.id && req.user.id !== +id) {
+      literal = [
         [
           sequelize.literal(
-            "CASE WHEN \"Person\".id IN (SELECT id FROM organizer) THEN 'organizer' ELSE 'user' END",
+            `CASE WHEN EXISTS (SELECT 1 FROM follow WHERE follower_id = ${req.user.id} AND followed_id = ${id}) THEN true ELSE false END`,
           ),
-          "type",
+          "is_following",
         ],
-        [sequelize.col("User.Organizer.rate"), "rate"],
-        [sequelize.col("User.Organizer.events_count"), "events_count"],
-        [sequelize.col("User.Organizer.bio"), "bio"],
-        [sequelize.col("User.UserImages.Image.secure_url"), "image_url"],
-      ],
+      ];
+      literal.push([
+        sequelize.literal(
+          `CASE WHEN EXISTS (SELECT 1 FROM friendship WHERE (sender_id = ${req.user.id} AND receiver_id = ${id}) OR (sender_id = ${id} AND receiver_id = ${req.user.id})) THEN true ELSE false END`,
+        ),
+        "is_friend",
+      ]);
+    }
+
+    const user = await Person.findOne({
+      where: {
+        id,
+        [Op.and]: sequelize.literal(
+          `NOT EXISTS (SELECT 1 FROM organizer WHERE id=:id)`,
+        ),
+      },
       include: [
         {
           model: User,
@@ -318,62 +327,98 @@ export const get = async_(
           attributes: [],
           include: [
             {
-              model: Organizer,
-              required: false,
-              attributes: [],
-            },
-            {
               model: UserImage,
+              required: true,
               attributes: [],
+              where: { is_profile: true },
               include: [
                 {
                   model: Image,
+                  required: true,
                   attributes: [],
                 },
               ],
-              where: { is_profile: true },
             },
           ],
         },
       ],
-      subQuery: false,
-      raw: true,
+      attributes: [
+        [
+          sequelize.fn(
+            "concat",
+            sequelize.col("first_name"),
+            " ",
+            sequelize.col("last_name"),
+          ),
+          "full_name",
+        ],
+        "phone_number",
+        "username",
+        "id",
+        "email",
+        [sequelize.col("User.followers_count"), "followers_count"],
+        [sequelize.col("User.following_count"), "following_count"],
+        [sequelize.col("User.friends_count"), "friends_count"],
+        [sequelize.col("User.UserImages.Image.url"), "profile_image"],
+        ...(literal?.length ? literal : []),
+      ],
+      replacements: { id },
+      benchmark: true,
     });
 
-    if (!user) throw new APIError("User not found", StatusCodes.NOT_FOUND);
+    if (!user) throw new APIError("user not found", StatusCodes.NOT_FOUND);
 
-    const data = Object.fromEntries(
-      Object.entries(user).map(([key, value]) => {
-        if (value === null) return [key, null];
-        if (value === "null") return [key, null];
-        if (value === "organizer") return [key, "organizer"];
-        if (value === "user") return [key, "user"];
-        return [key, value];
-      }),
-    );
+    const settings = await Settings.findOne({
+      where: { user_id: user.id },
+    });
 
-    if (user_id == user?.id || !user_id) {
-      data.is_following = null;
-      data.is_friend = null;
-    } else {
-      const is_following = await Follow.findOne({
-        where: { follower_id: user_id, followed_id: user.id },
-      });
-      const is_friend = await Friendship.findOne({
-        where: {
-          [Op.or]: [
-            { sender_id: user_id, receiver_id: user.id },
-            { sender_id: user.id, receiver_id: user_id },
-          ],
-        },
-      });
-      data.is_following = !!is_following;
-      data.is_friend = !!is_friend;
+    switch (settings?.followers_visibility) {
+      case "none":
+        user.setDataValue("followers_visible", false);
+        break;
+      case "friends":
+        user.setDataValue(
+          "followers_visible",
+          !!user.getDataValue("is_friend"),
+        );
+        break;
+      case "anyone":
+        user.setDataValue("followers_visible", true);
+        break;
+      default:
+        break;
     }
-    return res.status(StatusCodes.OK).json({
-      success: true,
-      data,
-    });
+    switch (settings?.following_visibility) {
+      case "none":
+        user.setDataValue("following_visible", false);
+        break;
+      case "friends":
+        user.setDataValue(
+          "following_visible",
+          !!user.getDataValue("is_friend"),
+        );
+        break;
+      case "anyone":
+        user.setDataValue("following_visible", true);
+        break;
+      default:
+        break;
+    }
+    switch (settings?.friends_visibility) {
+      case "none":
+        user.setDataValue("friends_visible", false);
+        break;
+      case "friends":
+        user.setDataValue("friends_visible", !!user.getDataValue("is_friend"));
+        break;
+      case "anyone":
+        user.setDataValue("friends_visible", true);
+        break;
+      default:
+        break;
+    }
+
+    return res.status(StatusCodes.OK).json({ success: true, data: user });
   },
 );
 

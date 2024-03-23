@@ -57,7 +57,8 @@ Person.init(
       allowNull: false,
       validate: {
         len: [3, 255],
-        isAlpha: true,
+        // isAlpha: true,
+
       },
     },
     phone_number: {

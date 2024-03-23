@@ -64,7 +64,7 @@ export const get_messages = async_(
           "createdAt",
         ],
       ],
-      order: [["createdAt", "DESC"]],
+      order: [["createdAt", "ASC"]],
       ...apifeatures.query,
     });
 
