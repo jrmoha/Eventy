@@ -94,6 +94,15 @@ export const profile = async_(
     if (!organizer)
       throw new APIError("Organizer not found", StatusCodes.NOT_FOUND);
 
+    if (req.user?.id == +id) {
+      organizer.setDataValue("followers_visible", true);
+      organizer.setDataValue("following_visible", true);
+      organizer.setDataValue("friends_visible", true);
+      return res
+        .status(StatusCodes.OK)
+        .json({ success: true, data: organizer });
+    }
+
     const settings = await Settings.findOne({
       where: { user_id: organizer.id },
     });

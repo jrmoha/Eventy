@@ -368,6 +368,13 @@ export const profile = async_(
 
     if (!user) throw new APIError("user not found", StatusCodes.NOT_FOUND);
 
+    if (req.user?.id == +id) {
+      user.setDataValue("followers_visible", true);
+      user.setDataValue("following_visible", true);
+      user.setDataValue("friends_visible", true);
+      return res.status(StatusCodes.OK).json({ success: true, data: user });
+    }
+
     const settings = await Settings.findOne({
       where: { user_id: user.id },
     });
