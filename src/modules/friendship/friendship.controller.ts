@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { UnfriendInput } from "./friendship.validator";
 import { async_ } from "../../interfaces/middleware/async.middleware";
 import Friendship from "./friendship.model";
-import { Op } from "sequelize";
+import { FindAttributeOptions, Op } from "sequelize";
 import { APIError } from "../../types/APIError.error";
 import StatusCodes from "http-status-codes";
 import User from "../user/user.model";
@@ -65,7 +65,41 @@ const includes = {
     ],
   },
 };
-
+const attrs = (id: number): FindAttributeOptions | [] => {
+  return [
+    [sequelize.literal("true"), "is_friends"],
+    [
+      sequelize.literal(
+        `CASE WHEN "sender"."id" = ${id} THEN "receiver"."followers_count" ELSE "sender"."followers_count" END`,
+      ),
+      "followers_count",
+    ],
+    [
+      sequelize.literal(
+        `CASE WHEN "sender"."id" = ${id} THEN "receiver"."id" ELSE "sender"."id" END`,
+      ),
+      "id",
+    ],
+    [
+      sequelize.literal(
+        `CASE WHEN "sender"."id" = ${id} THEN CONCAT("receiver->Person"."first_name", ' ', "receiver->Person"."last_name") ELSE CONCAT("sender->Person"."first_name", ' ', "sender->Person"."last_name") END`,
+      ),
+      "full_name",
+    ],
+    [
+      sequelize.literal(
+        `CASE WHEN "sender"."id" = ${id} THEN "receiver->UserImages->Image"."url" ELSE "sender->UserImages->Image"."url" END`,
+      ),
+      "image_url",
+    ],
+    [
+      sequelize.literal(
+        `CASE WHEN EXISTS (SELECT 1 FROM organizer WHERE id = sender.id) THEN 'o' ELSE 'u' END`,
+      ),
+      "role",
+    ],
+  ];
+};
 export const unfriend = async_(
   async (
     req: Request<UnfriendInput, {}, {}>,
@@ -113,33 +147,7 @@ export const get_friends = async_(
           [Op.or]: [{ sender_id: id }, { receiver_id: id }],
         },
         include: [includes.sender, includes.receiver],
-        attributes: [
-          [sequelize.literal("true"), "is_friends"],
-          [
-            sequelize.literal(
-              `CASE WHEN "sender"."id" = ${id} THEN "receiver"."followers_count" ELSE "sender"."followers_count" END`,
-            ),
-            "followers_count",
-          ],
-          [
-            sequelize.literal(
-              `CASE WHEN "sender"."id" = ${id} THEN "receiver"."id" ELSE "sender"."id" END`,
-            ),
-            "id",
-          ],
-          [
-            sequelize.literal(
-              `CASE WHEN "sender"."id" = ${id} THEN CONCAT("receiver->Person"."first_name", ' ', "receiver->Person"."last_name") ELSE CONCAT("sender->Person"."first_name", ' ', "sender->Person"."last_name") END`,
-            ),
-            "full_name",
-          ],
-          [
-            sequelize.literal(
-              `CASE WHEN "sender"."id" = ${id} THEN "receiver->UserImages->Image"."url" ELSE "sender->UserImages->Image"."url" END`,
-            ),
-            "image_url",
-          ],
-        ],
+        attributes: attrs(+id),
         order: [["createdAt", "DESC"]],
         ...apifeatures.query,
         raw: true,
@@ -199,34 +207,7 @@ export const get_friends = async_(
         [Op.or]: [{ sender_id: id }, { receiver_id: id }],
       },
       include: [includes.sender, includes.receiver],
-      attributes: [
-        [
-          sequelize.literal(
-            `CASE WHEN "sender"."id" = ${id} THEN "receiver"."id" ELSE "sender"."id" END`,
-          ),
-          "id",
-        ],
-        [
-          sequelize.literal(
-            `CASE WHEN "sender"."id" = ${id} THEN "receiver"."followers_count" ELSE "sender"."followers_count" END`,
-          ),
-          "followers_count",
-        ],
-
-        [
-          sequelize.literal(
-            `CASE WHEN "sender"."id" = ${id} THEN CONCAT("receiver->Person"."first_name", ' ', "receiver->Person"."last_name") ELSE CONCAT("sender->Person"."first_name", ' ', "sender->Person"."last_name") END`,
-          ),
-          "full_name",
-        ],
-        [
-          sequelize.literal(
-            `CASE WHEN "sender"."id" = ${id} THEN "receiver->UserImages->Image"."url" ELSE "sender->UserImages->Image"."url" END`,
-          ),
-          "profile_image",
-        ],
-        ...(literal.length ? [literal] : []),
-      ],
+      attributes: [...attrs(+id), ...(literal.length ? [literal] : [])],
       raw: true,
       subQuery: false,
     });

@@ -70,6 +70,12 @@ export const get_all = async_(
           "full_name",
         ],
         [sequelize.col("sender.UserImages.Image.secure_url"), "image_url"],
+        [
+          sequelize.literal(
+            "CASE WHEN EXISTS (SELECT 1 FROM organizer WHERE user_id = sender.id) THEN 'o' ELSE 'u' END",
+          ),
+          "role",
+        ],
       ],
       order: [["createdAt", "DESC"]],
       ...apifeatures.query,

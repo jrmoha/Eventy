@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { Op, Sequelize } from "sequelize";
+import { FindAttributeOptions, Op, Sequelize } from "sequelize";
 import StatusCodes from "http-status-codes";
 import { async_ } from "../../interfaces/middleware/async.middleware";
 import { APIError } from "../../types/APIError.error";
@@ -105,7 +105,46 @@ export const unfollow = async_(
     return res.status(StatusCodes.OK).json({ success: true });
   },
 );
-
+const followerAttributes: FindAttributeOptions = [
+  [sequelize.col("follower.id"), "id"],
+  [sequelize.col("follower.followers_count"), "followers_count"],
+  [
+    sequelize.fn(
+      "concat",
+      sequelize.col("follower.Person.first_name"),
+      " ",
+      sequelize.col("follower.Person.last_name"),
+    ),
+    "full_name",
+  ],
+  [sequelize.col("follower.UserImages.Image.url"), "image_url"],
+  [
+    sequelize.literal(
+      "CASE WHEN follower.id IN (SELECT id FROM organizer WHERE id = follower.id) THEN 'o' ELSE 'u' END",
+    ),
+    "role",
+  ],
+];
+const followingsAttributes: FindAttributeOptions = [
+  [sequelize.col("following.id"), "id"],
+  [sequelize.col("following.followers_count"), "followers_count"],
+  [
+    sequelize.fn(
+      "concat",
+      sequelize.col("following.Person.first_name"),
+      " ",
+      sequelize.col("following.Person.last_name"),
+    ),
+    "full_name",
+  ],
+  [sequelize.col("following.UserImages.Image.url"), "image_url"],
+  [
+    sequelize.literal(
+      "CASE WHEN following.id IN (SELECT id FROM organizer WHERE id = following.id) THEN 'o' ELSE 'u' END",
+    ),
+    "role",
+  ],
+];
 export const followers = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
@@ -153,18 +192,7 @@ export const followers = async_(
           },
         ],
         attributes: [
-          [sequelize.col("follower.id"), "id"],
-          [sequelize.col("follower.followers_count"), "followers_count"],
-          [
-            sequelize.fn(
-              "concat",
-              sequelize.col("follower.Person.first_name"),
-              " ",
-              sequelize.col("follower.Person.last_name"),
-            ),
-            "full_name",
-          ],
-          [sequelize.col("follower.UserImages.Image.url"), "image_url"],
+          ...followerAttributes,
           ...(literal.length ? [literal] : []),
         ],
         order: [["createdAt", "DESC"]],
@@ -243,18 +271,7 @@ export const followers = async_(
         },
       ],
       attributes: [
-        [sequelize.col("follower.id"), "id"],
-        [
-          sequelize.fn(
-            "concat",
-            sequelize.col("follower.Person.first_name"),
-            " ",
-            sequelize.col("follower.Person.last_name"),
-          ),
-          "full_name",
-        ],
-        [sequelize.col("follower.UserImages.Image.url"), "image_url"],
-        [sequelize.col("follower.followers_count"), "followers_count"],
+        ...followerAttributes,
         ...(literal?.length ? [literal] : []),
       ],
       order: [["createdAt", "DESC"]],
@@ -302,18 +319,7 @@ export const followings = async_(
           },
         ],
         attributes: [
-          [sequelize.col("following.id"), "id"],
-          [sequelize.col("following.followers_count"), "followers_count"],
-          [
-            sequelize.fn(
-              "concat",
-              sequelize.col("following.Person.first_name"),
-              " ",
-              sequelize.col("following.Person.last_name"),
-            ),
-            "full_name",
-          ],
-          [sequelize.col("following.UserImages.Image.url"), "image_url"],
+          ...followingsAttributes,
           [sequelize.literal("true"), "followed"],
         ],
         order: [["createdAt", "DESC"]],
@@ -402,18 +408,7 @@ export const followings = async_(
         },
       ],
       attributes: [
-        [sequelize.col("following.id"), "id"],
-        [sequelize.col("following.followers_count"), "followers_count"],
-        [
-          sequelize.fn(
-            "concat",
-            sequelize.col("following.Person.first_name"),
-            " ",
-            sequelize.col("following.Person.last_name"),
-          ),
-          "full_name",
-        ],
-        [sequelize.col("following.UserImages.Image.url"), "image_url"],
+        ...followingsAttributes,
         ...(literal?.length ? [literal] : []),
       ],
       order: [["createdAt", "DESC"]],
