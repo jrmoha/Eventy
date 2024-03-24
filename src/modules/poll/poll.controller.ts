@@ -9,6 +9,10 @@ import Poll_Options from "./poll.options.model";
 import { APIError } from "../../types/APIError.error";
 import Poll_Selection from "./poll.selection.model";
 import { VoteInput } from "./poll.validator";
+import Person from "../person/person.model";
+import User from "../user/user.model";
+import UserImage from "../image/user.image.model";
+import Image from "../image/image.model";
 
 export const create = async_(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -51,79 +55,122 @@ export const create = async_(
   },
 );
 
-export const get = async_(
+export const get_poll = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const user_id = req.user?.id;
-    const post = await Post.findOne({
-      where: {
-        id,
-        status: "published",
-      },
+
+    const poll = await Poll.findByPk(id, {
       include: [
         {
-          model: Poll,
+          model: Post,
+          required: true,
+          where: { status: "published" },
+          attributes: [],
           include: [
             {
-              model: Post,
+              model: Organizer,
               required: true,
               attributes: [],
-            },
-            {
-              model: Poll_Options,
-              as: "options",
-              attributes: [
-                "id",
-                "option",
-                "votes",
-                [
-                  sequelize.literal(
-                    `CASE WHEN ${user_id ? user_id : null} IN (SELECT user_id FROM poll_selection WHERE option_id = "Poll->options".id) THEN 'true' ELSE 'false' END`,
-                  ),
-                  "voted",
-                ],
+              include: [
+                {
+                  model: User,
+                  required: true,
+                  attributes: [],
+                  include: [
+                    {
+                      model: Person,
+                      required: true,
+                      attributes: [],
+                    },
+                    {
+                      model: UserImage,
+                      required: true,
+                      attributes: [],
+                      include: [
+                        {
+                          model: Image,
+                          required: true,
+                          attributes: [],
+                        },
+                      ],
+                    },
+                  ],
+                },
               ],
             },
           ],
-          attributes: ["id"],
+        },
+        {
+          model: Poll_Options,
+          as: "options",
+          attributes: ["id", "option", "votes"],
+          include: [
+            {
+              model: Poll_Selection,
+              as: "selections",
+              where: { user_id },
+              required: false,
+              attributes: ["user_id"],
+            },
+          ],
         },
       ],
       attributes: [
         "id",
-        "content",
-        "createdAt",
-        [sequelize.col("Poll.multi_selection"), "multi_selection"],
-        [sequelize.col("Poll.Post.content"), "content"],
+        "multi_selection",
+        [sequelize.col("Post.content"), "content"],
+        [
+          sequelize.fn(
+            "to_char",
+            sequelize.col("Post.createdAt"),
+            "YYYY-MM-DD HH24:MI:SS",
+          ),
+          "createdAt",
+        ],
+        //get first name and last name of the user as full_name
+        [
+          sequelize.fn(
+            "concat",
+            sequelize.col("Post.Organizer.User.Person.first_name"),
+            " ",
+            sequelize.col("Post.Organizer.User.Person.last_name"),
+          ),
+          "full_name",
+        ],
+        //get username
+        [sequelize.col("Post.Organizer.User.Person.username"), "username"],
+        //get profile image
+        [sequelize.col("Post.Organizer.User.UserImages.Image.url"), "profile_image"],
+
       ],
+      benchmark: true,
+      logging: console.log,
+      replacements: { user_id },
+      subQuery: false,
     });
 
-    if (!post) throw new APIError("Poll not found", StatusCode.NOT_FOUND);
+    if (!poll) throw new APIError("Poll doesn't exist", StatusCode.NOT_FOUND);
 
-    const result = {
-      id: post.id,
-      content: post.content,
-      createdAt: post.createdAt.toLocaleString(),
-      multi_selection: post.dataValues?.multi_selection,
-      options: post.dataValues.Poll.options.map(
-        (option: {
-          id: number;
-          option: string;
-          votes: number;
-          voted: boolean;
-        }) => {
-          return {
-            id: option.id,
-            option: option.option,
-            votes: option.votes,
-            voted: option.voted,
-          };
-        },
-      ),
-    };
+    if (req.user?.id) {
+      // for (const option of poll.dataValues.options) {
+      //   await Poll_Selection.findOne({
+      //     where: { user_id, option_id: option.id },
+      //   }).then((vote) => {
+      //     option.setDataValue("voted", !!vote);
+      //   });
+      // }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      poll.dataValues.options.forEach((option: any) => {
+        option.setDataValue("voted", !!option.selections.length);
+        // option.setDataValue("selections", undefined);
+        delete option.dataValues.selections;
+      });
+    }
 
     return res.status(StatusCode.OK).json({
       success: true,
-      data: result,
+      data: poll,
     });
   },
 );

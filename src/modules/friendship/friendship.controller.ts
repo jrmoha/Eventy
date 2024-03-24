@@ -213,7 +213,10 @@ export const get_friends = async_(
         [Op.or]: [{ sender_id: id }, { receiver_id: id }],
       },
       include: [includes.sender, includes.receiver],
-      attributes: [...attrs(+id), ...(literal.length ? [literal] : [])],
+      attributes: [
+        ...(attrs(+id) as unknown as [FindAttributeOptions]),
+        ...(literal.length ? [literal] : []),
+      ],
       raw: true,
       subQuery: false,
     });

@@ -34,11 +34,13 @@ Poll_Selection.init(
 Poll_Selection.belongsTo(Poll_Options, {
   foreignKey: "option_id",
   targetKey: "id",
+  as: "option",
 });
 
 Poll_Options.hasMany(Poll_Selection, {
   foreignKey: "option_id",
   sourceKey: "id",
+  as: "selections",
 });
 
 Poll_Selection.belongsTo(User, {
