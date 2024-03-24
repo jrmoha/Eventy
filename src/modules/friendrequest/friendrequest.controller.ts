@@ -60,6 +60,7 @@ export const get_all = async_(
       attributes: [
         [sequelize.col("sender.id"), "sender_id"],
         [sequelize.col("sender.followers_count"), "followers_count"],
+        [sequelize.col("sender.Person.username"), "username"],
         [
           sequelize.fn(
             "concat",

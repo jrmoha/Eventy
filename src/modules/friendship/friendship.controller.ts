@@ -65,7 +65,7 @@ const includes = {
     ],
   },
 };
-const attrs = (id: number): FindAttributeOptions | [] => {
+const attrs = (id: number): FindAttributeOptions => {
   return [
     [sequelize.literal("true"), "is_friends"],
     [
@@ -79,6 +79,12 @@ const attrs = (id: number): FindAttributeOptions | [] => {
         `CASE WHEN "sender"."id" = ${id} THEN "receiver"."id" ELSE "sender"."id" END`,
       ),
       "id",
+    ],
+    [
+      sequelize.literal(
+        `CASE WHEN "sender"."id" = ${id} THEN "receiver->Person"."username" ELSE "sender->Person"."username" END`,
+      ),
+      "username",
     ],
     [
       sequelize.literal(

@@ -117,6 +117,7 @@ const followerAttributes: FindAttributeOptions = [
     ),
     "full_name",
   ],
+  [sequelize.col("follower.Person.username"), "username"],
   [sequelize.col("follower.UserImages.Image.url"), "image_url"],
   [
     sequelize.literal(
@@ -137,6 +138,7 @@ const followingsAttributes: FindAttributeOptions = [
     ),
     "full_name",
   ],
+  [sequelize.col("following.Person.username"), "username"],
   [sequelize.col("following.UserImages.Image.url"), "image_url"],
   [
     sequelize.literal(
