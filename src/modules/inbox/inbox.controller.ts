@@ -95,7 +95,7 @@ export const get_inboxes = async_(
         ],
       ],
       ...apifeatures.query,
-      order: [["updatedAt", "DESC"]],
+      order: [["last_message_time", "DESC"]],
       raw: true,
       subQuery: false,
     });

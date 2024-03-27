@@ -5,8 +5,8 @@ import User from "../user/user.model";
 import { Op } from "sequelize";
 import { StatusCodes } from "http-status-codes";
 import { APIError } from "../../types/APIError.error";
-import { compare, hash } from "../../utils/functions";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import { compare, hash, signToken, verifyToken } from "../../utils/functions";
+import { JwtPayload } from "jsonwebtoken";
 import config from "config";
 import {
   LoginInput,
@@ -146,9 +146,7 @@ export const login = async_(
       profile_image: profile_image?.secure_url,
     };
 
-    const token = jwt.sign(payload, config.get<string>("jwt.secret"), {
-      expiresIn: config.get<string>("jwt.expiresIn"),
-    });
+    const token = signToken(payload);
 
     return res
       .status(StatusCodes.OK)
@@ -164,10 +162,7 @@ export const emailVerification = async_(
   ) => {
     const { t } = req.query;
 
-    const decoded = jwt.verify(
-      t,
-      config.get<string>("jwt.secret"),
-    ) as JwtPayload;
+    const decoded = verifyToken(t);
 
     if (!decoded?.id)
       throw new APIError("Invalid token", StatusCodes.BAD_REQUEST);
@@ -201,10 +196,7 @@ export const resendEmailVerification = async_(
   ) => {
     const t = req.query.t;
 
-    const decoded = jwt.verify(
-      t,
-      config.get<string>("jwt.secret"),
-    ) as JwtPayload;
+    const decoded = verifyToken(t) as JwtPayload;
 
     if (!decoded?.id)
       throw new APIError("Invalid token", StatusCodes.BAD_REQUEST);
@@ -295,10 +287,7 @@ export const reset_password = async_(
   ) => {
     const { password } = req.body;
     const { t } = req.query;
-    const decoded = jwt.verify(
-      t,
-      config.get<string>("jwt.secret"),
-    ) as JwtPayload;
+    const decoded = verifyToken(t) as JwtPayload;
 
     if (!decoded?.id)
       throw new APIError("Invalid token", StatusCodes.BAD_REQUEST);

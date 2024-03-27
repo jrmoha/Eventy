@@ -11,6 +11,8 @@ const {
   SALT_ROUNDS,
   HOST,
   JWT_SECRET,
+  JWT_PUBLIC_KEY,
+  JWT_PRIVATE_KEY,
   JWT_EXPIRATION,
   JWT_EMAIL_EXPIRATION,
   JWT_BEARER,
@@ -43,6 +45,8 @@ export default {
     SALT_ROUNDS,
   },
   jwt: {
+    public_key: JWT_PUBLIC_KEY,
+    private_key: JWT_PRIVATE_KEY,
     secret: JWT_SECRET,
     expiresIn: JWT_EXPIRATION,
     emailExpiresIn: JWT_EMAIL_EXPIRATION,

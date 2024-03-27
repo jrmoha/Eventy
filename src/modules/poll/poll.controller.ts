@@ -128,7 +128,6 @@ export const get_poll = async_(
           ),
           "createdAt",
         ],
-        //get first name and last name of the user as full_name
         [
           sequelize.fn(
             "concat",
@@ -138,14 +137,13 @@ export const get_poll = async_(
           ),
           "full_name",
         ],
-        //get username
         [sequelize.col("Post.Organizer.User.Person.username"), "username"],
-        //get profile image
-        [sequelize.col("Post.Organizer.User.UserImages.Image.url"), "profile_image"],
-
+        [
+          sequelize.col("Post.Organizer.User.UserImages.Image.url"),
+          "profile_image",
+        ],
       ],
       benchmark: true,
-      logging: console.log,
       replacements: { user_id },
       subQuery: false,
     });

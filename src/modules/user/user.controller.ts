@@ -1,4 +1,4 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
+import { JwtPayload } from "jsonwebtoken";
 import config from "config";
 import { NextFunction, Request, Response } from "express";
 import StatusCodes from "http-status-codes";
@@ -26,6 +26,7 @@ import Event_Interest from "../event/event.interest.model";
 import bcrypt from "bcryptjs";
 import Settings from "../settings/settings.model";
 import { FindAttributeOptions, Op } from "sequelize";
+import { signToken } from "../../utils/functions";
 
 export const update = async_(
   async (
@@ -95,9 +96,7 @@ export const update = async_(
       profile_image: req.user?.profile_image,
     };
 
-    const token = jwt.sign(payload, config.get<string>("jwt.secret"), {
-      expiresIn: config.get<string>("jwt.expiresIn"),
-    });
+    const token = signToken(payload);
 
     return res.status(StatusCodes.OK).json({
       success: true,
@@ -174,9 +173,7 @@ export const change_password = async_(
       profile_image: req.user?.profile_image,
     };
 
-    const token = jwt.sign(payload, config.get<string>("jwt.secret"), {
-      expiresIn: config.get<string>("jwt.expiresIn"),
-    });
+    const token = signToken(payload);
 
     return res.status(StatusCodes.OK).json({ success: true, token });
   },
@@ -222,9 +219,7 @@ export const uploadImage = async_(
       profile_image: secure_url,
     };
 
-    const token = jwt.sign(payload, config.get<string>("jwt.secret"), {
-      expiresIn: config.get<string>("jwt.expiresIn"),
-    });
+    const token = signToken(payload);
 
     return res.status(StatusCodes.CREATED).json({
       success: true,
@@ -280,9 +275,7 @@ export const deleteImage = async_(
       profile_image: newProfileImage?.secure_url,
     };
 
-    const token = jwt.sign(payload, config.get<string>("jwt.secret"), {
-      expiresIn: config.get<string>("jwt.expiresIn"),
-    });
+    const token = signToken(payload);
 
     return res.status(StatusCodes.OK).json({
       success: true,

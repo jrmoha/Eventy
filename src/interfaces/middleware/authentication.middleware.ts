@@ -2,9 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import StatusCodes from "http-status-codes";
 import { async_ } from "./async.middleware";
 import { APIError } from "../../types/APIError.error";
-import jwt, { JwtPayload } from "jsonwebtoken";
+// import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "config";
 import Person from "../../modules/person/person.model";
+import { verifyToken } from "../../utils/functions";
 
 export const authenticate = (optional = false, ...roles: string[]) => {
   return async_(async (req: Request, res: Response, next: NextFunction) => {
@@ -23,10 +24,7 @@ export const authenticate = (optional = false, ...roles: string[]) => {
 
     const baseToken = token.split(" ")[1];
 
-    const decoded = jwt.verify(
-      baseToken,
-      config.get<string>("jwt.secret"),
-    ) as JwtPayload;
+    const decoded = verifyToken(baseToken);
 
     if (!decoded?.id)
       throw new APIError("Invalid token", StatusCodes.UNAUTHORIZED);
