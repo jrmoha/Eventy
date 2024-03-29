@@ -28,15 +28,26 @@ export const search = async_(
           [Op.match]: sequelize.fn("websearch_to_tsquery", "english", q),
         },
       },
-      attributes: ["id", "location", "date", "time", "likes_count",
-      [sequelize.literal(`ts_rank(search, websearch_to_tsquery('english', :query))`), "rank"]
-    ],
-      order: sequelize.literal(
-        "ts_rank(search, websearch_to_tsquery('english', :query)) DESC",
-      ),
+      attributes: [
+        "id",
+        "location",
+        "date",
+        "time",
+        "likes_count",
+        [
+          sequelize.literal(
+            `ts_rank(search, websearch_to_tsquery('english', :query))`,
+          ),
+          "rank",
+        ],
+      ],
+      // order: sequelize.literal(
+      //   "ts_rank(search, websearch_to_tsquery('english', :query)) DESC",
+      // ),
+      order: sequelize.literal("rank DESC"),
       replacements: { query: q },
       benchmark: true,
-      logging: true,
+      logging: console.log,
     });
 
     return res.status(StatusCodes.OK).json({ success: true, data: events });

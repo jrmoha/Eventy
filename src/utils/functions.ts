@@ -36,22 +36,26 @@ export const numberToString = (num: number): string => {
   if (num < 1000000000) return (num / 1000000).toFixed(1) + "M";
   return "0";
 };
+
 /**
  * This function signs a token
  * @param payload
  * @returns string - The signed token
  */
+
 export const signToken = (payload: JwtPayload): string => {
   return jwt.sign(payload, config.get<string>("jwt.private_key"), {
     expiresIn: config.get<string>("jwt.expiresIn"),
     algorithm: "RS256",
   });
 };
+
 /**
  * This function verifies a token
  * @param token
  * @returns JwtPayload
  */
+
 export const verifyToken = (token: string): JwtPayload => {
   return jwt.verify(token, config.get<string>("jwt.public_key"), {
     algorithms: ["RS256"],

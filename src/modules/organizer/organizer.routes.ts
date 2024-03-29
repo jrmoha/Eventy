@@ -12,7 +12,14 @@ router.get(
   blocking(":username"),
   OC.profile,
 );
-router.get("/events/:id", authenticate(true, "u", "o"), OC.events);
+
+router.get(
+  "/events/:username",
+  authenticate(true, "u", "o"),
+  blocking(":username"),
+  OC.events,
+);
+
 router.get(
   "/likes/:username",
   authenticate(true, "u", "o"),
