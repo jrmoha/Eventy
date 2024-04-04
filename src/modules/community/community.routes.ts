@@ -4,6 +4,7 @@ import {
   delete_community,
   delete_member,
   get_communities,
+  get_messages,
   join,
   leave,
   make_admin,
@@ -56,5 +57,7 @@ router.delete(
   validate(communityMemberSchema),
   delete_member,
 );
+//messages of a community
+router.get("/messages/:community_id", authenticate(false, "u", "o"), get_messages);
 
 export default router;

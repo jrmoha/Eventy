@@ -16,6 +16,9 @@ import {
   AdminInput,
   DeleteCommunityInput,
 } from "./community.validator";
+import UserImage from "../image/user.image.model";
+import User from "../user/user.model";
+import Person from "../person/person.model";
 
 export const get_communities = async_(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -393,6 +396,107 @@ export const send_message = async_(
     return res.status(StatusCodes.OK).json({
       success: true,
       // data: community_message,
+    });
+  },
+);
+export const get_messages = async_(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { community_id } = req.params;
+    const user_id = req.user?.id;
+
+    const community = await Community.findByPk(community_id);
+    if (!community)
+      throw new APIError("Community not found", StatusCodes.NOT_FOUND);
+
+    const membership = await CommunityMembership.findOne({
+      where: {
+        user_id,
+        community_id,
+      },
+    });
+
+    if (!membership)
+      throw new APIError("Not a member", StatusCodes.BAD_REQUEST);
+
+    const userImage = await UserImage.findOne({
+      where: { user_id, is_profile: true },
+      include: [
+        {
+          model: Image,
+          required: true,
+          attributes: [],
+        },
+      ],
+      attributes: [[sequelize.col("Image.url"), "profile_image"]],
+    });
+
+    const apifeatures = new APIFeatures(req.query).paginate();
+
+    const messages = await CommunityMessage.findAll({
+      where: { community_id },
+      include: [
+        {
+          model: User,
+          required: true,
+          attributes: [],
+          include: [
+            {
+              model: Person,
+              required: true,
+              attributes: [],
+            },
+            {
+              model: UserImage,
+              required: true,
+              attributes: [],
+              where: { is_profile: true },
+              include: [
+                {
+                  model: Image,
+                  required: true,
+                  attributes: [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      attributes: [
+        "id",
+        "message",
+        "sender_id",
+        //  [
+        //   sequelize.fn(
+        //     "to_char",
+        //     sequelize.col("createdAt"),
+        //     "YYYY-MM-DD HH24:MI:SS",
+        //   ),
+        "createdAt",
+        // ],
+        //concat first name and last name as full name
+        // [
+        //   sequelize.fn(
+        //     "concat",
+        //     sequelize.col("User.Person.first_name"),
+        //     " ",
+        //     sequelize.col("User.Person.last_name"),
+        //   ),
+        //   "full_name",
+        // ],
+        [sequelize.col("User.Person.username"), "username"],
+        [sequelize.col("User.UserImages.Image.secure_url"), "profile_image"],
+      ],
+      order: [["createdAt", "DESC"]],
+      ...apifeatures.query,
+      subQuery: false,
+    });
+
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      data: {
+        profile_image: userImage?.getDataValue("profile_image"),
+        messages,
+      },
     });
   },
 );
