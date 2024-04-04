@@ -3,31 +3,21 @@ import { async_ } from "../../interfaces/middleware/async.middleware";
 import { sequelize } from "../../database";
 import StatusCodes from "http-status-codes";
 import Event from "../event/event.model";
-import { Op } from "sequelize";
+import { SearchInput } from "./search.validator";
+import QueryBuilder from "./search.helper";
 
 export const search = async_(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { q } = req.query;
-
-    // let query = `SELECT e.id,e.location,e.date,e.time,e.likes_count,`;
-    // query += `ts_rank(search, query) AS rank `;
-    // query += `FROM events e, websearch_to_tsquery('english', :query) AS query `;
-    // query += `WHERE search @@ query `;
-    // query += `ORDER BY rank DESC;`;
-
-    // const events = await sequelize.query(query, {
-    //   replacements: { query: q },
-    //   model: Event,
-    //   benchmark: true,
-    //   logging: console.log,
-    // });
+  async (
+    req: Request<{}, {}, {}, SearchInput>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    console.log(req.query);
+    
+    const queryBuilder = new QueryBuilder(req.query).build();
 
     const events = await Event.findAll({
-      where: {
-        search: {
-          [Op.match]: sequelize.fn("websearch_to_tsquery", "english", q),
-        },
-      },
+      where: queryBuilder,
       attributes: [
         "id",
         "location",
@@ -41,11 +31,8 @@ export const search = async_(
           "rank",
         ],
       ],
-      // order: sequelize.literal(
-      //   "ts_rank(search, websearch_to_tsquery('english', :query)) DESC",
-      // ),
       order: sequelize.literal("rank DESC"),
-      replacements: { query: q },
+      replacements: { query: req.query.q },
       benchmark: true,
       logging: console.log,
     });
