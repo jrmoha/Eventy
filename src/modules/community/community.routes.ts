@@ -58,6 +58,10 @@ router.delete(
   delete_member,
 );
 //messages of a community
-router.get("/messages/:community_id", authenticate(false, "u", "o"), get_messages);
+router.get(
+  "/messages/:community_id",
+  authenticate(false, "u", "o"),
+  get_messages,
+);
 
 export default router;

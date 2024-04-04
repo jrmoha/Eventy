@@ -1,6 +1,8 @@
-import { Op } from "sequelize";
+import { Includeable, Op } from "sequelize";
 import { SearchInput } from "./search.validator";
 import { sequelize } from "../../database";
+import EventCategory from "../category/event.category.model";
+import Ticket from "../event/event.tickets.model";
 
 interface IWhere {
   [key: string]: {
@@ -36,7 +38,7 @@ const dateOperators = {
 class QueryBuilder {
   private readonly query: SearchInput;
   private readonly where: IWhere;
-  //   private readonly includes: Includeable[] = [];
+  private readonly includes: Includeable[] = [];
 
   constructor(query: SearchInput) {
     this.query = query;
@@ -44,7 +46,17 @@ class QueryBuilder {
   }
 
   build() {
-    const { q, location, date } = this.query;
+    const {
+      q,
+      location,
+      date,
+      from_date,
+      to_date,
+      category,
+      price,
+      min_price,
+      max_price,
+    } = this.query;
 
     this.where["search"] = {
       [Op.match]: sequelize.fn("websearch_to_tsquery", "english", q),
@@ -64,13 +76,68 @@ class QueryBuilder {
       } else {
         this.where["date"] = dateOperators[key];
       }
-    } else if (this.query.from_date && this.query.to_date) {
+    } else if (from_date && to_date) {
       this.where["date"] = {
-        [Op.gte]: new Date(this.query.from_date),
-        [Op.lte]: new Date(this.query.to_date),
+        [Op.gte]: new Date(from_date),
+        [Op.lte]: new Date(to_date),
       };
     }
 
+    if (category) {
+      this.includes.push({
+        model: EventCategory,
+        where: {
+          category: {
+            [Op.iLike]: `%${category}%`,
+          },
+        },
+        required: true,
+        attributes: [],
+      });
+    }
+    if (price) {
+      if (price === "free") {
+        this.includes.push({
+          model: Ticket,
+          where: {
+            price: 0,
+          },
+          required: true,
+          attributes: [],
+        });
+      } else {
+        this.includes.push({
+          model: Ticket,
+          where: {
+            price: {
+              [Op.gt]: 0,
+            },
+          },
+          required: true,
+          attributes: [],
+        });
+      }
+    } else if (min_price && max_price) {
+      this.includes.push({
+        model: Ticket,
+        where: {
+          price: {
+            [Op.between]: [min_price, max_price],
+          },
+        },
+        required: true,
+        attributes: [],
+      });
+    }
+
+    return this;
+  }
+
+  get _includes() {
+    return this.includes;
+  }
+
+  get _where() {
     return this.where;
   }
 }

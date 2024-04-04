@@ -12,12 +12,12 @@ export const search = async_(
     res: Response,
     next: NextFunction,
   ) => {
-    console.log(req.query);
-    
     const queryBuilder = new QueryBuilder(req.query).build();
 
     const events = await Event.findAll({
-      where: queryBuilder,
+      where: queryBuilder._where,
+
+      include: [...queryBuilder._includes],
       attributes: [
         "id",
         "location",
