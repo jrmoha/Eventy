@@ -34,12 +34,24 @@ export const searchSchema = z.object({
       .optional(),
     category: z.string().trim().optional(),
     price: z.enum(["free", "paid"]).optional(),
-    min_price: z.string().refine((data) => !isNaN(Number(data)), {
-      message: "min_price must be a number",
-    }),
-    max_price: z.string().refine((data) => !isNaN(Number(data)), {
-      message: "max_price must be a number",
-    }),
+    min_price: z
+      .string()
+      .refine((data) => !isNaN(Number(data)), {
+        message: "min_price must be a number",
+      })
+      .optional(),
+    max_price: z
+      .string()
+      .refine((data) => !isNaN(Number(data)), {
+        message: "max_price must be a number",
+      })
+      .optional(),
+    only_from_following: z
+      .string()
+      .refine((val) => {
+        return val === "true" || val === "false";
+      })
+      .optional(),
   }),
   // .refine(
   //   (data) => {

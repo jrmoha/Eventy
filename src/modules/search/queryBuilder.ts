@@ -3,6 +3,7 @@ import { SearchInput } from "./search.validator";
 import { sequelize } from "../../database";
 import EventCategory from "../category/event.category.model";
 import Ticket from "../event/event.tickets.model";
+import Post from "../post/post.model";
 
 interface IWhere {
   [key: string]: {
@@ -37,12 +38,14 @@ const dateOperators = {
 };
 class QueryBuilder {
   private readonly query: SearchInput;
+  private readonly user_id?: number;
   private readonly where: IWhere;
   private readonly includes: Includeable[] = [];
 
-  constructor(query: SearchInput) {
+  constructor(query: SearchInput, user_id?: number) {
     this.query = query;
     this.where = {};
+    this.user_id = user_id;
   }
 
   build() {
@@ -56,6 +59,7 @@ class QueryBuilder {
       price,
       min_price,
       max_price,
+      only_from_following,
     } = this.query;
 
     this.where["search"] = {
@@ -128,6 +132,34 @@ class QueryBuilder {
         required: true,
         attributes: [],
       });
+    }
+    if (only_from_following) {
+      if (this.user_id) {
+        this.includes.push({
+          model: Post,
+          attributes: [],
+          where: {
+            status: "published",
+            organizer_id: {
+              [Op.in]: sequelize.literal(
+                `(SELECT followed_id FROM "follow" WHERE follower_id = :user_id)`,
+              ),
+            },
+          },
+          required: true,
+        });
+      } else {
+        console.log("User not found");
+        
+        this.includes.push({
+          model: Post,
+          attributes: [],
+          where: {
+            status: "published",
+          },
+          required: true,
+        });
+      }
     }
 
     return this;
