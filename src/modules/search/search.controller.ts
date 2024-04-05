@@ -5,7 +5,8 @@ import StatusCodes from "http-status-codes";
 import Event from "../event/event.model";
 import { SearchInput } from "./search.validator";
 import QueryBuilder from "./queryBuilder";
-import { FindAttributeOptions } from "sequelize";
+import EventImage from "../image/event.image.model";
+import Image from "../image/image.model";
 
 export const search = async_(
   async (
@@ -15,25 +16,24 @@ export const search = async_(
   ) => {
     const queryBuilder = new QueryBuilder(req.query, req.user?.id).build();
 
-    const attributes: FindAttributeOptions = [
-      "id",
-      "location",
-      "date",
-      "time",
-      "likes_count",
-      [
-        sequelize.literal(
-          `ts_rank(search, websearch_to_tsquery('english', :query))`,
-        ),
-        "rank",
-      ],
-    ];
-
-    console.log(queryBuilder._where);
     const events = await Event.findAll({
       where: queryBuilder._where,
-      include: queryBuilder._includes,
-      attributes,
+      include: [
+        ...queryBuilder._includes,
+        {
+          model: EventImage,
+          required: true,
+          attributes: [],
+          include: [
+            {
+              model: Image,
+              required: true,
+              attributes: [],
+            },
+          ],
+        },
+      ],
+      attributes: queryBuilder._attributes,
       order: sequelize.literal("rank DESC"),
       replacements: { query: req.query.q, user_id: req.user?.id },
       benchmark: true,
