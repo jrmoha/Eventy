@@ -215,16 +215,26 @@ class QueryBuilder {
       ...(literal ? literal : []),
     ];
   }
-
-  get _includes() {
+  /**
+   * @description Get includes for the query
+   * @returns {Includeable[]} includes
+   */
+  get _includes(): Includeable[] {
     return this.includes;
   }
-
-  get _where() {
+  /**
+   * @description Get where for the query
+   * @returns {IWhere} where
+   */
+  get _where(): IWhere {
     return this.where;
   }
-
-  get _attributes() {
+  /**
+   * @description Get attributes for the query
+   * @returns {FindAttributeOptions} attributes
+   *
+   */
+  get _attributes(): FindAttributeOptions {
     return this.attributes;
   }
 }

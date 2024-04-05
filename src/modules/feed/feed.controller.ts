@@ -162,7 +162,7 @@ export const get_home = async_(
         order: [["createdAt", "DESC"]],
       });
       event.setDataValue("image", image?.dataValues.url);
-      event.setDataValue("date", event.date.toDateString());
+      event.setDataValue("date", event.date);
     });
 
     await Promise.all(promises);
