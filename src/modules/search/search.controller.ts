@@ -7,14 +7,16 @@ import { SearchInput } from "./search.validator";
 import QueryBuilder from "./queryBuilder";
 import EventImage from "../image/event.image.model";
 import Image from "../image/image.model";
+import { APIFeatures, queryString } from "../../utils/api.features";
 
 export const search = async_(
   async (
-    req: Request<{}, {}, {}, SearchInput>,
+    req: Request<{}, {}, {}, SearchInput & queryString>,
     res: Response,
     next: NextFunction,
   ) => {
     const queryBuilder = new QueryBuilder(req.query, req.user?.id).build();
+    const apifeatures = new APIFeatures(req.query).paginate();
 
     const events = await Event.findAll({
       where: queryBuilder._where,
@@ -36,6 +38,7 @@ export const search = async_(
       attributes: queryBuilder._attributes,
       order: sequelize.literal("rank DESC"),
       replacements: { query: req.query.q, user_id: req.user?.id },
+      ...apifeatures.query,
       benchmark: true,
       logging: console.log,
       subQuery: false,

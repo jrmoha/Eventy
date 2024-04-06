@@ -1,12 +1,12 @@
 import { FindOptions } from "sequelize/types";
 
-type queryString = {
+export type queryString = {
   page?: number;
   limit?: number;
   sort?: string;
   // filter?: string;
   // search?: string;
-  select?: string;
+  // select?: string;
 };
 
 export class APIFeatures {
@@ -37,21 +37,6 @@ export class APIFeatures {
         return [el, "ASC"];
       });
       this.query.order = sortBy as [string, "ASC" | "DESC"][];
-    }
-    return this;
-  }
-
-  filter() {
-    // if (this.queryString.filter) {
-    // }
-    return this;
-  }
-
-  select() {
-    const selectFields = this.queryString.select;
-    if (selectFields) {
-      const fields = selectFields.split(",");
-      this.query.attributes = fields;
     }
     return this;
   }

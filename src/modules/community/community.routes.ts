@@ -9,12 +9,13 @@ import {
 } from "./community.validator";
 
 const router = Router();
-
+//get all communities
 router.get(
   "/all",
   authenticate(false, "u", "o"),
   CommunityController.get_communities,
 );
+//get all members of a community
 router.get(
   "/members/:id",
   authenticate(false, "u", "o"),
@@ -25,18 +26,20 @@ router.post(
   authenticate(false, "u", "o"),
   CommunityController.join,
 );
+// leave_community
 router.delete(
   "/leave/:id",
   authenticate(false, "u", "o"),
   CommunityController.leave,
 );
+// send_message to community
 router.post(
   "/send-message/:id",
   authenticate(false, "u", "o"),
   validate(communityMessageSchema),
   CommunityController.send_message,
 );
-
+// make_admin
 router.patch(
   "/make-admin/:id",
   authenticate(false, "o"),
