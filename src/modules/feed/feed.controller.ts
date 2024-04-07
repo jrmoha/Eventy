@@ -74,7 +74,8 @@ export const get_home = async_(
     let events: Event[];
 
     if (req.user) {
-      events = (await get_home_events(req)) as Event[];
+      // events = (await get_home_events(req)) as Event[];
+      events = (await random_events()) as Event[];//TODO: change this
     } else {
       events = (await random_events()) as Event[];
     }
