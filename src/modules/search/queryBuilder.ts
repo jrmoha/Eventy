@@ -210,7 +210,7 @@ class QueryBuilder {
         ),
         "rank",
       ],
-      [sequelize.col("EventImages.Image.secure_url"), "image_url"],
+      [sequelize.col("EventImages.Image.secure_url"), "image"],
       [sequelize.col("Post.content"), "content"],
       ...(literal ? literal : []),
     ];

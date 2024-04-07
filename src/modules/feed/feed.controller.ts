@@ -10,10 +10,8 @@ import UserImage from "../image/user.image.model";
 import User from "../user/user.model";
 import Person from "../person/person.model";
 import Follow from "../follow/follow.model";
+import { get_home_events, random_events } from "./feed.service";
 import Event from "../event/event.model";
-import EventImage from "../image/event.image.model";
-import Post from "../post/post.model";
-import { Literal } from "sequelize/types/utils";
 
 export const get_home = async_(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -72,100 +70,14 @@ export const get_home = async_(
         organizer.setDataValue("is_followed", is_followed ? true : false);
       }
     }
-    let literal!: [[Literal, string]];
-    if (req.user?.id) {
-      literal = [
-        [
-          sequelize.literal(
-            `EXISTS (SELECT 1 FROM likes WHERE event_id = "Post"."id" AND user_id = ${req.user?.id})`,
-          ),
-          "is_liked",
-        ],
-      ];
-      literal.push([
-        sequelize.literal(
-          `EXISTS (SELECT 1 FROM event_interest WHERE event_id = "Post"."id" AND user_id = ${req.user?.id})`,
-        ),
-        "is_interested",
-      ]);
+
+    let events: Event[];
+
+    if (req.user) {
+      events = (await get_home_events(req)) as Event[];
+    } else {
+      events = (await random_events()) as Event[];
     }
-    const events = await Event.findAll({
-      include: [
-        {
-          model: Post,
-          required: true,
-          attributes: [],
-          include: [
-            {
-              model: Organizer,
-              required: true,
-              attributes: [],
-              include: [
-                {
-                  model: User,
-                  required: true,
-                  attributes: [],
-                  include: [
-                    {
-                      model: Person,
-                      required: true,
-                      attributes: [],
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      ],
-      attributes: [
-        "id",
-        "location",
-        "date",
-        "time",
-        ...(literal?.length ? literal : []),
-        [sequelize.col("Post.content"), "content"],
-        [sequelize.col("Post.status"), "status"],
-        [sequelize.col("Post.Organizer.rate"), "rate"],
-        [
-          sequelize.fn(
-            "concat",
-            sequelize.col("Post.Organizer.User.Person.first_name"),
-            " ",
-            sequelize.col("Post.Organizer.User.Person.last_name"),
-          ),
-          "organizer_name",
-        ],
-        [
-          sequelize.col("Post.Organizer.User.followers_count"),
-          "followers_count",
-        ],
-      ],
-      where: {
-        "$Post.status$": "published",
-      },
-      order: sequelize.random(),
-      limit: 20,
-    });
-
-    const promises = events.map(async (event) => {
-      const image = await EventImage.findOne({
-        where: { event_id: event.id },
-        include: [
-          {
-            model: Image,
-            required: true,
-            attributes: [],
-          },
-        ],
-        attributes: [[sequelize.col("Image.url"), "url"]],
-        order: [["createdAt", "DESC"]],
-      });
-      event.setDataValue("image", image?.dataValues.url);
-      event.setDataValue("date", event.date);
-    });
-
-    await Promise.all(promises);
 
     return res
       .status(StatusCodes.OK)
