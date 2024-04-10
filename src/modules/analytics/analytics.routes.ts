@@ -4,6 +4,16 @@ import * as analyticsController from "./analytics.controller";
 
 const router = Router();
 
-router.get("/overview", authenticate(true, "o"), analyticsController.overview);
+router.get("/overview", authenticate(false, "o"), analyticsController.overview);
+router.get(
+  "/search",
+  authenticate(false, "o"),
+  analyticsController.searchPosts,
+);
+router.get(
+  "/:event_id",
+  authenticate(false, "o"),
+  analyticsController.eventAnalytics,
+);
 
 export default router;

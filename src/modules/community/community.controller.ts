@@ -568,6 +568,11 @@ export const community_members = async_(
         [sequelize.col("User.Person.username"), "username"],
         [sequelize.col("User.UserImages.Image.secure_url"), "profile_image"],
       ],
+      order: [
+        //order by user first one then admins then members
+        [sequelize.literal("role = 'admin'"), "DESC"],
+        [sequelize.literal("role = 'member'"), "DESC"],
+      ],
       subQuery: false,
       benchmark: true,
       logging: console.log,
