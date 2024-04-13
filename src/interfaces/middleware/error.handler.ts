@@ -47,3 +47,17 @@ export const error_handler = async function (
     }),
   });
 };
+// process.on("unhandledRejection", (reason, promise) => {
+//   logger.error(`Unhandled Rejection at: ${promise} reason: ${reason}`);
+//   process.exit(1);
+// });
+
+// process.on("uncaughtException", (error) => {
+//   logger.error(`Uncaught Exception ${error}`);
+//   process.exit(1);
+// });
+
+// process.on("SIGINT", () => {
+//   logger.info("SIGINT received...");
+//   process.exit(0);
+// });

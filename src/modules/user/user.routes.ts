@@ -12,6 +12,7 @@ import organizerRoutes from "../organizer/organizer.routes";
 import { blocking } from "../../interfaces/middleware/privacy/blocking.middleware";
 import communityRoutes from "../community/community.routes";
 import settingRoute from "../settings/settings.routes";
+import { cache } from "../../interfaces/middleware/cache.middleware";
 
 const router = Router();
 router.use("/o", organizerRoutes);
@@ -55,6 +56,7 @@ router.get(
   "/u/:username",
   authenticate(true, "u", "o"),
   blocking(":username"),
+  cache("user"),
   UC.profile,
 );
 

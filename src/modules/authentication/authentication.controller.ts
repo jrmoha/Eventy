@@ -5,7 +5,8 @@ import User from "../user/user.model";
 import { Op } from "sequelize";
 import { StatusCodes } from "http-status-codes";
 import { APIError } from "../../types/APIError.error";
-import { compare, hash, signToken, verifyToken } from "../../utils/functions";
+import { Token } from "../../utils/token";
+import Password from "../../utils/password";
 import { JwtPayload } from "jsonwebtoken";
 import config from "config";
 import {
@@ -61,7 +62,7 @@ export const signup = async_(
         throw new APIError("Phone number already exists", StatusCodes.CONFLICT);
       }
     }
-
+    const { hash } = new Password();
     const password_hash = await hash(password);
 
     const person = await Person.create({
@@ -118,6 +119,7 @@ export const login = async_(
     if (!person)
       throw new APIError("This user does not exist", StatusCodes.NOT_FOUND);
 
+    const { compare } = new Password();
     const is_password_valid = await compare(password, person.password);
 
     if (!is_password_valid)
@@ -146,6 +148,7 @@ export const login = async_(
       profile_image: profile_image?.secure_url,
     };
 
+    const { signToken } = new Token();
     const token = signToken(payload);
 
     return res
@@ -162,6 +165,7 @@ export const emailVerification = async_(
   ) => {
     const { t } = req.query;
 
+    const { verifyToken } = new Token();
     const decoded = verifyToken(t);
 
     if (!decoded?.id)
@@ -196,6 +200,7 @@ export const resendEmailVerification = async_(
   ) => {
     const t = req.query.t;
 
+    const { verifyToken } = new Token();
     const decoded = verifyToken(t) as JwtPayload;
 
     if (!decoded?.id)
@@ -287,6 +292,8 @@ export const reset_password = async_(
   ) => {
     const { password } = req.body;
     const { t } = req.query;
+
+    const { verifyToken } = new Token();
     const decoded = verifyToken(t) as JwtPayload;
 
     if (!decoded?.id)
@@ -313,6 +320,7 @@ export const reset_password = async_(
         StatusCodes.BAD_REQUEST,
       );
 
+    const { hash } = new Password();
     person.password = await hash(password);
     person.password_reset_code = null;
     person.password_reset_code_time = null;

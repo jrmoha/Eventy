@@ -14,6 +14,7 @@ import {
 } from "../src/interfaces/middleware/logger.middleware";
 import logger from "../src/utils/logger";
 import { SocketService } from "../src/services/socket";
+// import { RedisService } from "../src/cache";
 export class ExpressConfig {
   private app: Express;
   private port: number;
@@ -38,6 +39,10 @@ export class ExpressConfig {
       this.app.use(routeError);
       this.app.use(err_logger);
       this.app.use(error_handler);
+
+      //TODO: Uncomment the following lines to enable Redis
+      // const redis = new RedisService();
+      // await redis.connect();
 
       await database.init();
       server.listen(this.port, () => {

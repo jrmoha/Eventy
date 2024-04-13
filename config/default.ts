@@ -23,6 +23,9 @@ const {
   CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_API_KEY,
   CLOUDINARY_API_SECRET,
+  REDIS_URL,
+  REDIS_HOST,
+  REDIS_PORT,
 } = process.env;
 
 export default {
@@ -68,5 +71,11 @@ export default {
     default_user_image: "eventy/default_user",
     default_group_image: "eventy/kwdmhxefncz67i9mhblr",
     covers_max_length: 5,
+  },
+  redis: {
+    url: REDIS_URL,
+    host: REDIS_HOST,
+    port: REDIS_PORT,
+    ex: 60 * 60, // 1 hour
   },
 };

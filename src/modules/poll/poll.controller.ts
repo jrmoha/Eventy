@@ -13,6 +13,8 @@ import Person from "../person/person.model";
 import User from "../user/user.model";
 import UserImage from "../image/user.image.model";
 import Image from "../image/image.model";
+// import { RedisService } from "../../cache";
+// import config from "config";
 
 export const create = async_(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -150,21 +152,21 @@ export const get_poll = async_(
 
     if (!poll) throw new APIError("Poll doesn't exist", StatusCode.NOT_FOUND);
 
-    if (req.user?.id) {
-      // for (const option of poll.dataValues.options) {
-      //   await Poll_Selection.findOne({
-      //     where: { user_id, option_id: option.id },
-      //   }).then((vote) => {
-      //     option.setDataValue("voted", !!vote);
-      //   });
-      // }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      poll.dataValues.options.forEach((option: any) => {
-        option.setDataValue("voted", !!option.selections.length);
-        // option.setDataValue("selections", undefined);
-        delete option.dataValues.selections;
-      });
-    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    poll.dataValues.options.forEach((option: any) => {
+      option.setDataValue("voted", !!option.selections.length);
+      delete option.dataValues.selections;
+    });
+    //TODO: uncomment this code
+    //********** Cache Poll **********//
+    /**  const redisClient = new RedisService().Client;
+    const key = `Poll:${id}:User:${user_id}`;
+    await redisClient.set(
+      key,
+      JSON.stringify(poll),
+      "EX",
+      config.get<number>("redis.ex"),
+    );*/
 
     return res.status(StatusCode.OK).json({
       success: true,

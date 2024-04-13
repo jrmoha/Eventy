@@ -91,10 +91,10 @@ export const eventAnalytics = async_(
     const [likes, interests] = await Promise.all(promises);
 
     const data = {
-      likes: likes[1],
       likes_count: likes[0],
-      interests: interests[1],
+      likes: likes[1],
       interests_count: interests[0],
+      interests: interests[1],
     };
 
     return res.status(StatusCodes.OK).json({ success: true, data });

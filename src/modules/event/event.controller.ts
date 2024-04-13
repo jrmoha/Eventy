@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable quotes */
+// import config from "config";
 import { NextFunction, Request, Response } from "express";
 import fs from "fs";
 import { sequelize } from "../../database";
@@ -25,6 +24,7 @@ import Person from "../person/person.model";
 import User from "../user/user.model";
 import Event_Interest from "./event.interest.model";
 import { Literal } from "sequelize/types/utils";
+// import { RedisService } from "../../cache";
 
 export const create = async_(
   async (
@@ -356,6 +356,19 @@ export const get = async_(
     event.dataValues.Event.dataValues.date = new Date(
       event.dataValues.Event.dataValues.date,
     ).toDateString();
+
+    //TODO: uncomment
+    //*********** Cache the event ***********
+    /**const redisClient = new RedisService().Client;
+    let key = `Event:${id}`;
+    if (req.user) key += `:User:${req.user.id}`;
+    await redisClient.set(
+      key,
+      JSON.stringify(event),
+      "EX",
+      config.get<number>("redis.ex"),
+    );
+    */
 
     return res.status(StatusCodes.OK).json({
       success: true,

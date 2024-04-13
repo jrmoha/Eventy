@@ -26,7 +26,8 @@ import Event_Interest from "../event/event.interest.model";
 import bcrypt from "bcryptjs";
 import Settings from "../settings/settings.model";
 import { FindAttributeOptions, Op } from "sequelize";
-import { signToken } from "../../utils/functions";
+import { Token } from "../../utils/token";
+// import { RedisService } from "../../cache";
 
 export const update = async_(
   async (
@@ -96,6 +97,7 @@ export const update = async_(
       profile_image: req.user?.profile_image,
     };
 
+    const { signToken } = new Token();
     const token = signToken(payload);
 
     return res.status(StatusCodes.OK).json({
@@ -173,6 +175,7 @@ export const change_password = async_(
       profile_image: req.user?.profile_image,
     };
 
+    const { signToken } = new Token();
     const token = signToken(payload);
 
     return res.status(StatusCodes.OK).json({ success: true, token });
@@ -219,6 +222,7 @@ export const uploadImage = async_(
       profile_image: secure_url,
     };
 
+    const { signToken } = new Token();
     const token = signToken(payload);
 
     return res.status(StatusCodes.CREATED).json({
@@ -275,6 +279,7 @@ export const deleteImage = async_(
       profile_image: newProfileImage?.secure_url,
     };
 
+    const { signToken } = new Token();
     const token = signToken(payload);
 
     return res.status(StatusCodes.OK).json({
@@ -417,6 +422,18 @@ export const profile = async_(
       default:
         break;
     }
+
+    //********Cache *********
+    //TODO:uncomment this code
+    /** const redisClient = new RedisService().Client;
+    let key = `User:${id}`;
+    if (req.user) key += `:User:${req.user.id}`;
+    await redisClient.set(
+      key,
+      JSON.stringify(user),
+      "EX",
+      config.get<number>("redis.ex"),
+    );*/
 
     return res.status(StatusCodes.OK).json({ success: true, data: user });
   },

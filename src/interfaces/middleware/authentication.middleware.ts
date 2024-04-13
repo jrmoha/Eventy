@@ -4,7 +4,7 @@ import { async_ } from "./async.middleware";
 import { APIError } from "../../types/APIError.error";
 import config from "config";
 import Person from "../../modules/person/person.model";
-import { verifyToken } from "../../utils/functions";
+import { Token } from "../../utils/token";
 
 export const authenticate = (optional = false, ...roles: string[]) => {
   return async_(async (req: Request, res: Response, next: NextFunction) => {
@@ -23,6 +23,7 @@ export const authenticate = (optional = false, ...roles: string[]) => {
 
     const baseToken = token.split(" ")[1];
 
+    const { verifyToken } = new Token();
     const decoded = verifyToken(baseToken);
 
     if (!decoded?.id)

@@ -7,6 +7,7 @@ import { validate } from "../../interfaces/middleware/validator.middleware";
 import { createEventSchema, interestSchema } from "./event.validator";
 import likeRoutes from "../like/like.routes";
 import searchRoutes from "../search/search.routes";
+// import { cache } from "../../interfaces/middleware/cache.middleware";
 
 const router = Router();
 
@@ -23,7 +24,12 @@ router.post(
   validate(createEventSchema),
   create,
 );
-router.get("/event/:id", authenticate(true, "u", "o"), get);
+router.get(
+  "/event/:id",
+  authenticate(true, "u", "o"),
+  // cache("event"),
+  get,
+);
 router.post(
   "/:id/interest",
   authenticate(false, "o", "u"),
