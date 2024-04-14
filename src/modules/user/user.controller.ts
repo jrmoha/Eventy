@@ -27,6 +27,7 @@ import bcrypt from "bcryptjs";
 import Settings from "../settings/settings.model";
 import { FindAttributeOptions, Op } from "sequelize";
 import { Token } from "../../utils/token";
+// import { CacheKeysGenerator } from "../../utils/cacheKeysGenerator";
 // import { RedisService } from "../../cache";
 
 export const update = async_(
@@ -426,8 +427,7 @@ export const profile = async_(
     //********Cache *********
     //TODO:uncomment this code
     /** const redisClient = new RedisService().Client;
-    let key = `User:${id}`;
-    if (req.user) key += `:User:${req.user.id}`;
+     const key = new CacheKeysGenerator().keysGenerator["user"](req);
     await redisClient.set(
       key,
       JSON.stringify(user),

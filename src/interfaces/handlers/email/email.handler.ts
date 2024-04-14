@@ -1,7 +1,7 @@
 import Person from "../../../modules/person/person.model";
 import config from "config";
-import jwt from "jsonwebtoken";
 import { sendEmail } from "../../../services/mailer";
+import { Token } from "../../../utils/token";
 
 type EmailURL = { origin: string };
 
@@ -11,13 +11,15 @@ export const sendResetPasswordEmail = function (
 ) {
   const { id, email, first_name, password_reset_code } = data;
 
-  const token = jwt.sign(
-    { id, email, password_reset_code },
-    config.get<string>("jwt.secret"),
-    {
-      expiresIn: `${config.get<string>("PASSWORD_RESET_CODE_EXPIRES_IN")}m`,
-    },
-  );
+  if (!password_reset_code) return;
+
+  const { signPasswordResetToken } = new Token();
+  const payload = {
+    id,
+    email,
+    password_reset_code,
+  };
+  const token = signPasswordResetToken(payload);
 
   const config_ = {
     mailserver: {
@@ -51,22 +53,12 @@ export const sendVerificationEmail = function (
   { origin }: EmailURL,
 ) {
   const { email, first_name, id } = data;
-
-  const token = jwt.sign(
-    {
-      id,
-    },
-    config.get<string>("jwt.secret"),
-    {
-      expiresIn: config.get<string>("jwt.emailExpiresIn"),
-    },
-  );
-  const resend_token = jwt.sign(
-    {
-      id,
-    },
-    config.get<string>("jwt.secret"),
-  );
+  const { signEmailToken, signResendEmailToken } = new Token();
+  const payload = {
+    id,
+  };
+  const token = signEmailToken(payload);
+  const resend_token = signResendEmailToken(payload);
 
   const config_ = {
     mailserver: {

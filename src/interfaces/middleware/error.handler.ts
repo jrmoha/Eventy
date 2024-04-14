@@ -3,6 +3,7 @@ import config from "config";
 import StatusCodes from "http-status-codes";
 import { APIError } from "../../types/APIError.error";
 import fs from "fs";
+import logger from "../../utils/logger";
 
 export const routeError = function (
   req: Request,
@@ -23,7 +24,7 @@ export const error_handler = async function (
   next: NextFunction,
 ) {
   if (req.file) fs.unlinkSync(req.file.path);
-  
+
   if (req.transaction) await req.transaction.rollback();
 
   if (err instanceof APIError) {
@@ -47,17 +48,20 @@ export const error_handler = async function (
     }),
   });
 };
-// process.on("unhandledRejection", (reason, promise) => {
-//   logger.error(`Unhandled Rejection at: ${promise} reason: ${reason}`);
-//   process.exit(1);
-// });
 
-// process.on("uncaughtException", (error) => {
-//   logger.error(`Uncaught Exception ${error}`);
-//   process.exit(1);
-// });
+export const unhandledRejection = (
+  reason: unknown,
+  promise: Promise<unknown>,
+) => {
+  logger.error(`Unhandled Rejection at: ${promise} reason: ${reason}`);
+  process.exit(1);
+};
+export const uncaughtException = (error: Error) => {
+  logger.error(`Uncaught Exception ${error}`);
+  process.exit(1);
+};
 
-// process.on("SIGINT", () => {
-//   logger.info("SIGINT received...");
-//   process.exit(0);
-// });
+export const sigint = () => {
+  logger.info("SIGINT received...");
+  process.exit(0);
+};

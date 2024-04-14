@@ -32,6 +32,12 @@ export const validate =
     }
   };
 
+/**
+ * @description Trims all string values in an object
+ * @param obj - The object to trim
+ * @returns The object with all string values trimmed
+ */
+
 function trimStringValues(
   obj: Record<string, unknown>,
 ): Record<string, unknown> {

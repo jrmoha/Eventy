@@ -8,7 +8,7 @@ export class Token {
    * @returns string - The signed token
    */
 
-  public signToken(payload: JwtPayload): string {
+  public signAccessToken(payload: JwtPayload): string {
     return jwt.sign(payload, config.get<string>("jwt.private_key"), {
       expiresIn: config.get<string>("jwt.expiresIn"),
       algorithm: "RS256",
@@ -25,5 +25,38 @@ export class Token {
     return jwt.verify(token, config.get<string>("jwt.public_key"), {
       algorithms: ["RS256"],
     }) as JwtPayload;
+  }
+  /**
+   * @description This function signs a token for email verification
+   * @param payload
+   * @returns string - The signed token
+   *
+   */
+  public signEmailToken(payload: JwtPayload): string {
+    return jwt.sign(payload, config.get<string>("jwt.private_key"), {
+      expiresIn: config.get<string>("jwt.emailExpiresIn"),
+      algorithm: "RS256",
+    });
+  }
+  /**
+   * @description This function signs a token for resending email verification
+   * @param payload
+   * @returns string - The signed token
+   */
+  public signResendEmailToken(payload: JwtPayload): string {
+    return jwt.sign(payload, config.get<string>("jwt.private_key"), {
+      algorithm: "RS256",
+    });
+  }
+  /**
+   * @description This function signs a token for password reset
+   * @param payload
+   * @returns string - The signed token
+   */
+  public signPasswordResetToken(payload: JwtPayload): string {
+    return jwt.sign(payload, config.get<string>("jwt.private_key"), {
+      expiresIn: `${config.get<string>("PASSWORD_RESET_CODE_EXPIRES_IN")}m`,
+      algorithm: "RS256",
+    });
   }
 }

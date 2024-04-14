@@ -65,19 +65,24 @@ export const signup = async_(
     const { hash } = new Password();
     const password_hash = await hash(password);
 
-    const person = await Person.create({
-      username,
-      email,
-      phone_number,
-      first_name,
-      last_name,
-      password: password_hash,
-      birthdate,
-      gender,
-    });
+    const t = await sequelize.transaction();
 
-    await User.create({ id: person.id });
-    if (config.get<string>("NODE_ENV") !== "development")
+    const person = await Person.create(
+      {
+        username,
+        email,
+        phone_number,
+        first_name,
+        last_name,
+        password: password_hash,
+        birthdate,
+        gender,
+      },
+      { transaction: t },
+    );
+
+    await User.create({ id: person.id }, { transaction: t });
+    if (config.get<string>("NODE_ENV") === "development")
       sendVerificationEmail(person, {
         origin: req.get("origin") || req.protocol + "://" + req.get("host"),
       })
@@ -85,13 +90,18 @@ export const signup = async_(
         .catch((err) => logger.error(err.message));
     else {
       person.confirmed = true;
-      await person.save();
-      await Settings.create({ user_id: person.id });
-      await UserImage.create({
-        public_id: config.get<string>("images.default_user_image"),
-        user_id: person.id,
-      });
+      await person.save({ transaction: t });
+      await Settings.create({ user_id: person.id }, { transaction: t });
+      await UserImage.create(
+        {
+          public_id: config.get<string>("images.default_user_image"),
+          user_id: person.id,
+        },
+        { transaction: t },
+      );
     }
+
+    await t.commit();
 
     return res
       .status(StatusCodes.CREATED)
@@ -148,8 +158,8 @@ export const login = async_(
       profile_image: profile_image?.secure_url,
     };
 
-    const { signToken } = new Token();
-    const token = signToken(payload);
+    const { signAccessToken } = new Token();
+    const token = signAccessToken(payload);
 
     return res
       .status(StatusCodes.OK)

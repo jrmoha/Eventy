@@ -1,4 +1,3 @@
-/* eslint-disable quotes */
 import { NextFunction, Request, Response } from "express";
 import { async_ } from "../../interfaces/middleware/async.middleware";
 import Event from "../event/event.model";

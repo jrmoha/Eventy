@@ -24,6 +24,7 @@ import Person from "../person/person.model";
 import User from "../user/user.model";
 import Event_Interest from "./event.interest.model";
 import { Literal } from "sequelize/types/utils";
+// import { CacheKeysGenerator } from "../../utils/cacheKeysGenerator";
 // import { RedisService } from "../../cache";
 
 export const create = async_(
@@ -360,8 +361,7 @@ export const get = async_(
     //TODO: uncomment
     //*********** Cache the event ***********
     /**const redisClient = new RedisService().Client;
-    let key = `Event:${id}`;
-    if (req.user) key += `:User:${req.user.id}`;
+     const key = new CacheKeysGenerator().keysGenerator["event"](req);
     await redisClient.set(
       key,
       JSON.stringify(event),
