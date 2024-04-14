@@ -3,6 +3,7 @@ import { authenticate } from "../../interfaces/middleware/authentication.middlew
 import { blocking } from "../../interfaces/middleware/privacy/blocking.middleware";
 import * as OC from "./organizer.controller";
 import * as UC from "../user/user.controller";
+import { cache } from "../../interfaces/middleware/cache.middleware";
 
 const router = Router();
 
@@ -10,6 +11,7 @@ router.get(
   "/:username",
   authenticate(true, "u", "o"),
   blocking(":username"),
+  cache("organizer"),
   OC.profile,
 );
 

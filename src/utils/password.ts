@@ -2,6 +2,7 @@ import config from "config";
 import bcrypt from "bcryptjs";
 
 class Password {
+  constructor() {}
   /**
    * @description This function hashes a password
    * @param password

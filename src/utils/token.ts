@@ -1,7 +1,7 @@
 import config from "config";
 import jwt, { JwtPayload } from "jsonwebtoken";
-
 export class Token {
+  constructor() {}
   /**
    * This function signs a token
    * @param payload

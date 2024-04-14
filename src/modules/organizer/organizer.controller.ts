@@ -14,6 +14,8 @@ import Event from "../event/event.model";
 import EventImage from "../image/event.image.model";
 import Post from "../post/post.model";
 import { APIFeatures } from "../../utils/api.features";
+import { RedisService } from "../../cache";
+import { CacheKeysGenerator } from "../../utils/cacheKeysGenerator";
 
 export const profile = async_(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -156,6 +158,10 @@ export const profile = async_(
         break;
     }
 
+    const redisClient = new RedisService();
+    const key = new CacheKeysGenerator().keysGenerator["organizer"](req);
+    await redisClient.set(key, organizer);
+
     return res.status(StatusCodes.OK).json({ success: true, data: organizer });
   },
 );
@@ -192,7 +198,14 @@ export const events = async_(
       attributes: [
         [sequelize.col("Event.id"), "event_id"],
         "content",
-        [sequelize.fn("to_char",sequelize.col("Event.date"), "YYYY-MM-DD HH24:MI:SS"), "date"],
+        [
+          sequelize.fn(
+            "to_char",
+            sequelize.col("Event.date"),
+            "YYYY-MM-DD HH24:MI:SS",
+          ),
+          "date",
+        ],
         [sequelize.col("Event.location"), "location"],
         [sequelize.col("Event.time"), "time"],
         [sequelize.col("Event.EventImages.Image.url"), "image_url"],

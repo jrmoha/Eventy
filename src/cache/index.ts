@@ -27,7 +27,17 @@ export class RedisService {
       });
     });
   }
-
+  public async set(key: string, value: Object): Promise<string> {
+    return this.client.set(
+      key,
+      JSON.stringify(value),
+      "EX",
+      config.get<number>("redis.ex"),
+    );
+  }
+  public async del(key: string): Promise<number> {
+    return this.client.del(key);
+  }
   get Client() {
     return this.client;
   }

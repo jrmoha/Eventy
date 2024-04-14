@@ -27,8 +27,8 @@ import bcrypt from "bcryptjs";
 import Settings from "../settings/settings.model";
 import { FindAttributeOptions, Op } from "sequelize";
 import { Token } from "../../utils/token";
-// import { CacheKeysGenerator } from "../../utils/cacheKeysGenerator";
-// import { RedisService } from "../../cache";
+import { CacheKeysGenerator } from "../../utils/cacheKeysGenerator";
+import { RedisService } from "../../cache";
 
 export const update = async_(
   async (
@@ -98,8 +98,8 @@ export const update = async_(
       profile_image: req.user?.profile_image,
     };
 
-    const { signToken } = new Token();
-    const token = signToken(payload);
+    const { signAccessToken } = new Token();
+    const token = signAccessToken(payload);
 
     return res.status(StatusCodes.OK).json({
       success: true,
@@ -176,8 +176,8 @@ export const change_password = async_(
       profile_image: req.user?.profile_image,
     };
 
-    const { signToken } = new Token();
-    const token = signToken(payload);
+    const { signAccessToken } = new Token();
+    const token = signAccessToken(payload);
 
     return res.status(StatusCodes.OK).json({ success: true, token });
   },
@@ -223,8 +223,8 @@ export const uploadImage = async_(
       profile_image: secure_url,
     };
 
-    const { signToken } = new Token();
-    const token = signToken(payload);
+    const { signAccessToken } = new Token();
+    const token = signAccessToken(payload);
 
     return res.status(StatusCodes.CREATED).json({
       success: true,
@@ -280,8 +280,8 @@ export const deleteImage = async_(
       profile_image: newProfileImage?.secure_url,
     };
 
-    const { signToken } = new Token();
-    const token = signToken(payload);
+    const { signAccessToken } = new Token();
+    const token = signAccessToken(payload);
 
     return res.status(StatusCodes.OK).json({
       success: true,
@@ -425,15 +425,9 @@ export const profile = async_(
     }
 
     //********Cache *********
-    //TODO:uncomment this code
-    /** const redisClient = new RedisService().Client;
-     const key = new CacheKeysGenerator().keysGenerator["user"](req);
-    await redisClient.set(
-      key,
-      JSON.stringify(user),
-      "EX",
-      config.get<number>("redis.ex"),
-    );*/
+    const redisClient = new RedisService();
+    const key: string = new CacheKeysGenerator().keysGenerator["user"](req);
+    await redisClient.set(key, user);
 
     return res.status(StatusCodes.OK).json({ success: true, data: user });
   },

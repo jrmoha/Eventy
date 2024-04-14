@@ -13,8 +13,8 @@ import Person from "../person/person.model";
 import User from "../user/user.model";
 import UserImage from "../image/user.image.model";
 import Image from "../image/image.model";
-// import { RedisService } from "../../cache";
-// import config from "config";
+import { RedisService } from "../../cache";
+import { CacheKeysGenerator } from "../../utils/cacheKeysGenerator";
 
 export const create = async_(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -157,16 +157,11 @@ export const get_poll = async_(
       option.setDataValue("voted", !!option.selections.length);
       delete option.dataValues.selections;
     });
-    //TODO: uncomment this code
+
     //********** Cache Poll **********//
-    /**  const redisClient = new RedisService().Client;
-    const key = `Poll:${id}:User:${user_id}`;
-    await redisClient.set(
-      key,
-      JSON.stringify(poll),
-      "EX",
-      config.get<number>("redis.ex"),
-    );*/
+    const redisClient = new RedisService();
+    const key = new CacheKeysGenerator().keysGenerator["poll"](req);
+    await redisClient.set(key, poll);
 
     return res.status(StatusCode.OK).json({
       success: true,
@@ -182,7 +177,8 @@ export const vote = async_(
     next: NextFunction,
   ) => {
     const user_id = req.user?.id;
-    const { poll_id, option_id } = req.params;
+
+    const { id: poll_id, option_id } = req.params;
 
     const poll = await Poll.findByPk(poll_id);
     if (!poll) throw new APIError("Poll doesn't exist", StatusCode.NOT_FOUND);
@@ -211,6 +207,12 @@ export const vote = async_(
     const vote = await Poll_Selection.create({ user_id, option_id });
     await option.increment("votes", { by: 1 });
 
+    const redisClient = new RedisService();
+    const key = new CacheKeysGenerator().keysGenerator["poll"](req);
+
+    const n = await redisClient.del(key);
+    console.log(key, n);
+
     return res.status(StatusCode.OK).json({
       success: true,
       data: vote,
@@ -225,7 +227,7 @@ export const unvote = async_(
     next: NextFunction,
   ) => {
     const user_id = req.user?.id;
-    const { poll_id, option_id } = req.params;
+    const { id: poll_id, option_id } = req.params;
 
     const poll = await Poll.findByPk(poll_id);
     if (!poll) throw new APIError("Poll doesn't exist", StatusCode.NOT_FOUND);
@@ -244,6 +246,10 @@ export const unvote = async_(
     await already_vote.destroy();
     option.votes--;
     await option.save();
+
+    const redisClient = new RedisService();
+    const key = new CacheKeysGenerator().keysGenerator["poll"](req);
+    await redisClient.del(key);
 
     return res.status(StatusCode.OK).json({
       success: true,
