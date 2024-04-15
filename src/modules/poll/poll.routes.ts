@@ -1,5 +1,10 @@
 import { Router } from "express";
-import { create, get_poll, unvote, vote } from "./poll.controller";
+import {
+  create,
+  get_poll,
+  unvote,
+  vote,
+} from "./poll.controller";
 import { authenticate } from "../../interfaces/middleware/authentication.middleware";
 import { validate } from "../../interfaces/middleware/validator.middleware";
 import { voteSchema } from "./poll.validator";
@@ -22,4 +27,5 @@ router.patch(
   validate(voteSchema),
   unvote,
 );
+
 export default router;

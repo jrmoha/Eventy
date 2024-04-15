@@ -40,7 +40,7 @@ export const authenticate = (optional = false, ...roles: string[]) => {
         StatusCodes.NON_AUTHORITATIVE_INFORMATION,
       );
 
-    if (roles.length && !roles.includes(decoded?.role))
+    if (roles.length && decoded.role && !roles.includes(decoded?.role))
       throw new APIError(
         "You don't have permission to access this resource",
         StatusCodes.FORBIDDEN,
