@@ -92,6 +92,7 @@ export const update = async_(
     const payload: JwtPayload = {
       id: req.user?.id as number,
       username: person.username,
+      email: person.email,
       first_name: person.first_name,
       last_name: person.last_name,
       role: req.user?.role || "u",
@@ -172,6 +173,7 @@ export const change_password = async_(
       username: req.user?.username,
       first_name: req.user?.first_name,
       last_name: req.user?.last_name,
+      email: req.user?.email,
       role: req.user?.role || "u",
       profile_image: req.user?.profile_image,
     };
@@ -220,6 +222,7 @@ export const uploadImage = async_(
       first_name: req.user?.first_name,
       last_name: req.user?.last_name,
       role: req.user?.role || "u",
+      email: req.user?.email,
       profile_image: secure_url,
     };
 
@@ -277,6 +280,7 @@ export const deleteImage = async_(
       first_name: req.user?.first_name,
       last_name: req.user?.last_name,
       role: req.user?.role || "u",
+      email: req.user?.email,
       profile_image: newProfileImage?.secure_url,
     };
 

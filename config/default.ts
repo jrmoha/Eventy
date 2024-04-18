@@ -26,6 +26,8 @@ const {
   REDIS_URL,
   REDIS_HOST,
   REDIS_PORT,
+  STRIPE_SECRET_KEY,
+  STRIPE_ENDPOINT_SECRET,
 } = process.env;
 
 export default {
@@ -77,5 +79,12 @@ export default {
     host: REDIS_HOST,
     port: REDIS_PORT,
     ex: 60 * 60, // 1 hour
+  },
+  stripe: {
+    secret_key: STRIPE_SECRET_KEY,
+    endpoint_secret: STRIPE_ENDPOINT_SECRET,
+  },
+  ticket: {
+    encryption_key: "Hello dash",
   },
 };

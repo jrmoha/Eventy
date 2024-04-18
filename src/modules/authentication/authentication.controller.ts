@@ -152,6 +152,7 @@ export const login = async_(
     const payload: JwtPayload = {
       id: person.id,
       username: person.username,
+      email: person.email,
       first_name: person.first_name,
       last_name: person.last_name,
       role: organizer ? "o" : "u",

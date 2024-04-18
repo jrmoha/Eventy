@@ -6,6 +6,7 @@ import eventRoutes from "./event/event.routes";
 import pollRoutes from "./poll/poll.routes";
 import feedRoutes from "./feed/feed.routes";
 import analyticsRoutes from "./analytics/analytics.routes";
+import orderRoutes from "./order/order.routes";
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use("/api/v1/events", eventRoutes);
 router.use("/api/v1/polls", pollRoutes);
 router.use("/api/v1", feedRoutes);
 router.use("/api/v1/analytics", analyticsRoutes);
+router.use("/api/v1/orders", orderRoutes);
 
 export default router;
