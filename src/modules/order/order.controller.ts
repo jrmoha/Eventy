@@ -4,7 +4,7 @@ import { async_ } from "../../interfaces/middleware/async.middleware";
 import { APIError } from "../../types/APIError.error";
 import StatusCodes from "http-status-codes";
 import Ticket from "../event/event.tickets.model";
-import Order from "./order.model";
+import Order, { OrderStatus } from "./order.model";
 import Stripe from "stripe";
 import { sequelize } from "../../database";
 import Event from "../event/event.model";
@@ -13,6 +13,8 @@ import { PaymentService } from "../../utils/paymentService";
 import { PaymentHandler } from "./payment.handler";
 import config from "config";
 import Person from "../person/person.model";
+import User from "../user/user.model";
+import { OrderDetailsInput } from "./order.validator";
 
 export const orderTicket = async_(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -109,6 +111,70 @@ export const webhook = async_(
     }
 
     return res.status(StatusCodes.OK).send(); // Return a 200 response to acknowledge receipt of the event
+  },
+);
+export const orderDetails = async_(
+  async (
+    req: Request<OrderDetailsInput, {}, {}>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const { order_id } = req.params;
+
+    const order = await Order.findOne({
+      where: { id: order_id },
+      include: [
+        {
+          model: Ticket,
+          required: true,
+          attributes: [],
+          include:[{
+            model:Event,
+            required:true,
+            attributes:[],
+            include:[{
+              model:Post,
+              required:true,
+              attributes:[],
+            }]
+          }]
+        },
+        {
+          model: User,
+          required: true,
+          attributes: [],
+          include: [
+            {
+              model: Person,
+              required: true,
+              attributes: [],
+            },
+          ],
+        },
+      ],
+      attributes: [
+        "status",
+        [sequelize.col("Order.total"), "amount_paid"],
+        [sequelize.col("Order.quantity"), "seats"],
+        [sequelize.col("Ticket.class"), "ticket_class"],
+        [
+          sequelize.fn(
+            "concat",
+            sequelize.col("User.Person.first_name"),
+            " ",
+            sequelize.col("User.Person.last_name"),
+          ),
+          "full_name",
+        ],
+        [sequelize.col("Ticket.Event.Post.content"), "event"],
+      ],
+    });
+
+    if (!order) throw new APIError("Order not found", StatusCodes.NOT_FOUND);
+    if (order.status != OrderStatus.success)
+      throw new APIError("Order not completed", StatusCodes.BAD_REQUEST);
+
+    return res.status(StatusCodes.OK).json({ success: true, data: order });
   },
 );
 export const success = async_(
