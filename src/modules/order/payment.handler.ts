@@ -1,4 +1,4 @@
-import { sequelize } from "./../../database/index";
+import { sequelize } from "../../database/index";
 import { StatusCodes } from "http-status-codes";
 import Stripe from "stripe";
 import { APIError } from "../../types/APIError.error";
@@ -21,23 +21,27 @@ export class PaymentHandler {
   public async success(
     checkoutSessionAsyncPaymentSucceeded: Stripe.Checkout.Session,
     req: Request,
-  ) {
+  ): Promise<void> | never {
     const order_id = checkoutSessionAsyncPaymentSucceeded?.metadata?.order_id;
     const order = await Order.findOne({ where: { id: order_id } });
 
     if (!order) throw new APIError("Order not found", StatusCodes.NOT_FOUND);
+    if (order.status == OrderStatus.success) return;
+    if (order.status == OrderStatus.failed)
+      throw new APIError("Order failed", StatusCodes.BAD_REQUEST);
 
     const user_id = checkoutSessionAsyncPaymentSucceeded?.metadata?.user_id;
     const user = await Person.findOne({ where: { id: user_id } });
     if (!user) throw new APIError("User not found", StatusCodes.NOT_FOUND);
 
-    const transaction_id = checkoutSessionAsyncPaymentSucceeded?.payment_intent;
+    const payment_transaction_id =
+      checkoutSessionAsyncPaymentSucceeded?.payment_intent;
 
     const t = await sequelize.transaction();
 
     const payment = await Payment.create(
       {
-        id: transaction_id,
+        id: payment_transaction_id,
         amount: checkoutSessionAsyncPaymentSucceeded.amount_total,
         status: "success",
         payment_method: "stripe",
@@ -51,12 +55,14 @@ export class PaymentHandler {
     order.payment_id = payment.id;
     order.status = OrderStatus.success;
     await order.save({ transaction: t });
+
     const ticket = await Ticket.findOne({
       where: { ticket_id: order.ticket_id },
     });
     if (!ticket) throw new APIError("Ticket not found", StatusCodes.NOT_FOUND);
     ticket.available -= order.quantity;
     await ticket.save({ transaction: t });
+
     const event_id = ticket.event_id;
     const event = await Event.findByPk(event_id, {
       include: [
@@ -86,7 +92,7 @@ export class PaymentHandler {
     if (!event) throw new APIError("Event not found", StatusCodes.NOT_FOUND);
     //TODO:insert in event attendance
 
-    //Encrypt the order_id using rsa encryption
+    //*************Encrypt the order id*************
     const encryptionService = new EncryptionService(
       config.get<string>("ticket.encryption_key"),
     );
@@ -105,7 +111,6 @@ export class PaymentHandler {
       order,
       ticket,
     );
-    //TODO:Send the user a receipt
 
     await t.commit();
 
@@ -123,19 +128,26 @@ export class PaymentHandler {
 
     const transaction_id = checkoutSessionAsyncPaymentFailed?.payment_intent;
 
-    const payment = await Payment.create({
-      id: transaction_id,
-      amount: checkoutSessionAsyncPaymentFailed.amount_total,
-      status: "failed",
-      payment_method: "stripe",
-      payment_type: "event",
-      user_id: order.user_id,
-      ip: req.ip,
-    });
+    const t = await sequelize.transaction();
+
+    const payment = await Payment.create(
+      {
+        id: transaction_id,
+        amount: checkoutSessionAsyncPaymentFailed.amount_total,
+        status: "failed",
+        payment_method: "stripe",
+        payment_type: "event",
+        user_id: order.user_id,
+        ip: req.ip,
+      },
+      { transaction: t },
+    );
 
     order.status = OrderStatus.failed;
     order.payment_id = payment.id;
-    await order.save();
+    await order.save({ transaction: t });
+
+    await t.commit();
 
     return;
   }

@@ -38,9 +38,12 @@
         }
 
         .ticket-header {
-            justify-content: space-around;
-            align-items: center;
             display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+
         }
 
         .ticket-header h2 {
@@ -85,7 +88,6 @@
         }
 
         .qrcode {
-            justify-content: center;
             width: auto;
             height: auto;
             display: flex;
@@ -97,11 +99,12 @@
     <div class="container">
         <h1>E-Ticket Purchase Confirmation</h1>
         <h5>Hello, {{first_name}}!</h5>
-        <p>Thank you for purchasing your e-ticket(s) for {{event_name}}! Your order details are below:</p>
+        <p>Thank you for purchasing your e-ticket(s) for </p><strong>{{event_name}}</strong>! <p>Your order details are below:</p>
         <div class="ticket">
-            <div class="ticket-header">
+            <div class="ticket-header" style="justify-content: space-around;
+            align-items: center;">
                 <h2>{{event_name}}</h2>
-                 <img src="{{event_logo}}" alt="{{event_name}} Logo"> 
+                <img src="{{event_logo}}" alt="{{event_name}} Logo">
             </div>
             <div class="ticket-body">
                 <table>
@@ -125,7 +128,7 @@
                 <h3>Total: {{total}}</h3>
                 <p>Please present this e-ticket with the QR code at the event entrance.</p>
             </div>
-            <div class="qrcode">
+            <div class="qrcode" style="justify-content: center;">
                 <img src="{{qrcode}}" alt="QR Code">
             </div>
         </div>
@@ -134,4 +137,3 @@
 </body>
 
 </html>
-

@@ -44,7 +44,7 @@ function trimStringValues(
   const trimmedObj: Record<string, unknown> = {};
   for (const key in obj) {
     if (typeof obj[key] === "string") {
-      trimmedObj[key] = obj[key].trim();
+      trimmedObj[key] = (obj[key] as string).trim();
     } else {
       trimmedObj[key] = obj[key];
     }

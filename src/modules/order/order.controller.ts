@@ -10,8 +10,9 @@ import { sequelize } from "../../database";
 import Event from "../event/event.model";
 import Post from "../post/post.model";
 import { PaymentService } from "../../utils/paymentService";
-import { PaymentHandler } from "./order.service";
+import { PaymentHandler } from "./payment.handler";
 import config from "config";
+import Person from "../person/person.model";
 
 export const orderTicket = async_(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -63,19 +64,14 @@ export const orderTicket = async_(
     const paymentService = new PaymentService();
     const checkoutSession = await paymentService.checkout({
       ticket,
-      quantity,
       order,
       event,
-      email,
-      req,
-      user_id,
+      user: req.user as Person,
     });
 
     return res.status(StatusCodes.OK).json({
       success: true,
-      order,
-      url: checkoutSession.url,
-      session: checkoutSession,
+      redirect_url: checkoutSession.url,
     });
   },
 );
@@ -86,26 +82,30 @@ export const webhook = async_(
     if (!sig) throw new APIError("No signature", StatusCodes.BAD_REQUEST);
 
     const endpointSecret = config.get<string>("stripe.endpoint_secret");
-    const event = Stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    const stripeWebhookEvent = Stripe.webhooks.constructEvent(
+      req.body,
+      sig,
+      endpointSecret,
+    );
 
-    if (!event)
+    if (!stripeWebhookEvent)
       throw new APIError("Invalid signature", StatusCodes.BAD_REQUEST);
 
     const { success: successHandler, failed: failedHandler } =
       new PaymentHandler();
 
     // Handle the event
-    switch (event.type) {
+    switch (stripeWebhookEvent.type) {
       case "checkout.session.async_payment_failed":
       case "checkout.session.expired":
-        await failedHandler(event.data.object, req);
+        await failedHandler(stripeWebhookEvent.data.object, req);
         break;
       case "checkout.session.async_payment_succeeded":
       case "checkout.session.completed":
-        await successHandler(event.data.object, req);
+        await successHandler(stripeWebhookEvent.data.object, req);
         break;
       default:
-        console.log(`Unhandled event type ${event.type}`);
+        console.log(`Unhandled event type ${stripeWebhookEvent.type}`);
     }
 
     return res.status(StatusCodes.OK).send(); // Return a 200 response to acknowledge receipt of the event
