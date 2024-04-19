@@ -10,7 +10,7 @@ import { sequelize } from "../../database";
 import Event from "../event/event.model";
 import Post from "../post/post.model";
 import { PaymentService } from "../../utils/paymentService";
-import { OrderService } from "./order.service";
+import { PaymentHandler } from "./order.service";
 import config from "config";
 
 export const orderTicket = async_(
@@ -92,7 +92,7 @@ export const webhook = async_(
       throw new APIError("Invalid signature", StatusCodes.BAD_REQUEST);
 
     const { success: successHandler, failed: failedHandler } =
-      new OrderService();
+      new PaymentHandler();
 
     // Handle the event
     switch (event.type) {
@@ -111,7 +111,6 @@ export const webhook = async_(
     return res.status(StatusCodes.OK).send(); // Return a 200 response to acknowledge receipt of the event
   },
 );
-
 export const success = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     return res.status(StatusCodes.OK).json({ success: true });

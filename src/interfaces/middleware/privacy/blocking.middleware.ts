@@ -23,7 +23,7 @@ export const blocking = (target: string) => {
 
     if (!current_user_id || current_user_id?.toString() == target.toString())
       return next();
-    
+
     const block = await Block.findOne({
       where: {
         [Op.or]: [

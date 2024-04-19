@@ -50,9 +50,9 @@ export class ExpressConfig {
       this.app.use(routeError);
       this.app.use(err_logger);
       this.app.use(sigint);
+      this.app.use(error_handler);
       process.on("unhandledRejection", unhandledRejection);
       process.on("uncaughtException", uncaughtException);
-      this.app.use(error_handler);
 
       //TODO: Uncomment the following lines to enable Redis
       const redis = new RedisService();

@@ -24,4 +24,6 @@ export const getEventCategoriesSchema = object({
 
 export type AddCategoriesInput = TypeOf<typeof addCategoriesSchema>["body"];
 export type DeleteCategoryInput = TypeOf<typeof deleteCategorySchema>["params"];
-export type GetEventCategoriesInput = TypeOf<typeof getEventCategoriesSchema>["params"];
+export type GetEventCategoriesInput = TypeOf<
+  typeof getEventCategoriesSchema
+>["params"];

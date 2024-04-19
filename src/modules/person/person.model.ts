@@ -58,7 +58,6 @@ Person.init(
       validate: {
         len: [3, 255],
         // isAlpha: true,
-
       },
     },
     phone_number: {
@@ -117,5 +116,5 @@ Person.init(
     ],
   },
 );
- 
+
 export default Person;

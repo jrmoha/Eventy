@@ -26,10 +26,10 @@ EventFAQ.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    event_id:{
+    event_id: {
       type: DataTypes.BIGINT,
       allowNull: false,
-    }
+    },
   },
   {
     sequelize,

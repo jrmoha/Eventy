@@ -28,6 +28,7 @@ const {
   REDIS_PORT,
   STRIPE_SECRET_KEY,
   STRIPE_ENDPOINT_SECRET,
+  TICKET_ENCRYPTION_KEY,
 } = process.env;
 
 export default {
@@ -85,6 +86,6 @@ export default {
     endpoint_secret: STRIPE_ENDPOINT_SECRET,
   },
   ticket: {
-    encryption_key: "Hello dash",
+    encryption_key: TICKET_ENCRYPTION_KEY,
   },
 };

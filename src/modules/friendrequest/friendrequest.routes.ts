@@ -2,7 +2,7 @@ import { Router } from "express";
 import { authenticate } from "../../interfaces/middleware/authentication.middleware";
 import { validate } from "../../interfaces/middleware/validator.middleware";
 import { friendRequestSchema } from "./friendrequest.validator";
-import { accept, cancel, send ,get_all} from "./friendrequest.controller";
+import { accept, cancel, send, get_all } from "./friendrequest.controller";
 
 const router = Router();
 

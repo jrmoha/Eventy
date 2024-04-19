@@ -20,7 +20,7 @@ export class SocketService {
 
     this.io.on("connection", (socket) => {
       socket.join(socket.data.user.id);
-      
+
       socket.on("disconnect", () => {
         socket.leave(socket.data.user.id);
       });

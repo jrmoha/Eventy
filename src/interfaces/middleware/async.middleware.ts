@@ -5,5 +5,3 @@ export const async_ = (fn: Function) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 };
-
- 

@@ -9,8 +9,14 @@ import { Request } from "express";
 import { EncryptionService } from "../../utils/encryption";
 import { QrCodeService } from "../../utils/qrcode";
 import config from "config";
+import { sendTicketConfirmationEmail } from "../../interfaces/handlers/email/email.handler";
+import Person from "../person/person.model";
+import Event from "../event/event.model";
+import Post from "../post/post.model";
+import EventImage from "../image/event.image.model";
+import Image from "../image/image.model";
 
-export class OrderService {
+export class PaymentHandler {
   constructor() {}
   public async success(
     checkoutSessionAsyncPaymentSucceeded: Stripe.Checkout.Session,
@@ -22,6 +28,9 @@ export class OrderService {
     if (!order) throw new APIError("Order not found", StatusCodes.NOT_FOUND);
 
     const user_id = checkoutSessionAsyncPaymentSucceeded?.metadata?.user_id;
+    const user = await Person.findOne({ where: { id: user_id } });
+    if (!user) throw new APIError("User not found", StatusCodes.NOT_FOUND);
+
     const transaction_id = checkoutSessionAsyncPaymentSucceeded?.payment_intent;
 
     const t = await sequelize.transaction();
@@ -42,25 +51,60 @@ export class OrderService {
     order.payment_id = payment.id;
     order.status = OrderStatus.success;
     await order.save({ transaction: t });
-
-    await Ticket.decrement("available", {
-      by: order.quantity,
+    const ticket = await Ticket.findOne({
       where: { ticket_id: order.ticket_id },
-      transaction: t,
     });
+    if (!ticket) throw new APIError("Ticket not found", StatusCodes.NOT_FOUND);
+    ticket.available -= order.quantity;
+    await ticket.save({ transaction: t });
+    const event_id = ticket.event_id;
+    const event = await Event.findByPk(event_id, {
+      include: [
+        {
+          model: Post,
+          required: true,
+          attributes: [],
+        },
+        {
+          model: EventImage,
+          required: true,
+          attributes: [],
+          include: [
+            {
+              model: Image,
+              required: true,
+              attributes: [],
+            },
+          ],
+        },
+      ],
+      attributes: [
+        [sequelize.col("Post.content"), "content"],
+        [sequelize.col("EventImages.Image.secure_url"), "logo"],
+      ],
+    });
+    if (!event) throw new APIError("Event not found", StatusCodes.NOT_FOUND);
     //TODO:insert in event attendance
+
     //Encrypt the order_id using rsa encryption
     const encryptionService = new EncryptionService(
-      config.get<string>("ticket.encryption_key") || "Hello dash",
+      config.get<string>("ticket.encryption_key"),
     );
     const encryptedData = encryptionService.encrypt(order.id);
 
     //*************Generate a QR code for the ticket*************
     const qrCodeService = new QrCodeService();
     const qrCodeUrl = await qrCodeService.generate(encryptedData);
-    console.log(qrCodeUrl);
 
     //TODO:Send the QR code to the user email
+    await sendTicketConfirmationEmail(
+      user,
+      qrCodeUrl,
+      event.content,
+      event.dataValues.logo,
+      order,
+      ticket,
+    );
     //TODO:Send the user a receipt
 
     await t.commit();

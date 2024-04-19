@@ -68,4 +68,6 @@ export const deleteCommunitySchema = z.object({
 });
 export type CommunityMessageInput = TypeOf<typeof communityMessageSchema>;
 export type AdminInput = TypeOf<typeof communityMemberSchema>;
-export type DeleteCommunityInput = TypeOf<typeof deleteCommunitySchema>["params"];
+export type DeleteCommunityInput = TypeOf<
+  typeof deleteCommunitySchema
+>["params"];

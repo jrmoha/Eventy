@@ -20,7 +20,7 @@ const errorFileTransport = new winston.transports.DailyRotateFile({
   zippedArchive: true,
   maxSize: "20m",
   maxFiles: "14d",
-  level: "error",  
+  level: "error",
 });
 
 const logger = winston.createLogger({
