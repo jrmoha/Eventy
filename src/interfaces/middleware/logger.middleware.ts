@@ -2,15 +2,16 @@ import { NextFunction, Request, Response } from "express";
 import logger from "../../utils/logger";
 
 export const req_logger = (req: Request, res: Response, next: NextFunction) => {
+  //TODO:${JSON.stringify({
+  // body: req.body,
+  // query: req.query,
+  // params: req.params,
+  // header: req.headers,
+  // })}
   logger.info(
-    `${req.method} ${req.protocol}://${req.get("host")}${req.originalUrl} 
-    ${JSON.stringify({
-      body: req.body,
-      query: req.query,
-      params: req.params,
-      header: req.headers,
-    })}`,
+    `${req.method} ${req.protocol}://${req.get("host")}${req.originalUrl}`,
   );
+
   next();
 };
 

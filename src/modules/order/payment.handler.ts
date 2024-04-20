@@ -96,7 +96,7 @@ export class PaymentHandler {
     const encryptionService = new EncryptionService(
       config.get<string>("ticket.encryption_key"),
     );
-    const encryptedData = encryptionService.encrypt(order.id);
+    const encryptedData = encryptionService.encodeURI(order.id);
 
     //*************Generate a QR code for the ticket*************
     const qrCodeService = new QrCodeService();

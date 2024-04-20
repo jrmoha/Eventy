@@ -39,9 +39,9 @@
 
         .ticket-header {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+            justify-content: space-between !important;
+            align-items: center !important;
+            margin-bottom: 20px !important;
             position: relative;
 
         }
@@ -91,6 +91,7 @@
             width: auto;
             height: auto;
             display: flex;
+            justify-content: center !important;
         }
     </style>
 </head>
@@ -99,7 +100,8 @@
     <div class="container">
         <h1>E-Ticket Purchase Confirmation</h1>
         <h5>Hello, {{first_name}}!</h5>
-        <p>Thank you for purchasing your e-ticket(s) for </p><strong>{{event_name}}</strong>! <p>Your order details are below:</p>
+        <p>Thank you for purchasing your e-ticket(s) for </p><strong>{{event_name}}</strong>! <p>Your order details are
+            below:</p>
         <div class="ticket">
             <div class="ticket-header" style="justify-content: space-around;
             align-items: center;">

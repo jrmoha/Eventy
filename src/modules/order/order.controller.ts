@@ -1,3 +1,4 @@
+import { EncryptionService } from "./../../utils/encryption";
 /* eslint-disable no-case-declarations */
 import { NextFunction, Request, Response } from "express-serve-static-core";
 import { async_ } from "../../interfaces/middleware/async.middleware";
@@ -14,7 +15,6 @@ import { PaymentHandler } from "./payment.handler";
 import config from "config";
 import Person from "../person/person.model";
 import User from "../user/user.model";
-import { OrderDetailsInput } from "./order.validator";
 
 export const orderTicket = async_(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -114,13 +114,13 @@ export const webhook = async_(
   },
 );
 export const orderDetails = async_(
-  async (
-    req: Request<OrderDetailsInput, {}, {}>,
-    res: Response,
-    next: NextFunction,
-  ) => {
-    const { order_id } = req.params;
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { enc } = req.params;
 
+    const EncryptionServiceInstance = new EncryptionService(
+      config.get<string>("ticket.encryption_key"),
+    );
+    const order_id = EncryptionServiceInstance.decodeURI(enc);
     const order = await Order.findOne({
       where: { id: order_id },
       include: [
@@ -128,16 +128,20 @@ export const orderDetails = async_(
           model: Ticket,
           required: true,
           attributes: [],
-          include:[{
-            model:Event,
-            required:true,
-            attributes:[],
-            include:[{
-              model:Post,
-              required:true,
-              attributes:[],
-            }]
-          }]
+          include: [
+            {
+              model: Event,
+              required: true,
+              attributes: [],
+              include: [
+                {
+                  model: Post,
+                  required: true,
+                  attributes: [],
+                },
+              ],
+            },
+          ],
         },
         {
           model: User,
@@ -167,12 +171,18 @@ export const orderDetails = async_(
           "full_name",
         ],
         [sequelize.col("Ticket.Event.Post.content"), "event"],
+        [sequelize.col("Ticket.Event.date"), "event_date"],
       ],
     });
 
     if (!order) throw new APIError("Order not found", StatusCodes.NOT_FOUND);
     if (order.status != OrderStatus.success)
       throw new APIError("Order not completed", StatusCodes.BAD_REQUEST);
+
+    order.setDataValue(
+      "event_date",
+      new Date(order.dataValues.event_date).toDateString(),
+    );
 
     return res.status(StatusCodes.OK).json({ success: true, data: order });
   },
