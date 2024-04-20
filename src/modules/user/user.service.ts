@@ -5,7 +5,6 @@ import UserImage from "../image/user.image.model";
 import User from "./user.model";
 import Person from "../person/person.model";
 import { Literal } from "sequelize/types/utils";
-import Settings from "../settings/settings.model";
 import Like from "../like/like.model";
 import Post from "../post/post.model";
 import Event from "../event/event.model";
@@ -115,67 +114,6 @@ export class UserService {
       replacements: { id },
       benchmark: true,
     });
-  }
-  public async setSettings(
-    user: Person,
-    current_id: number | undefined,
-  ): Promise<void> {
-    if (current_id == user.id) {
-      user.setDataValue("followers_visible", true);
-      user.setDataValue("following_visible", true);
-      user.setDataValue("friends_visible", true);
-      return;
-    }
-    const settings = await Settings.findOne({
-      where: { user_id: user.id },
-    });
-
-    switch (settings?.followers_visibility) {
-      case "none":
-        user.setDataValue("followers_visible", false);
-        break;
-      case "friends":
-        user.setDataValue(
-          "followers_visible",
-          !!user.getDataValue("is_friend"),
-        );
-        break;
-      case "anyone":
-        user.setDataValue("followers_visible", true);
-        break;
-      default:
-        break;
-    }
-    switch (settings?.following_visibility) {
-      case "none":
-        user.setDataValue("following_visible", false);
-        break;
-      case "friends":
-        user.setDataValue(
-          "following_visible",
-          !!user.getDataValue("is_friend"),
-        );
-        break;
-      case "anyone":
-        user.setDataValue("following_visible", true);
-        break;
-      default:
-        break;
-    }
-    switch (settings?.friends_visibility) {
-      case "none":
-        user.setDataValue("friends_visible", false);
-        break;
-      case "friends":
-        user.setDataValue("friends_visible", !!user.getDataValue("is_friend"));
-        break;
-      case "anyone":
-        user.setDataValue("friends_visible", true);
-        break;
-      default:
-        break;
-    }
-    return;
   }
   public async likes(
     id: number,

@@ -1,3 +1,4 @@
+import { SettingsService } from "./../settings/settings.service";
 import { JwtPayload } from "jsonwebtoken";
 import config from "config";
 import { NextFunction, Request, Response } from "express";
@@ -296,7 +297,8 @@ export const profile = async_(
 
     if (!user) throw new APIError("user not found", StatusCodes.NOT_FOUND);
 
-    await UserServiceInstance.setSettings(user, req.user?.id);
+    const SettingsServiceInstance = new SettingsService();
+    await SettingsServiceInstance.setSettings(user, req.user?.id);
 
     //********Cache *********
     const redisClient = new RedisService();

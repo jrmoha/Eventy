@@ -1,3 +1,4 @@
+import { SettingsService } from "./../settings/settings.service";
 import { NextFunction, Request, Response } from "express";
 import { async_ } from "../../interfaces/middleware/async.middleware";
 import Person from "../person/person.model";
@@ -8,7 +9,6 @@ import Image from "../image/image.model";
 import { APIError } from "../../types/APIError.error";
 import { StatusCodes } from "http-status-codes";
 import { sequelize } from "../../database";
-import Settings from "../settings/settings.model";
 import { Literal } from "sequelize/types/utils";
 import Event from "../event/event.model";
 import EventImage from "../image/event.image.model";
@@ -96,67 +96,8 @@ export const profile = async_(
     if (!organizer)
       throw new APIError("Organizer not found", StatusCodes.NOT_FOUND);
 
-    if (req.user?.id == +id) {
-      organizer.setDataValue("followers_visible", true);
-      organizer.setDataValue("following_visible", true);
-      organizer.setDataValue("friends_visible", true);
-      return res
-        .status(StatusCodes.OK)
-        .json({ success: true, data: organizer });
-    }
-
-    const settings = await Settings.findOne({
-      where: { user_id: organizer.id },
-    });
-
-    switch (settings?.followers_visibility) {
-      case "none":
-        organizer.setDataValue("followers_visible", false);
-        break;
-      case "friends":
-        organizer.setDataValue(
-          "followers_visible",
-          !!organizer.getDataValue("is_friend"),
-        );
-        break;
-      case "anyone":
-        organizer.setDataValue("followers_visible", true);
-        break;
-      default:
-        break;
-    }
-    switch (settings?.following_visibility) {
-      case "none":
-        organizer.setDataValue("following_visible", false);
-        break;
-      case "friends":
-        organizer.setDataValue(
-          "following_visible",
-          !!organizer.getDataValue("is_friend"),
-        );
-        break;
-      case "anyone":
-        organizer.setDataValue("following_visible", true);
-        break;
-      default:
-        break;
-    }
-    switch (settings?.friends_visibility) {
-      case "none":
-        organizer.setDataValue("friends_visible", false);
-        break;
-      case "friends":
-        organizer.setDataValue(
-          "friends_visible",
-          !!organizer.getDataValue("is_friend"),
-        );
-        break;
-      case "anyone":
-        organizer.setDataValue("friends_visible", true);
-        break;
-      default:
-        break;
-    }
+    const SettingsServiceInstance = new SettingsService();
+    await SettingsServiceInstance.setSettings(organizer, req.user?.id);
 
     const redisClient = new RedisService();
     const key = new CacheKeysGenerator().keysGenerator["organizer"](req);

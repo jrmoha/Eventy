@@ -11,45 +11,6 @@ import axios from "axios";
 import { FindAttributeOptions, Includeable, Op } from "sequelize";
 import { Literal } from "sequelize/types/utils";
 
-//   {
-//     model: Post,
-//     required: true,
-//     attributes: [],
-//     include: [
-//       {
-//         model: Organizer,
-//         required: true,
-//         attributes: [],
-//         include: [
-//           {
-//             model: User,
-//             required: true,
-//             attributes: [],
-//             include: [
-//               {
-//                 model: Person,
-//                 required: true,
-//                 attributes: [],
-//               },
-//             ],
-//           },
-//         ],
-//       },
-//     ],
-//   },
-//   {
-//     model: EventImage,
-//     required: true,
-//     attributes: [],
-//     include: [
-//       {
-//         model: Image,
-//         required: true,
-//         attributes: [],
-//       },
-//     ],
-//   },
-// ];
 export class FeedService {
   private readonly includes: Includeable[];
   private readonly attributes: FindAttributeOptions;
