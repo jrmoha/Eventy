@@ -10,7 +10,7 @@ import UserImage from "../image/user.image.model";
 import User from "../user/user.model";
 import Person from "../person/person.model";
 import Follow from "../follow/follow.model";
-import { get_home_events, random_events } from "./feed.service";
+import { FeedService } from "./feed.service";
 import Event from "../event/event.model";
 
 export const get_home = async_(
@@ -72,12 +72,12 @@ export const get_home = async_(
     }
 
     let events: Event[];
-
+    const FeedServiceInstance = new FeedService();
     if (req.user) {
-      events = (await get_home_events(req)) as Event[];
+      events = (await FeedServiceInstance.get_home_events(req)) as Event[];
       //events = (await random_events()) as Event[];//TODO: delete this
     } else {
-      events = (await random_events()) as Event[];
+      events = (await FeedServiceInstance.random_events()) as Event[];
     }
 
     return res

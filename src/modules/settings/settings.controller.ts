@@ -4,15 +4,14 @@ import Settings from "./settings.model";
 import { APIError } from "../../types/APIError.error";
 import { StatusCodes } from "http-status-codes";
 import { EditSettingsInput } from "./settings.validator";
+import { SettingsService } from "./settings.service";
 
 export const get_settings = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     const user_id = req.user?.id;
 
-    const settings = await Settings.findOne({
-      where: { user_id },
-      attributes: { exclude: ["user_id", "createdAt", "updatedAt"] },
-    });
+    const SettingsServiceInstance = new SettingsService();
+    const settings = await SettingsServiceInstance.getSettings(user_id);
 
     if (!settings)
       throw new APIError("Settings not found", StatusCodes.NOT_FOUND);

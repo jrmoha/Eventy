@@ -1,4 +1,3 @@
-// import config from "config";
 import { NextFunction, Request, Response } from "express";
 import fs from "fs";
 import { sequelize } from "../../database";
@@ -20,12 +19,10 @@ import EventImage from "../image/event.image.model";
 import StatusCodes from "http-status-codes";
 import { CreateEventInput, InterestInput } from "./event.validator";
 import { APIError } from "../../types/APIError.error";
-import Person from "../person/person.model";
-import User from "../user/user.model";
 import Event_Interest from "./event.interest.model";
-import { Literal } from "sequelize/types/utils";
 import { CacheKeysGenerator } from "../../utils/cacheKeysGenerator";
 import { RedisService } from "../../cache";
+import { EventService } from "./event.service";
 
 export const create = async_(
   async (
@@ -238,119 +235,8 @@ export const get = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     const id = Number(req.params.id);
 
-    let literal!: [[Literal, string]];
-    if (req.user?.id) {
-      literal = [
-        [
-          sequelize.literal(
-            `CASE WHEN EXISTS (SELECT 1 FROM likes WHERE event_id = ${id} AND user_id = ${req.user?.id}) THEN true ELSE false END`,
-          ),
-          "is_liked",
-        ],
-      ];
-      literal.push([
-        sequelize.literal(
-          `CASE WHEN EXISTS (SELECT 1 FROM event_interest WHERE event_id = ${id} AND user_id = ${req.user?.id}) THEN true ELSE false END`,
-        ),
-        "is_interested",
-      ]);
-    }
-
-    const event = await Post.findByPk(id, {
-      attributes: ["id", "content"],
-      include: [
-        {
-          model: Organizer,
-          include: [
-            {
-              model: User,
-              attributes: [],
-              include: [
-                {
-                  model: Person,
-                  required: true,
-                  attributes: [],
-                },
-              ],
-              required: true,
-            },
-          ],
-          attributes: [
-            [
-              sequelize.literal('"Organizer->User->Person".first_name'),
-              "first_name",
-            ],
-            [
-              sequelize.literal('"Organizer->User->Person".last_name'),
-              "last_name",
-            ],
-            [
-              sequelize.literal('"Organizer->User->Person".username'),
-              "username",
-            ],
-            [
-              sequelize.literal('"Organizer->User".followers_count'),
-              "followers_count",
-            ],
-            [sequelize.literal('"Organizer".rate'), "rate"],
-            [sequelize.literal('"Organizer".events_count'), "events_count"],
-          ],
-        },
-        {
-          model: Event,
-          required: true,
-          attributes: [
-            "location",
-            "date",
-            "time",
-            "likes_count",
-            "comments_count",
-            "interests_count",
-            "attendees_count",
-            ...(literal ? literal : []),
-          ],
-          include: [
-            {
-              model: EventCategory,
-              attributes: ["category"],
-            },
-            {
-              model: EventImage,
-              include: [
-                {
-                  model: Image,
-                  required: true,
-                  attributes: [],
-                },
-              ],
-              attributes: [
-                [
-                  sequelize.literal('"Event->EventImages->Image".public_id'),
-                  "public_id",
-                ],
-                [sequelize.literal('"Event->EventImages->Image".url'), "url"],
-                [
-                  sequelize.literal('"Event->EventImages->Image".secure_url'),
-                  "secure_url",
-                ],
-              ],
-            },
-            {
-              model: Event_Phone,
-              attributes: ["phone"],
-            },
-            {
-              model: EventFAQ,
-              attributes: ["question", "answer"],
-            },
-            {
-              model: Event_Agenda,
-              attributes: ["description", "start_time", "end_time"],
-            },
-          ],
-        },
-      ],
-    });
+    const EventServiceInstance = new EventService();
+    const event = await EventServiceInstance.getEvent(id, req.user?.id);
 
     if (!event) throw new APIError("Event not found", StatusCodes.NOT_FOUND);
 

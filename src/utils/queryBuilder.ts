@@ -1,9 +1,9 @@
 import { FindAttributeOptions, Includeable, Op } from "sequelize";
-import { SearchInput } from "./search.validator";
-import { sequelize } from "../../database";
-import EventCategory from "../category/event.category.model";
-import Ticket from "../event/event.tickets.model";
-import Post from "../post/post.model";
+import { SearchInput } from "../modules/search/search.validator";
+import { sequelize } from "../database";
+import EventCategory from "../modules/category/event.category.model";
+import Ticket from "../modules/event/event.tickets.model";
+import Post from "../modules/post/post.model";
 import { Literal } from "sequelize/types/utils";
 
 interface IWhere {
@@ -41,16 +41,18 @@ class QueryBuilder {
   private readonly query: SearchInput;
   private readonly user_id?: number;
   private readonly where: IWhere;
-  private readonly includes: Includeable[] = [];
-  private attributes: FindAttributeOptions = [];
+  private readonly includes: Includeable[];
+  private attributes: FindAttributeOptions;
 
   constructor(query: SearchInput, user_id?: number) {
     this.query = query;
-    this.where = {};
     this.user_id = user_id;
+    this.where = {};
+    this.includes = [];
+    this.attributes = [];
   }
 
-  build() {
+  public build() {
     this.buildWhere();
     this.buildAttributes();
     return this;

@@ -1,3 +1,4 @@
+import { OrderService } from "./order.service";
 import { EncryptionService } from "./../../utils/encryption";
 /* eslint-disable no-case-declarations */
 import { NextFunction, Request, Response } from "express-serve-static-core";
@@ -10,11 +11,9 @@ import Stripe from "stripe";
 import { sequelize } from "../../database";
 import Event from "../event/event.model";
 import Post from "../post/post.model";
-import { PaymentService } from "../../utils/paymentService";
-import { PaymentHandler } from "./payment.handler";
+import { PaymentService } from "../payment/payment.service";
 import config from "config";
 import Person from "../person/person.model";
-import User from "../user/user.model";
 
 export const orderTicket = async_(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -93,18 +92,23 @@ export const webhook = async_(
     if (!stripeWebhookEvent)
       throw new APIError("Invalid signature", StatusCodes.BAD_REQUEST);
 
-    const { success: successHandler, failed: failedHandler } =
-      new PaymentHandler();
+    const PaymentServiceInstance = new PaymentService();
 
     // Handle the event
     switch (stripeWebhookEvent.type) {
       case "checkout.session.async_payment_failed":
       case "checkout.session.expired":
-        await failedHandler(stripeWebhookEvent.data.object, req);
+        await PaymentServiceInstance.handlePaymentFailure(
+          stripeWebhookEvent.data.object,
+          req,
+        );
         break;
       case "checkout.session.async_payment_succeeded":
       case "checkout.session.completed":
-        await successHandler(stripeWebhookEvent.data.object, req);
+        await PaymentServiceInstance.handlePaymentSuccess(
+          stripeWebhookEvent.data.object,
+          req,
+        );
         break;
       default:
         console.log(`Unhandled event type ${stripeWebhookEvent.type}`);
@@ -121,59 +125,8 @@ export const orderDetails = async_(
       config.get<string>("ticket.encryption_key"),
     );
     const order_id = EncryptionServiceInstance.decodeURI(enc);
-    const order = await Order.findOne({
-      where: { id: order_id },
-      include: [
-        {
-          model: Ticket,
-          required: true,
-          attributes: [],
-          include: [
-            {
-              model: Event,
-              required: true,
-              attributes: [],
-              include: [
-                {
-                  model: Post,
-                  required: true,
-                  attributes: [],
-                },
-              ],
-            },
-          ],
-        },
-        {
-          model: User,
-          required: true,
-          attributes: [],
-          include: [
-            {
-              model: Person,
-              required: true,
-              attributes: [],
-            },
-          ],
-        },
-      ],
-      attributes: [
-        "status",
-        [sequelize.col("Order.total"), "amount_paid"],
-        [sequelize.col("Order.quantity"), "seats"],
-        [sequelize.col("Ticket.class"), "ticket_class"],
-        [
-          sequelize.fn(
-            "concat",
-            sequelize.col("User.Person.first_name"),
-            " ",
-            sequelize.col("User.Person.last_name"),
-          ),
-          "full_name",
-        ],
-        [sequelize.col("Ticket.Event.Post.content"), "event"],
-        [sequelize.col("Ticket.Event.date"), "event_date"],
-      ],
-    });
+    const OrderServiceInstance = new OrderService();
+    const order = await OrderServiceInstance.orderDetails(order_id);
 
     if (!order) throw new APIError("Order not found", StatusCodes.NOT_FOUND);
     if (order.status != OrderStatus.success)
