@@ -18,10 +18,19 @@ export class CacheKeysGenerator {
     if (req.user) return `Organizer:${req.params.id};User:${req.user.id}`;
     return `Organizer:${req.params.id}`;
   }
+  private FeedKeyGenerator(req: Request): string {
+    if (req.user) return `Feed;User:${req.user.id}`;
+    return `Feed;User:null`;
+  }
+  private SimilarEventsKeyGenerator(req: Request): string {
+    return `SimilarEvents:${req.params.id}`;
+  }
   public keysGenerator = {
     event: this.EventKeyGenerator,
     user: this.UserKeyGenerator,
     poll: this.PollKeyGenerator,
     organizer: this.OrganizerKeyGenerator,
+    feed: this.FeedKeyGenerator,
+    similarEvents: this.SimilarEventsKeyGenerator,
   };
 }

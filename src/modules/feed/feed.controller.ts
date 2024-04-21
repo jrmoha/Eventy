@@ -12,6 +12,8 @@ import Person from "../person/person.model";
 import Follow from "../follow/follow.model";
 import { FeedService } from "./feed.service";
 import Event from "../event/event.model";
+import { RedisService } from "../../cache";
+import { CacheKeysGenerator } from "../../utils/cacheKeysGenerator";
 
 export const get_home = async_(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -79,10 +81,12 @@ export const get_home = async_(
     } else {
       events = (await FeedServiceInstance.random_events()) as Event[];
     }
+    const data = { covers, organizers, events };
+    const redisClient = new RedisService();
+    const key = new CacheKeysGenerator().keysGenerator["feed"](req);
+    await redisClient.set(key, data);
 
-    return res
-      .status(StatusCodes.OK)
-      .json({ success: true, data: { covers, organizers, events } });
+    return res.status(StatusCodes.OK).json({ success: true, data });
   },
 );
 

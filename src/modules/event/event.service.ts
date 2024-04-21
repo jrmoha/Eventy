@@ -11,6 +11,8 @@ import Event_Agenda from "./event.agenda.model";
 import EventFAQ from "./event.faq.model";
 import Event_Phone from "./event.phone.model";
 import Event from "./event.model";
+import axios from "axios";
+import { Op } from "sequelize";
 
 export class EventService {
   constructor() {}
@@ -131,5 +133,64 @@ export class EventService {
         },
       ],
     });
+  }
+  public async getSimilarEvents(
+    id: number,
+    token: string,
+  ): Promise<Post[] | null> {
+    const similarEventsIds = await this.fetchSimilarEventsIds(id, token);
+    return Post.findAll({
+      where: {
+        id: {
+          [Op.in]: similarEventsIds,
+        },
+        status: "published",
+      },
+      include: [
+        {
+          model: Event,
+          required: true,
+          attributes: [],
+          include: [
+            {
+              model: EventImage,
+              required: true,
+              attributes: [],
+              include: [
+                {
+                  model: Image,
+                  required: true,
+                  attributes: [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      attributes: [
+        "id",
+        "content",
+        [sequelize.col("Event.EventImages.Image.secure_url"), "image_url"],
+      ],
+      order: sequelize.random(),
+      limit: 10,
+      subQuery: false,
+    }) as unknown as Post[] | null;
+  }
+
+  private async fetchSimilarEventsIds(
+    id: number,
+    token: string,
+  ): Promise<Number[] | null> {
+    const response = await axios.post(
+      "http://localhost:8000/event",
+      { elementid: id },
+      {
+        headers: {
+          Authorization: token.split(" ")[1],
+        },
+      },
+    );
+    return response.data as Number[] | null;
   }
 }

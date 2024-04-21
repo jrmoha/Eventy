@@ -27,7 +27,7 @@ export class RedisService {
       });
     });
   }
-  public async set(key: string, value: Object): Promise<string> {
+  public async set(key: string, value: Object | Object[]): Promise<string> {
     return this.client.set(
       key,
       JSON.stringify(value),

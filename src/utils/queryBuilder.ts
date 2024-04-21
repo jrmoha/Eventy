@@ -37,7 +37,7 @@ const dateOperators = {
     [Op.lt]: new Date(new Date().setMonth(new Date().getMonth() + 2)),
   },
 };
-class QueryBuilder {
+export default class QueryBuilder {
   private readonly query: SearchInput;
   private readonly user_id?: number;
   private readonly where: IWhere;
@@ -240,5 +240,3 @@ class QueryBuilder {
     return this.attributes;
   }
 }
-
-export default QueryBuilder;

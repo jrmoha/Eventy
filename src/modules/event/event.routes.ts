@@ -1,6 +1,6 @@
 import { authenticate } from "./../../interfaces/middleware/authentication.middleware";
 import { Router } from "express";
-import { create, get, interest } from "./event.controller";
+import * as EventController from "./event.controller";
 import upload from "../../utils/multer";
 import config from "config";
 import { validate } from "../../interfaces/middleware/validator.middleware";
@@ -22,14 +22,25 @@ router.post(
     config.get<number>("maxImageCount"),
   ),
   validate(createEventSchema),
-  create,
+  EventController.create,
 );
-router.get("/event/:id", authenticate(true, "u", "o"), cache("event"), get);
+router.get(
+  "/event/:id",
+  authenticate(true, "u", "o"),
+  cache("event"),
+  EventController.get,
+);
 router.post(
   "/:id/interest",
   authenticate(false, "o", "u"),
   validate(interestSchema),
-  interest,
+  EventController.interest,
+);
+router.get(
+  "/similar/:id",
+  authenticate(true, "o", "u"),
+  cache("similarEvents"),
+  EventController.similar_events,
 );
 
 export default router;

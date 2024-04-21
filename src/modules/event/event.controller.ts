@@ -247,7 +247,7 @@ export const get = async_(
     //*********** Cache the event ***********
     const redisClient = new RedisService();
     const key: string = new CacheKeysGenerator().keysGenerator["event"](req);
-    await redisClient.set(key, event);
+    await redisClient.set(key, { post: event });
 
     return res.status(StatusCodes.OK).json({
       success: true,
@@ -293,5 +293,26 @@ export const interest = async_(
         event,
       },
     });
+  },
+);
+
+export const similar_events = async_(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.id;
+    const EventServiceInstance = new EventService();
+    const events = await EventServiceInstance.getSimilarEvents(
+      +id,
+      req.headers["x-access-token"] as string,
+    );
+    if (!events) return null;
+
+    //*********** Cache the event ***********
+    const redisClient = new RedisService();
+    const key: string = new CacheKeysGenerator().keysGenerator["similarEvents"](
+      req,
+    );
+    await redisClient.set(key, events);
+
+    return res.status(StatusCodes.OK).json({ success: true, data: events });
   },
 );
