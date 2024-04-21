@@ -54,7 +54,6 @@ export class ExpressConfig {
       process.on("unhandledRejection", unhandledRejection);
       process.on("uncaughtException", uncaughtException);
 
-      //TODO: Uncomment the following lines to enable Redis
       const redis = new RedisService();
       await redis.connect();
 
