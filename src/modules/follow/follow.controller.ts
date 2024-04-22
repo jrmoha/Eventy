@@ -1,5 +1,6 @@
+import { FollowService } from "./follow.service";
 import { NextFunction, Request, Response } from "express";
-import { FindAttributeOptions, Op, Sequelize } from "sequelize";
+import { Op, Sequelize } from "sequelize";
 import StatusCodes from "http-status-codes";
 import { async_ } from "../../interfaces/middleware/async.middleware";
 import { APIError } from "../../types/APIError.error";
@@ -9,10 +10,6 @@ import Person from "../person/person.model";
 import { FollowInput } from "./follow.validator";
 import Settings from "../settings/settings.model";
 import Friendship from "../friendship/friendship.model";
-import UserImage from "../image/user.image.model";
-import Image from "../image/image.model";
-import { sequelize } from "../../database";
-import { Literal } from "sequelize/types/utils";
 import { APIFeatures } from "../../utils/api.features";
 
 export const follow = async_(
@@ -105,107 +102,22 @@ export const unfollow = async_(
     return res.status(StatusCodes.OK).json({ success: true });
   },
 );
-const followerAttributes: FindAttributeOptions = [
-  [sequelize.col("follower.id"), "id"],
-  [sequelize.col("follower.followers_count"), "followers_count"],
-  [
-    sequelize.fn(
-      "concat",
-      sequelize.col("follower.Person.first_name"),
-      " ",
-      sequelize.col("follower.Person.last_name"),
-    ),
-    "full_name",
-  ],
-  [sequelize.col("follower.Person.username"), "username"],
-  [sequelize.col("follower.UserImages.Image.url"), "image_url"],
-  [
-    sequelize.literal(
-      "CASE WHEN follower.id IN (SELECT id FROM organizer WHERE id = follower.id) THEN 'o' ELSE 'u' END",
-    ),
-    "role",
-  ],
-];
-const followingsAttributes: FindAttributeOptions = [
-  [sequelize.col("following.id"), "id"],
-  [sequelize.col("following.followers_count"), "followers_count"],
-  [
-    sequelize.fn(
-      "concat",
-      sequelize.col("following.Person.first_name"),
-      " ",
-      sequelize.col("following.Person.last_name"),
-    ),
-    "full_name",
-  ],
-  [sequelize.col("following.Person.username"), "username"],
-  [sequelize.col("following.UserImages.Image.url"), "image_url"],
-  [
-    sequelize.literal(
-      "CASE WHEN following.id IN (SELECT id FROM organizer WHERE id = following.id) THEN 'o' ELSE 'u' END",
-    ),
-    "role",
-  ],
-];
 export const followers = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
     const apifeatures = new APIFeatures(req.query).paginate();
+    const FollowServiceInstance = new FollowService();
+    const followers = await FollowServiceInstance.followers(
+      +id,
+      req.user?.id,
+      apifeatures,
+    );
 
-    let literal!: [Literal, string];
-    if (req.user?.id) {
-      literal = [
-        sequelize.literal(
-          `CASE WHEN "follower"."id" IN (SELECT "followed_id" FROM "follow" WHERE "follower_id" = ${req.user?.id}) THEN true ELSE false END`,
-        ),
-        "followed",
-      ];
-    }
-
-    if (+id == req.user?.id) {
-      const followers = await Follow.findAll({
-        where: { followed_id: +id },
-        include: [
-          {
-            model: User,
-            attributes: [],
-            as: "follower",
-            include: [
-              {
-                model: Person,
-                required: true,
-                attributes: [],
-              },
-              {
-                model: UserImage,
-                required: true,
-                attributes: [],
-                include: [
-                  {
-                    model: Image,
-                    required: true,
-                    attributes: [],
-                  },
-                ],
-                where: { is_profile: true },
-              },
-            ],
-          },
-        ],
-        attributes: [
-          ...followerAttributes,
-          ...(literal.length ? [literal] : []),
-        ],
-        order: [["createdAt", "DESC"]],
-        ...apifeatures.query,
-        raw: true,
-        subQuery: false,
-      });
+    if (+id == req.user?.id)
       return res
         .status(StatusCodes.OK)
         .json({ success: true, data: followers });
-    }
 
     const user = await Person.findByPk(+id, {
       include: [
@@ -242,45 +154,6 @@ export const followers = async_(
         throw new APIError("Access denied", StatusCodes.NOT_FOUND);
     }
 
-    const followers = await Follow.findAll({
-      where: { followed_id: id },
-      include: [
-        {
-          model: User,
-          attributes: [],
-          required: true,
-          as: "follower",
-          include: [
-            {
-              model: Person,
-              required: true,
-              attributes: [],
-            },
-            {
-              model: UserImage,
-              required: true,
-              attributes: [],
-              where: { is_profile: true },
-              include: [
-                {
-                  model: Image,
-                  required: true,
-                  attributes: [],
-                },
-              ],
-            },
-          ],
-        },
-      ],
-      attributes: [
-        ...followerAttributes,
-        ...(literal?.length ? [literal] : []),
-      ],
-      order: [["createdAt", "DESC"]],
-      ...apifeatures.query,
-      raw: true,
-      subQuery: false,
-    });
     return res.status(StatusCodes.OK).json({ success: true, data: followers });
   },
 );
@@ -290,49 +163,18 @@ export const followings = async_(
     const { id } = req.params;
     const apifeatures = new APIFeatures(req.query).paginate();
 
-    if (+id == req.user?.id) {
-      const followings = await Follow.findAll({
-        where: { follower_id: +id },
-        include: [
-          {
-            model: User,
-            attributes: [],
-            as: "following",
-            include: [
-              {
-                model: Person,
-                required: true,
-                attributes: [],
-              },
-              {
-                model: UserImage,
-                required: true,
-                attributes: [],
-                include: [
-                  {
-                    model: Image,
-                    required: true,
-                    attributes: [],
-                  },
-                ],
-                where: { is_profile: true },
-              },
-            ],
-          },
-        ],
-        attributes: [
-          ...followingsAttributes,
-          [sequelize.literal("true"), "followed"],
-        ],
-        order: [["createdAt", "DESC"]],
-        ...apifeatures.query,
-        raw: true,
-        subQuery: false,
-      });
+    const FollowServiceInstance = new FollowService();
+    const followingsData = await FollowServiceInstance.followings(
+      +id,
+      req.user?.id,
+      apifeatures,
+    );
+
+    //if current user return without coniditions
+    if (+id == req.user?.id)
       return res
         .status(StatusCodes.OK)
-        .json({ success: true, data: followings });
-    }
+        .json({ success: true, data: followingsData });
 
     const user = await Person.findByPk(+id, {
       include: [
@@ -369,55 +211,8 @@ export const followings = async_(
         throw new APIError("Access denied", StatusCodes.NOT_FOUND);
     }
 
-    let literal!: [Literal, string];
-    if (req.user?.id) {
-      literal = [
-        sequelize.literal(
-          `CASE WHEN "following"."id" IN (SELECT "followed_id" FROM "follow" WHERE "follower_id" = ${req.user?.id}) THEN true ELSE false END`,
-        ),
-        "followed",
-      ];
-    }
-
-    const followings = await Follow.findAll({
-      where: { follower_id: id },
-      include: [
-        {
-          model: User,
-          attributes: [],
-          required: true,
-          as: "following",
-          include: [
-            {
-              model: Person,
-              required: true,
-              attributes: [],
-            },
-            {
-              model: UserImage,
-              required: true,
-              attributes: [],
-              where: { is_profile: true },
-              include: [
-                {
-                  model: Image,
-                  required: true,
-                  attributes: [],
-                },
-              ],
-            },
-          ],
-        },
-      ],
-      attributes: [
-        ...followingsAttributes,
-        ...(literal?.length ? [literal] : []),
-      ],
-      order: [["createdAt", "DESC"]],
-      ...apifeatures.query,
-      raw: true,
-      subQuery: false,
-    });
-    return res.status(StatusCodes.OK).json({ success: true, data: followings });
+    return res
+      .status(StatusCodes.OK)
+      .json({ success: true, data: followingsData });
   },
 );
