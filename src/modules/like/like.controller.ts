@@ -104,8 +104,11 @@ export const get_likes = async_(
       ],
       attributes: [
         [
-          sequelize.literal(
-            '"User->Person".first_name || \' \' || "User->Person".last_name',
+          sequelize.fn(
+            "CONCAT",
+            sequelize.col('"User->Person".first_name'),
+            " ",
+            sequelize.col('"User->Person".last_name'),
           ),
           "full_name",
         ],

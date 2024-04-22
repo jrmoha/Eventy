@@ -95,7 +95,7 @@ export class InboxSerivce {
   ): Promise<Inbox[]> {
     const includes = this.inboxesIncludes();
     const attributes = this.inboxesAttributes(user_id);
-    
+
     return Inbox.findAll({
       where: {
         [Op.or]: [{ sender_id: user_id }, { receiver_id: user_id }],

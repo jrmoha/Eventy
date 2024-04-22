@@ -3,7 +3,8 @@ import { sequelize } from "../../database";
 import User from "../user/user.model";
 import Event from "../event/event.model";
 
-class Comment extends Model {//TODO:Delete this model
+class Comment extends Model {
+  //TODO:Delete this model
   declare id: number;
   declare user_id: number;
   declare event_id: number;

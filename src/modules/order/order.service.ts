@@ -26,6 +26,12 @@ export class OrderService {
       ],
       [sequelize.col("Ticket.Event.Post.content"), "event"],
       [sequelize.col("Ticket.Event.date"), "event_date"],
+      [
+        sequelize.literal(
+          `EXISTS (SELECT 1 FROM "event_attendance" WHERE "event_attendance"."user_id" = "Order"."user_id" AND "event_attendance"."event_id" = "Ticket"."event_id")`,
+        ),
+        "attended",
+      ],
     ];
     const include = [
       {
