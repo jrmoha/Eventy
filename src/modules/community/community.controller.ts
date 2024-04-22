@@ -6,7 +6,7 @@ import CommunityMembership from "./community.membership.model";
 import config from "config";
 import Image from "../image/image.model";
 import { APIFeatures } from "../../utils/api.features";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import Event from "../event/event.model";
 import Post from "../post/post.model";
 import { sequelize } from "../../database";

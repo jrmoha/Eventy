@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import StatusCodes from "http-status-codes";
 import { async_ } from "./async.middleware";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import config from "config";
 import Person from "../../modules/person/person.model";
 import { Token } from "../../utils/token";

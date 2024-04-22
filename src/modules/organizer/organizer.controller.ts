@@ -1,11 +1,11 @@
 import { SettingsService } from "./../settings/settings.service";
 import { NextFunction, Request, Response } from "express";
 import { async_ } from "../../interfaces/middleware/async.middleware";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import { StatusCodes } from "http-status-codes";
 import { APIFeatures } from "../../utils/api.features";
 import { RedisService } from "../../cache";
-import { CacheKeysGenerator } from "../../utils/cacheKeysGenerator";
+import { CacheKeysGenerator } from "../../utils/cache_keys_generator";
 import { OrganizerService } from "./organizer.service";
 
 export const profile = async_(

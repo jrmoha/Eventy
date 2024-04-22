@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { async_ } from "../../interfaces/middleware/async.middleware";
 import Category from "./category.model";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import StatusCodes from "http-status-codes";
 import UserCategory from "./user.category.model";
 import {

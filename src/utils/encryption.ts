@@ -1,6 +1,6 @@
 import CryptoJS from "crypto-js";
 
-export class EncryptionService {
+export class Encryption {
   private readonly key: string;
   constructor(key: string) {
     this.key = key;

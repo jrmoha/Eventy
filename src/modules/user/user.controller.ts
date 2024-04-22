@@ -9,7 +9,7 @@ import Image from "../image/image.model";
 import fs from "fs";
 import UserImage from "../image/user.image.model";
 import Person from "../person/person.model";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import {
   ChangeEmailInput,
   ChangePasswordInput,
@@ -21,7 +21,7 @@ import Event from "../event/event.model";
 import Post from "../post/post.model";
 import bcrypt from "bcryptjs";
 import { Token } from "../../utils/token";
-import { CacheKeysGenerator } from "../../utils/cacheKeysGenerator";
+import { CacheKeysGenerator } from "../../utils/cache_keys_generator";
 import { RedisService } from "../../cache";
 import { UserService } from "./user.service";
 

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import config from "config";
 import StatusCodes from "http-status-codes";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import fs from "fs";
 import logger from "../../utils/logger";
 

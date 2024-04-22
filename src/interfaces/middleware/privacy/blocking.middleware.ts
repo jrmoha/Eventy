@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { async_ } from "../async.middleware";
-import { APIError } from "../../../types/APIError.error";
+import { APIError } from "../../../error/api-error";
 import { StatusCodes } from "http-status-codes";
 import Block from "../../../modules/block/block.model";
 import { Op } from "sequelize";

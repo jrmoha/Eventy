@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { async_ } from "../../interfaces/middleware/async.middleware";
 import Settings from "./settings.model";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import { StatusCodes } from "http-status-codes";
 import { EditSettingsInput } from "./settings.validator";
 import { SettingsService } from "./settings.service";

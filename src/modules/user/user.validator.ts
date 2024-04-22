@@ -1,5 +1,5 @@
 import { TypeOf, z } from "zod";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import { StatusCodes } from "http-status-codes";
 
 export const uploadImageSchema = z.object({

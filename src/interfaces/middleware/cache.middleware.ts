@@ -2,10 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import StatusCodes from "http-status-codes";
 import { RedisService } from "../../cache";
 import { async_ } from "./async.middleware";
-import { CacheKeysGenerator } from "../../utils/cacheKeysGenerator";
-import { resourceType } from "../../types/cache.type";
+import { CacheKeysGenerator } from "../../utils/cache_keys_generator";
+import { ResourceType } from "../../types/cache.type";
 
-export const cache = (resource: resourceType) => {
+export const cache = (resource: ResourceType) => {
   return async_(async (req: Request, res: Response, next: NextFunction) => {
     const keysGenerator = new CacheKeysGenerator().keysGenerator;
     const key = keysGenerator[resource](req);

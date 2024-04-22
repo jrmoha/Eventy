@@ -13,7 +13,7 @@ import Follow from "../follow/follow.model";
 import { FeedService } from "./feed.service";
 import Event from "../event/event.model";
 import { RedisService } from "../../cache";
-import { CacheKeysGenerator } from "../../utils/cacheKeysGenerator";
+import { CacheKeysGenerator } from "../../utils/cache_keys_generator";
 
 export const get_home = async_(
   async (req: Request, res: Response, next: NextFunction) => {

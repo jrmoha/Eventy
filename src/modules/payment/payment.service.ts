@@ -3,11 +3,11 @@ import Stripe from "stripe";
 import config from "config";
 import { sequelize } from "../../database/index";
 import { StatusCodes } from "http-status-codes";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import Ticket from "../event/event.tickets.model";
 import Payment from "./payment.model";
 import Order, { OrderStatus } from "../order/order.model";
-import { EncryptionService } from "../../utils/encryption";
+import { Encryption } from "../../utils/encryption";
 import { sendTicketConfirmationEmail } from "../../interfaces/handlers/email/email.handler";
 import Person from "../person/person.model";
 import Event from "../event/event.model";
@@ -136,7 +136,7 @@ export class PaymentService {
     //TODO:insert in event attendance
 
     //*************Encrypt the order id*************
-    const encryptionService = new EncryptionService(
+    const encryptionService = new Encryption(
       config.get<string>("ticket.encryption_key"),
     );
     const encryptedData = encryptionService.encodeURI(order.id);

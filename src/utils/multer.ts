@@ -3,7 +3,7 @@ import path from "path";
 import fs from "fs";
 import { AllowedMedia, allowed_types } from "../types/media.type";
 import { Request } from "express";
-import { APIError } from "../types/APIError.error";
+import { APIError } from "../error/api-error";
 import StatusCodes from "http-status-codes";
 
 const storage = (folder = "") => {

@@ -3,7 +3,7 @@ import { UnfriendInput } from "./friendship.validator";
 import { async_ } from "../../interfaces/middleware/async.middleware";
 import Friendship from "./friendship.model";
 import { FindAttributeOptions, Op } from "sequelize";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import StatusCodes from "http-status-codes";
 import User from "../user/user.model";
 import { sequelize } from "../../database";

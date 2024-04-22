@@ -1,9 +1,9 @@
 import { OrderService } from "./order.service";
-import { EncryptionService } from "./../../utils/encryption";
+import { Encryption } from "./../../utils/encryption";
 /* eslint-disable no-case-declarations */
 import { NextFunction, Request, Response } from "express-serve-static-core";
 import { async_ } from "../../interfaces/middleware/async.middleware";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import StatusCodes from "http-status-codes";
 import Ticket from "../event/event.tickets.model";
 import Order, { OrderStatus } from "./order.model";
@@ -121,7 +121,7 @@ export const orderDetails = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     const { enc } = req.params;
 
-    const EncryptionServiceInstance = new EncryptionService(
+    const EncryptionServiceInstance = new Encryption(
       config.get<string>("ticket.encryption_key"),
     );
     const order_id = EncryptionServiceInstance.decodeURI(enc);

@@ -18,9 +18,9 @@ import Image from "../image/image.model";
 import EventImage from "../image/event.image.model";
 import StatusCodes from "http-status-codes";
 import { CreateEventInput, InterestInput } from "./event.validator";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import Event_Interest from "./event.interest.model";
-import { CacheKeysGenerator } from "../../utils/cacheKeysGenerator";
+import { CacheKeysGenerator } from "../../utils/cache_keys_generator";
 import { RedisService } from "../../cache";
 import { EventService } from "./event.service";
 

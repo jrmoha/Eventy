@@ -1,6 +1,6 @@
 import { AnyZodObject, ZodError } from "zod";
 import { NextFunction, Request, Response } from "express";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import StatusCodes from "http-status-codes";
 import { ParsedQs } from "qs";
 import { ParamsDictionary } from "express-serve-static-core";

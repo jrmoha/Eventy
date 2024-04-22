@@ -4,7 +4,7 @@ import UserImage from "../image/user.image.model";
 import Image from "../image/image.model";
 import { sequelize } from "../../database";
 import Inbox from "../inbox/inbox.model";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import { StatusCodes } from "http-status-codes";
 import { APIFeatures } from "../../utils/api.features";
 import Message from "./message.model";

@@ -7,11 +7,11 @@ import StatusCode from "http-status-codes";
 import Post from "../post/post.model";
 import Poll from "./poll.model";
 import Poll_Options from "./poll.options.model";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import Poll_Selection from "./poll.selection.model";
 import { VoteInput } from "./poll.validator";
 import { RedisService } from "../../cache";
-import { CacheKeysGenerator } from "../../utils/cacheKeysGenerator";
+import { CacheKeysGenerator } from "../../utils/cache_keys_generator";
 
 export const create = async_(
   async (req: Request, res: Response, next: NextFunction) => {

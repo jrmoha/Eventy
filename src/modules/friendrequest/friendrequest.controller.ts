@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { Op, Sequelize } from "sequelize";
 import StatusCodes from "http-status-codes";
 import { async_ } from "../../interfaces/middleware/async.middleware";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import FriendRequest from "./friendrequest.model";
 import User from "../user/user.model";
 import Block from "../block/block.model";

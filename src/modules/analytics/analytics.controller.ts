@@ -3,7 +3,7 @@ import { async_ } from "../../interfaces/middleware/async.middleware";
 import Event from "../event/event.model";
 import Post from "../post/post.model";
 import { sequelize } from "../../database";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import { StatusCodes } from "http-status-codes";
 import Organizer from "../organizer/organizer.model";
 import User from "../user/user.model";

@@ -4,7 +4,7 @@ import Person from "../person/person.model";
 import User from "../user/user.model";
 import { Op } from "sequelize";
 import { StatusCodes } from "http-status-codes";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import { Token } from "../../utils/token";
 import Password from "../../utils/password";
 import { JwtPayload } from "jsonwebtoken";
