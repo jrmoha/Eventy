@@ -207,7 +207,6 @@ export const create = async_(
 
     organizer[0].events_count++;
     await organizer[0].save({ transaction: t });
-    console.log(`post id: ${post.id}`);
 
     await t.commit().then(() => {
       console.log("Transaction committed");

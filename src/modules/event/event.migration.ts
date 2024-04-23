@@ -1,4 +1,5 @@
 import { sequelize } from "../../database/index";
+import logger from "../../utils/logger";
 
 const alter_query = `ALTER TABLE events ADD COLUMN IF NOT EXISTS search TSVECTOR;`;
 const function_query = `
@@ -43,14 +44,14 @@ const index_query = `CREATE INDEX IF NOT EXISTS search_idx ON events USING GIN(s
 
 (async () => {
   try {
-    await sequelize.query(alter_query);
-    await sequelize.query(function_query);
-    const [trigger] = await sequelize.query(find_trigger_query);
-    if (!trigger.length) await sequelize.query(trigger_query);
-    await sequelize.query(index_query);
+    await sequelize.query(alter_query,{logging:false});
+    await sequelize.query(function_query,{logging:false});
+    const [trigger] = await sequelize.query(find_trigger_query,{logging:false});
+    if (!trigger.length) await sequelize.query(trigger_query,{logging:false});
+    await sequelize.query(index_query,{logging:false});
 
-    console.log("Migration successful!");
+    logger.info("Migration successful!");
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   }
 })();

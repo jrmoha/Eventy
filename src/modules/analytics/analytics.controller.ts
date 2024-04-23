@@ -105,7 +105,6 @@ export const eventAnalytics = async_(
 
     if (event.organizer_id !== organizer_id)
       throw new APIError("Unauthorized", StatusCodes.UNAUTHORIZED);
-    console.log(await Post.min("createdAt", { where: { organizer_id } }));
 
     if (!from) {
       const min_date = await Post.min("createdAt", { where: { organizer_id } });
@@ -127,8 +126,10 @@ export const eventAnalytics = async_(
       analyticsService.likes(event.id),
       analyticsService.interests(event.id),
       analyticsService.EventSoldTickets(event.id),
+      analyticsService.AttendeesCount(event.id),
     ];
-    const [likes, interests, tickets_sold] = await Promise.all(promises);
+    const [likes, interests, tickets_sold, attendees] =
+      await Promise.all(promises);
 
     const data = {
       likes_count: likes[0],
@@ -137,6 +138,7 @@ export const eventAnalytics = async_(
       interests: interests[1],
       total_sold: tickets_sold[0],
       total_paid: tickets_sold[1],
+      attendees,
     };
 
     return res.status(StatusCodes.OK).json({ success: true, data });

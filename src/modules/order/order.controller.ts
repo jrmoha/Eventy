@@ -14,6 +14,7 @@ import Post from "../post/post.model";
 import { PaymentService } from "../payment/payment.service";
 import config from "config";
 import Person from "../person/person.model";
+import logger from "../../utils/logger";
 
 export const orderTicket = async_(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -123,7 +124,7 @@ export const webhook = async_(
         );
         break;
       default:
-        console.log(`Unhandled event type ${stripeWebhookEvent.type}`);
+        logger.error(`Unhandled event type ${stripeWebhookEvent.type}`);
     }
 
     return res.status(StatusCodes.OK).send(); // Return a 200 response to acknowledge receipt of the event

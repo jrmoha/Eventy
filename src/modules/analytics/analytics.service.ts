@@ -225,7 +225,7 @@ class AnalyticsService {
         : [0, 0];
     });
   }
-  public async AttendeesCount(event_id: number): Promise<number> {
+  public async AttendeesCount(event_id: number):Promise<[number, null]>{
     return Attendance.count({
       where: {
         event_id,
@@ -235,7 +235,7 @@ class AnalyticsService {
         },
       },
       col: "user_id",
-    });
+    }) as unknown as [number, null];
   }
 }
 

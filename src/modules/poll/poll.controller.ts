@@ -121,9 +121,7 @@ export const vote = async_(
 
     const redisClient = new RedisService();
     const key = new CacheKeysGenerator().keysGenerator["poll"](req);
-
-    const n = await redisClient.del(key);
-    console.log(key, n);
+    await redisClient.del(key);
 
     return res.status(StatusCode.OK).json({
       success: true,
