@@ -3,7 +3,7 @@ import { sequelize } from "./../../database/index";
 import Image from "./image.model";
 
 class SystemImage extends Image {
-  declare user_id: number;
+  declare public_id: string;
 }
 
 SystemImage.init(
