@@ -2,11 +2,9 @@ import { z } from "zod";
 
 export const orderDetailsSchema = z.object({
   params: z.object({
-    order_id: z
-      .string({
-        required_error: "order_id is required",
-      })
-      .uuid(),
+    enc: z.string({
+      required_error: "order is required",
+    }),
   }),
 });
 

@@ -9,7 +9,11 @@ export class Encryption {
     return encodeURIComponent(this.encrypt(data));
   }
   public decodeURI(data: string): string {
-    return decodeURIComponent(this.decrypt(data));
+    try {
+      return decodeURIComponent(this.decrypt(data));
+    } catch (e) {
+      throw new Error("Invalid URI");
+    }
   }
   public encrypt(data: string): string {
     return CryptoJS.AES.encrypt(data, this.key).toString();

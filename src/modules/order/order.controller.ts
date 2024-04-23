@@ -30,6 +30,12 @@ export const orderTicket = async_(
     if (ticket.available === 0 || ticket.available < quantity)
       throw new APIError("Ticket not available", StatusCodes.BAD_REQUEST);
 
+    const already_purchased = await Order.findOne({
+      where: { user_id, ticket_id, status: OrderStatus.success },
+    });
+    if (already_purchased)
+      throw new APIError("Ticket already purchased", StatusCodes.BAD_REQUEST);
+
     const event = await Event.findOne({
       where: { id: ticket.event_id },
       include: [
@@ -51,8 +57,14 @@ export const orderTicket = async_(
     if (!event) throw new APIError("Event not found", StatusCodes.NOT_FOUND);
     if (event.status !== "published")
       throw new APIError("Event not published", StatusCodes.BAD_REQUEST);
-    if (new Date(event.date) < new Date())
-      throw new APIError("Event has already passed", StatusCodes.BAD_REQUEST);
+
+    const end_of_today = new Date().setHours(23, 59, 59, 999);
+    const today = new Date().setHours(0, 0, 0, 0);
+    const is_today = new Date(event.date).getTime() >= today;
+    const is_passed =
+      new Date(event.date).getTime() < end_of_today && !is_today;
+    if (is_passed)
+      throw new APIError("Event date has passed", StatusCodes.BAD_REQUEST);
 
     const order = await Order.create({
       user_id,

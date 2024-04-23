@@ -1,16 +1,16 @@
-import { sequelize } from "./../../database/index";
+import { sequelize } from "../../database/index";
 import { DataTypes, Model } from "sequelize";
-import Event from "./event.model";
+import Event from "../event/event.model";
 import User from "../user/user.model";
 
-class Event_Attendance extends Model {
+class Attendance extends Model {
   declare event_id: number;
   declare user_id: number;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 }
 
-Event_Attendance.init(
+Attendance.init(
   {
     event_id: {
       type: DataTypes.BIGINT,
@@ -30,22 +30,22 @@ Event_Attendance.init(
     timestamps: true,
   },
 );
-Event_Attendance.belongsTo(Event, {
+Attendance.belongsTo(Event, {
   foreignKey: "event_id",
   targetKey: "id",
 });
-Event.hasMany(Event_Attendance, {
+Event.hasMany(Attendance, {
   foreignKey: "event_id",
   sourceKey: "id",
 });
 
-User.hasMany(Event_Attendance, {
+User.hasMany(Attendance, {
   foreignKey: "user_id",
   sourceKey: "id",
 });
-Event_Attendance.belongsTo(User, {
+Attendance.belongsTo(User, {
   foreignKey: "user_id",
   targetKey: "id",
 });
 
-export default Event_Attendance;
+export default Attendance;

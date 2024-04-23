@@ -9,6 +9,7 @@ import Event_Interest from "../event/event.interest.model";
 import Order from "../order/order.model";
 import { sequelize } from "../../database";
 import Ticket from "../event/event.tickets.model";
+import Attendance from "../attendance/attendance.model";
 
 class AnalyticsService {
   private readonly organizer_id: number;
@@ -222,6 +223,18 @@ class AnalyticsService {
       return result.length > 0
         ? [result[0].total_sold, result[0].total_paid]
         : [0, 0];
+    });
+  }
+  public async AttendeesCount(event_id: number): Promise<number> {
+    return Attendance.count({
+      where: {
+        event_id,
+        createdAt: {
+          [Op.gte]: this.from_date,
+          [Op.lte]: this.to_date,
+        },
+      },
+      col: "user_id",
     });
   }
 }
