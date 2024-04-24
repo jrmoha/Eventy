@@ -1,3 +1,4 @@
+import { EventService } from "./../event/event.service";
 import config from "config";
 import { Encryption } from "./../../utils/encryption";
 import { NextFunction, Request, Response } from "express";
@@ -65,13 +66,17 @@ export const make_attendance = async_(
     if (attended)
       throw new APIError("Ticket Already Used", StatusCodes.FORBIDDEN);
 
-    Attendance.create({
+    await Attendance.create({
       user_id: order.user_id,
       event_id: event.id,
-    }).then((_) => {
-      return res
-        .status(StatusCodes.OK)
-        .json({ success: true, message: "Ticket is valid" });
     });
+
+    //Increase the attendees count
+    const EventServiceInstance = new EventService();
+    await EventServiceInstance.increaseAttendeesCount(event.id, order.quantity);
+
+    return res
+      .status(StatusCodes.OK)
+      .json({ success: true, message: "Ticket is valid" });
   },
 );

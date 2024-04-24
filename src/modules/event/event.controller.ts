@@ -315,3 +315,17 @@ export const similar_events = async_(
     return res.status(StatusCodes.OK).json({ success: true, data: events });
   },
 );
+
+export const tickets = async_(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.id;
+    
+    const tickets = await Ticket.findAll({
+      where: {
+        event_id: id,
+      },
+      attributes: ["ticket_id", "price", "class", "available"],
+    });
+    return res.status(StatusCodes.OK).json({ success: true, data: tickets });
+  },
+);

@@ -42,5 +42,10 @@ router.get(
   cache("similarEvents"),
   EventController.similar_events,
 );
+router.get(
+  "/tickets/:id",
+  authenticate(true, "o", "u"),
+  EventController.tickets,
+);
 
 export default router;

@@ -16,7 +16,17 @@ import { Op } from "sequelize";
 
 export class EventService {
   constructor() {}
-
+  public async increaseAttendeesCount(
+    id: number,
+    quantity: number,
+  ): Promise<void> {
+    await Event.increment("attendees_count", {
+      by: quantity,
+      where: {
+        id,
+      },
+    });
+  }
   public async getEvent(
     id: number,
     user_id: number | undefined,
@@ -139,6 +149,14 @@ export class EventService {
     token: string,
   ): Promise<Post[] | null> {
     const similarEventsIds = await this.fetchSimilarEventsIds(id, token);
+    if (!similarEventsIds) return null;
+
+    // const result: Post[] = [];
+    // for (const eventId of similarEventsIds) {
+    //   const post = await this.getEvent(eventId, undefined);
+    //   if (post) result.push(post);
+    // }
+    // return result;
     return Post.findAll({
       where: {
         id: {
@@ -181,7 +199,7 @@ export class EventService {
   private async fetchSimilarEventsIds(
     id: number,
     token: string,
-  ): Promise<Number[] | null> {
+  ): Promise<number[] | null> {
     const response = await axios.post(
       "http://localhost:8000/event",
       { elementid: id },
@@ -191,6 +209,6 @@ export class EventService {
         },
       },
     );
-    return response.data as Number[] | null;
+    return response.data as number[] | null;
   }
 }
