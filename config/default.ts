@@ -72,6 +72,10 @@ export default {
   maxImageCount: 5,
   images: {
     default_user_image: "eventy/default_user",
+    default_user_url:
+      "http://res.cloudinary.com/db3qmksfk/image/upload/v1709376796/eventy/default_user.jpg",
+    default_user_secure_url:
+      "https://res.cloudinary.com/db3qmksfk/image/upload/v1709376796/eventy/default_user.jpg",
     default_group_image: "eventy/kwdmhxefncz67i9mhblr",
     covers_max_length: 5,
   },

@@ -194,6 +194,18 @@ export const emailVerification = async_(
     await person.save();
 
     await Settings.create({ user_id: person.id });
+
+    await Image.findOrCreate({
+      where: { public_id: config.get<string>("images.default_user_image") },
+      defaults: {
+        public_id: config.get<string>("images.default_user_image"),
+        url: config.get<string>("images.default_user_url"),
+        secure_url: config.get<string>("images.default_user_secure_url"),
+        size: 0,
+        format: "jpg",
+      },
+    });
+
     await UserImage.create({
       public_id: config.get<string>("images.default_user_image"),
       user_id: person.id,

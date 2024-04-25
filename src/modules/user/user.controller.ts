@@ -97,6 +97,11 @@ export const update = async_(
     const { signAccessToken } = new Token();
     const token = signAccessToken(payload);
 
+    //Delete all user cache from redis
+    const redisClient = new RedisService();
+    const pattern: string = `User:${req.user?.id}*`;
+    await redisClient.delByPattern(pattern);
+
     return res.status(StatusCodes.OK).json({
       success: true,
       data: person,
@@ -224,6 +229,10 @@ export const uploadImage = async_(
     const { signAccessToken } = new Token();
     const token = signAccessToken(payload);
 
+    //Delete all user cache from redis
+    const redisClient = new RedisService();
+    await redisClient.delByPattern(`User:${req.user?.id}*`);
+
     return res.status(StatusCodes.CREATED).json({
       success: true,
       data: { public_id: image.public_id, url: image.url },
@@ -281,6 +290,9 @@ export const deleteImage = async_(
 
     const { signAccessToken } = new Token();
     const token = signAccessToken(payload);
+
+    const redisClient = new RedisService();
+    await redisClient.delByPattern(`User:${req.user?.id}*`);
 
     return res.status(StatusCodes.OK).json({
       success: true,

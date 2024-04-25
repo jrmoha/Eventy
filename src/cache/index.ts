@@ -38,6 +38,16 @@ export class RedisService {
   public async del(key: string): Promise<number> {
     return this.client.del(key);
   }
+  private async getKeysByPattern(pattern: string): Promise<string[]> {
+    return this.client.keys(pattern);
+  }
+   public async delByPattern(pattern: string): Promise<number> {
+    const keys = await this.getKeysByPattern(pattern);
+    for(const key of keys) {
+      await this.del(key);
+    }
+    return keys.length;
+   }
   get Client() {
     return this.client;
   }

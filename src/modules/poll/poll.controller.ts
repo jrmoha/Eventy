@@ -89,15 +89,18 @@ export const vote = async_(
     next: NextFunction,
   ) => {
     const user_id = req.user?.id;
-
-    const { id: poll_id, option_id } = req.params;
-
-    const poll = await Poll.findByPk(poll_id);
-    if (!poll) throw new APIError("Poll doesn't exist", StatusCode.NOT_FOUND);
-
+    const {   option_id } = req.params;
+    
+    
     const option = await Poll_Options.findByPk(option_id);
     if (!option)
       throw new APIError("Poll option doesn't exist", StatusCode.NOT_FOUND);
+    
+        const poll = await Poll.findByPk(option.poll_id);
+        if (!poll) throw new APIError("Poll doesn't exist", StatusCode.NOT_FOUND);
+
+
+
 
     const already_vote = await Poll_Selection.findOne({
       where: { user_id, option_id },
@@ -137,15 +140,15 @@ export const unvote = async_(
     next: NextFunction,
   ) => {
     const user_id = req.user?.id;
-    const { id: poll_id, option_id } = req.params;
+    const {   option_id } = req.params;
 
-    const poll = await Poll.findByPk(poll_id);
-    if (!poll) throw new APIError("Poll doesn't exist", StatusCode.NOT_FOUND);
-
+    
     const option = await Poll_Options.findByPk(option_id);
     if (!option)
       throw new APIError("Poll option doesn't exist", StatusCode.NOT_FOUND);
-
+    
+    // const poll = await Poll.findByPk(poll_id);
+    // if (!poll) throw new APIError("Poll doesn't exist", StatusCode.NOT_FOUND);
     const already_vote = await Poll_Selection.findOne({
       where: { user_id, option_id },
     });
