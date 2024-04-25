@@ -4,7 +4,7 @@ import { sequelize } from "../../database";
 import { APIFeatures } from "../../utils/api.features";
 import User from "../user/user.model";
 import Person from "../person/person.model";
-import UserImage from "../image/user.image.model";
+import UserImage from "../user/image/user.image.model";
 import Image from "../image/image.model";
 
 export class InboxSerivce {

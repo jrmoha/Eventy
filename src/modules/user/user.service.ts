@@ -1,16 +1,16 @@
 import { FindAttributeOptions, Op } from "sequelize";
 import { sequelize } from "../../database";
 import Image from "../image/image.model";
-import UserImage from "../image/user.image.model";
+import UserImage from "./image/user.image.model";
 import User from "./user.model";
 import Person from "../person/person.model";
 import { Literal } from "sequelize/types/utils";
 import Like from "../like/like.model";
 import Post from "../post/post.model";
 import Event from "../event/event.model";
-import EventImage from "../image/event.image.model";
+import EventImage from "../event/image/event.image.model";
 import { APIFeatures } from "../../utils/api.features";
-import Event_Interest from "../event/event.interest.model";
+import Event_Interest from "../event/interest/event.interest.model";
 
 export class UserService {
   constructor() {}

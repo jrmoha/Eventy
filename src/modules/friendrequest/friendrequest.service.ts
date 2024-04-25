@@ -1,7 +1,7 @@
 import { Op } from "sequelize";
 import { sequelize } from "../../database";
 import Image from "../image/image.model";
-import UserImage from "../image/user.image.model";
+import UserImage from "../user/image/user.image.model";
 import Person from "../person/person.model";
 import User from "../user/user.model";
 import FriendRequest from "./friendrequest.model";

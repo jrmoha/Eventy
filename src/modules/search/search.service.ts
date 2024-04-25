@@ -2,7 +2,7 @@ import { Request } from "express";
 import { APIFeatures, queryString } from "../../utils/api.features";
 import QueryBuilder from "../../utils/query_builder";
 import Event from "../event/event.model";
-import EventImage from "../image/event.image.model";
+import EventImage from "../event/image/event.image.model";
 import { SearchInput } from "./search.validator";
 import { sequelize } from "../../database";
 import Image from "../image/image.model";

@@ -1,4 +1,4 @@
-import { SettingsService } from "./../settings/settings.service";
+import { SettingsService } from "./settings/settings.service";
 import { JwtPayload } from "jsonwebtoken";
 import config from "config";
 import { NextFunction, Request, Response } from "express";
@@ -7,7 +7,7 @@ import { async_ } from "../../interfaces/middleware/async.middleware";
 import cloudinary from "../../utils/cloudinary";
 import Image from "../image/image.model";
 import fs from "fs";
-import UserImage from "../image/user.image.model";
+import UserImage from "./image/user.image.model";
 import Person from "../person/person.model";
 import { APIError } from "../../error/api-error";
 import {

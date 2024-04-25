@@ -1,7 +1,7 @@
 import { FindAttributeOptions } from "sequelize";
 import { sequelize } from "../../database";
 import Event from "../event/event.model";
-import Ticket from "../event/event.tickets.model";
+import Ticket from "../event/tickets/event.tickets.model";
 import Person from "../person/person.model";
 import Post from "../post/post.model";
 import User from "../user/user.model";

@@ -5,7 +5,7 @@ import { NextFunction, Request, Response } from "express-serve-static-core";
 import { async_ } from "../../interfaces/middleware/async.middleware";
 import { APIError } from "../../error/api-error";
 import StatusCodes from "http-status-codes";
-import Ticket from "../event/event.tickets.model";
+import Ticket from "../event/tickets/event.tickets.model";
 import Order, { OrderStatus } from "./order.model";
 import Stripe from "stripe";
 import { sequelize } from "../../database";

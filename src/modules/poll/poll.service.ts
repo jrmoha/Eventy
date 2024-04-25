@@ -1,7 +1,7 @@
 import { FindAttributeOptions } from "sequelize";
 import { sequelize } from "../../database";
 import Poll from "./poll.model";
-import UserImage from "../image/user.image.model";
+import UserImage from "../user/image/user.image.model";
 import Organizer from "../organizer/organizer.model";
 import Person from "../person/person.model";
 import Post from "../post/post.model";

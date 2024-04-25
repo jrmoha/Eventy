@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authenticate } from "../../interfaces/middleware/authentication.middleware";
 import { get_inboxes } from "./inbox.controller";
-import messagesRoute from "../message/message.routes";
+import messagesRoute from "./message/message.routes";
 
 const router = Router();
 

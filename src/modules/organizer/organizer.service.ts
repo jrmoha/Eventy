@@ -2,16 +2,29 @@ import { Literal } from "sequelize/types/utils";
 import { sequelize } from "../../database";
 import { APIFeatures } from "../../utils/api.features";
 import Event from "../event/event.model";
-import EventImage from "../image/event.image.model";
+import EventImage from "../event/image/event.image.model";
 import Image from "../image/image.model";
 import Post from "../post/post.model";
 import Person from "../person/person.model";
 import User from "../user/user.model";
 import Organizer from "./organizer.model";
-import UserImage from "../image/user.image.model";
+import UserImage from "../user/image/user.image.model";
+import { Transaction } from "sequelize";
 
 export class OrganizerService {
   constructor() {}
+  public async insertIfNotExists(
+    id: number,
+    t?: Transaction,
+  ): Promise<[Organizer, boolean]> {
+    return Organizer.findOrCreate({
+      where: { id },
+      defaults: {
+        id,
+      },
+      transaction: t,
+    });
+  }
   public async getOrganizerProfile(
     organizer_id: number,
     current_id: number | undefined,

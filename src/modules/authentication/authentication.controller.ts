@@ -22,9 +22,9 @@ import {
   sendVerificationEmail,
 } from "../../interfaces/handlers/email/email.handler";
 import { nanoid } from "nanoid";
-import Settings from "../settings/settings.model";
+import Settings from "../user/settings/settings.model";
 import logger from "../../utils/logger";
-import UserImage from "../image/user.image.model";
+import UserImage from "../user/image/user.image.model";
 import Image from "../image/image.model";
 import { sequelize } from "../../database";
 

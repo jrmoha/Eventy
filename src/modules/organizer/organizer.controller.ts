@@ -1,4 +1,4 @@
-import { SettingsService } from "./../settings/settings.service";
+import { SettingsService } from "../user/settings/settings.service";
 import { NextFunction, Request, Response } from "express";
 import { async_ } from "../../interfaces/middleware/async.middleware";
 import { APIError } from "../../error/api-error";

@@ -2,7 +2,7 @@ import { APIFeatures } from "./../../utils/api.features";
 import { FindAttributeOptions } from "sequelize";
 import { sequelize } from "../../database";
 import { Literal } from "sequelize/types/utils";
-import UserImage from "../image/user.image.model";
+import UserImage from "../user/image/user.image.model";
 import Person from "../person/person.model";
 import User from "../user/user.model";
 import Follow from "./follow.model";

@@ -7,7 +7,7 @@ import Like from "./like.model";
 import User from "../user/user.model";
 import { sequelize } from "../../database";
 import Person from "../person/person.model";
-import UserImage from "../image/user.image.model";
+import UserImage from "../user/image/user.image.model";
 import Image from "../image/image.model";
 import { APIFeatures } from "../../utils/api.features";
 import { GetLikesInput, LikeInput, UnlikeInput } from "./like.validator";

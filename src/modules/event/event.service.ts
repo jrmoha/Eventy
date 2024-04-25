@@ -1,32 +1,27 @@
 import { Literal } from "sequelize/types/utils";
 import { sequelize } from "../../database";
-import EventCategory from "../category/event.category.model";
-import EventImage from "../image/event.image.model";
+import EventCategory from "./category/event.category.model";
+import EventImage from "./image/event.image.model";
 import Image from "../image/image.model";
 import Organizer from "../organizer/organizer.model";
 import Person from "../person/person.model";
 import Post from "../post/post.model";
 import User from "../user/user.model";
-import Event_Agenda from "./event.agenda.model";
-import EventFAQ from "./event.faq.model";
-import Event_Phone from "./event.phone.model";
+import Event_Agenda from "./agenda/agenda.model";
+import EventFAQ from "./faq/faq.model";
+import Event_Phone from "./phone/phone.model";
 import Event from "./event.model";
 import axios from "axios";
-import { Op } from "sequelize";
+import { Op, Transaction } from "sequelize";
 
 export class EventService {
   constructor() {}
-  public async increaseAttendeesCount(
-    id: number,
-    quantity: number,
-  ): Promise<void> {
-    await Event.increment("attendees_count", {
-      by: quantity,
-      where: {
-        id,
-      },
-    });
+
+  public async saveEvent(event: Event, t?: Transaction): Promise<Event> {
+    await event.save({ transaction: t });
+    return event;
   }
+
   public async getEvent(
     id: number,
     user_id: number | undefined,

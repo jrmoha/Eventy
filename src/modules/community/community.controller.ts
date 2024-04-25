@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { async_ } from "../../interfaces/middleware/async.middleware";
 import Community from "./community.model";
 import { StatusCodes } from "http-status-codes";
-import CommunityMembership from "./community.membership.model";
+import CommunityMembership from "./membership/community.membership.model";
 import config from "config";
 import Image from "../image/image.model";
 import { APIFeatures } from "../../utils/api.features";
@@ -10,13 +10,13 @@ import { APIError } from "../../error/api-error";
 import Event from "../event/event.model";
 import Post from "../post/post.model";
 import { sequelize } from "../../database";
-import CommunityMessage from "./community.message.model";
+import CommunityMessage from "./message/community.message.model";
 import {
   CommunityMessageInput,
   AdminInput,
   DeleteCommunityInput,
 } from "./community.validator";
-import UserImage from "../image/user.image.model";
+import UserImage from "../user/image/user.image.model";
 import User from "../user/user.model";
 import Person from "../person/person.model";
 

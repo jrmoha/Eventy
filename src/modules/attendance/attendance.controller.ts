@@ -1,4 +1,3 @@
-import { EventService } from "./../event/event.service";
 import config from "config";
 import { Encryption } from "./../../utils/encryption";
 import { NextFunction, Request, Response } from "express";
@@ -7,10 +6,11 @@ import { OrderDetailsInput } from "../order/order.validator";
 import Order, { OrderStatus } from "../order/order.model";
 import { APIError } from "../../error/api-error";
 import { StatusCodes } from "http-status-codes";
-import Ticket from "../event/event.tickets.model";
+import Ticket from "../event/tickets/event.tickets.model";
 import Event from "../event/event.model";
 import Attendance from "./attendance.model";
 import { z } from "zod";
+import { AttendanceService } from "./attendance.service";
 
 export const make_attendance = async_(
   async (
@@ -72,8 +72,11 @@ export const make_attendance = async_(
     });
 
     //Increase the attendees count
-    const EventServiceInstance = new EventService();
-    await EventServiceInstance.increaseAttendeesCount(event.id, order.quantity);
+    const AttendanceServiceInstance = new AttendanceService();
+    await AttendanceServiceInstance.increaseAttendeesCount(
+      event.id,
+      order.quantity,
+    );
 
     return res
       .status(StatusCodes.OK)

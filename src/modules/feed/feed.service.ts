@@ -1,7 +1,7 @@
 import { Request } from "express";
 import { sequelize } from "../../database";
 import Event from "../event/event.model";
-import EventImage from "../image/event.image.model";
+import EventImage from "../event/image/event.image.model";
 import Image from "../image/image.model";
 import Organizer from "../organizer/organizer.model";
 import Person from "../person/person.model";
@@ -10,7 +10,7 @@ import User from "../user/user.model";
 import axios from "axios";
 import { FindAttributeOptions, Includeable, Op } from "sequelize";
 import { Literal } from "sequelize/types/utils";
-import UserImage from "../image/user.image.model";
+import UserImage from "../user/image/user.image.model";
 import SystemImage from "../image/system.image.model";
 import config from "config";
 export class FeedService {

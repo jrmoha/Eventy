@@ -8,7 +8,7 @@ import Follow from "./follow.model";
 import User from "../user/user.model";
 import Person from "../person/person.model";
 import { FollowInput } from "./follow.validator";
-import Settings from "../settings/settings.model";
+import Settings from "../user/settings/settings.model";
 import Friendship from "../friendship/friendship.model";
 import { APIFeatures } from "../../utils/api.features";
 
@@ -90,15 +90,19 @@ export const unfollow = async_(
         "you're already not following this user",
         StatusCodes.BAD_REQUEST,
       );
+
     await follow.destroy();
+
     await User.decrement("following_count", {
       by: 1,
       where: { id: follower_id },
     });
+
     await User.decrement("followers_count", {
       by: 1,
       where: { id: followed_id },
     });
+
     return res.status(StatusCodes.OK).json({ success: true });
   },
 );

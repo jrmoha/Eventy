@@ -4,7 +4,7 @@ import config from "config";
 import { sequelize } from "../../database/index";
 import { StatusCodes } from "http-status-codes";
 import { APIError } from "../../error/api-error";
-import Ticket from "../event/event.tickets.model";
+import Ticket from "../event/tickets/event.tickets.model";
 import Payment from "./payment.model";
 import Order, { OrderStatus } from "../order/order.model";
 import { Encryption } from "../../utils/encryption";
@@ -12,7 +12,7 @@ import { sendTicketConfirmationEmail } from "../../interfaces/handlers/email/ema
 import Person from "../person/person.model";
 import Event from "../event/event.model";
 import Post from "../post/post.model";
-import EventImage from "../image/event.image.model";
+import EventImage from "../event/image/event.image.model";
 import Image from "../image/image.model";
 import { QrCodeService } from "../../utils/qrcode";
 

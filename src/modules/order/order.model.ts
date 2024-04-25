@@ -1,4 +1,4 @@
-import Ticket from "../event/event.tickets.model";
+import Ticket from "../event/tickets/event.tickets.model";
 import Payment from "../payment/payment.model";
 import User from "../user/user.model";
 import { sequelize } from "./../../database/index";

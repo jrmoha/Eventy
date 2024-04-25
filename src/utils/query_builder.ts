@@ -1,8 +1,8 @@
 import { FindAttributeOptions, Includeable, Op } from "sequelize";
 import { SearchInput } from "../modules/search/search.validator";
 import { sequelize } from "../database";
-import EventCategory from "../modules/category/event.category.model";
-import Ticket from "../modules/event/event.tickets.model";
+import EventCategory from "../modules/event/category/event.category.model";
+import Ticket from "../modules/event/tickets/event.tickets.model";
 import Post from "../modules/post/post.model";
 import { Literal } from "sequelize/types/utils";
 

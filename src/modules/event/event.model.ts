@@ -1,7 +1,7 @@
 import { sequelize } from "./../../database/index";
 import Post from "../post/post.model";
 import { DataTypes } from "sequelize";
-import "./event.migration";
+import "./migration/event.migration";
 class Event extends Post {
   declare location: string;
   declare date: Date;

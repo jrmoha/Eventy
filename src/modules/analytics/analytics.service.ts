@@ -5,10 +5,10 @@ import Follow from "../follow/follow.model";
 import Poll from "../poll/poll.model";
 import Event from "../event/event.model";
 import Like from "../like/like.model";
-import Event_Interest from "../event/event.interest.model";
+import Event_Interest from "../event/interest/event.interest.model";
 import Order from "../order/order.model";
 import { sequelize } from "../../database";
-import Ticket from "../event/event.tickets.model";
+import Ticket from "../event/tickets/event.tickets.model";
 import Attendance from "../attendance/attendance.model";
 
 class AnalyticsService {
@@ -225,7 +225,7 @@ class AnalyticsService {
         : [0, 0];
     });
   }
-  public async AttendeesCount(event_id: number):Promise<[number, null]>{
+  public async AttendeesCount(event_id: number): Promise<[number, null]> {
     return Attendance.count({
       where: {
         event_id,
