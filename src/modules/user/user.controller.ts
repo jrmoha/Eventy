@@ -1,3 +1,4 @@
+import { SettingsService } from "./settings/settings.service";
 import { JwtPayload } from "jsonwebtoken";
 import config from "config";
 import { NextFunction, Request, Response } from "express";
@@ -6,29 +7,23 @@ import { async_ } from "../../interfaces/middleware/async.middleware";
 import cloudinary from "../../utils/cloudinary";
 import Image from "../image/image.model";
 import fs from "fs";
-import UserImage from "../image/user.image.model";
+import UserImage from "./image/user.image.model";
 import Person from "../person/person.model";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import {
   ChangeEmailInput,
   ChangePasswordInput,
   UpdateUserInput,
 } from "./user.validator";
 import { sequelize } from "../../database";
-import User from "./user.model";
 import { APIFeatures } from "../../utils/api.features";
-import Like from "../like/like.model";
 import Event from "../event/event.model";
 import Post from "../post/post.model";
-import EventImage from "../image/event.image.model";
-import { Literal } from "sequelize/types/utils";
-import Event_Interest from "../event/event.interest.model";
 import bcrypt from "bcryptjs";
-import Settings from "../settings/settings.model";
-import { FindAttributeOptions, Op } from "sequelize";
 import { Token } from "../../utils/token";
-import { CacheKeysGenerator } from "../../utils/cacheKeysGenerator";
+import { CacheKeysGenerator } from "../../utils/cache_keys_generator";
 import { RedisService } from "../../cache";
+import { UserService } from "./user.service";
 
 export const update = async_(
   async (
@@ -92,6 +87,7 @@ export const update = async_(
     const payload: JwtPayload = {
       id: req.user?.id as number,
       username: person.username,
+      email: person.email,
       first_name: person.first_name,
       last_name: person.last_name,
       role: req.user?.role || "u",
@@ -100,6 +96,11 @@ export const update = async_(
 
     const { signAccessToken } = new Token();
     const token = signAccessToken(payload);
+
+    //Delete all user cache from redis
+    const redisClient = new RedisService();
+    const pattern: string = `User:${req.user?.id}*`;
+    await redisClient.delByPattern(pattern);
 
     return res.status(StatusCodes.OK).json({
       success: true,
@@ -172,6 +173,7 @@ export const change_password = async_(
       username: req.user?.username,
       first_name: req.user?.first_name,
       last_name: req.user?.last_name,
+      email: req.user?.email,
       role: req.user?.role || "u",
       profile_image: req.user?.profile_image,
     };
@@ -220,11 +222,16 @@ export const uploadImage = async_(
       first_name: req.user?.first_name,
       last_name: req.user?.last_name,
       role: req.user?.role || "u",
+      email: req.user?.email,
       profile_image: secure_url,
     };
 
     const { signAccessToken } = new Token();
     const token = signAccessToken(payload);
+
+    //Delete all user cache from redis
+    const redisClient = new RedisService();
+    await redisClient.delByPattern(`User:${req.user?.id}*`);
 
     return res.status(StatusCodes.CREATED).json({
       success: true,
@@ -277,11 +284,15 @@ export const deleteImage = async_(
       first_name: req.user?.first_name,
       last_name: req.user?.last_name,
       role: req.user?.role || "u",
+      email: req.user?.email,
       profile_image: newProfileImage?.secure_url,
     };
 
     const { signAccessToken } = new Token();
     const token = signAccessToken(payload);
+
+    const redisClient = new RedisService();
+    await redisClient.delByPattern(`User:${req.user?.id}*`);
 
     return res.status(StatusCodes.OK).json({
       success: true,
@@ -293,136 +304,13 @@ export const profile = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
-    let literal!: [[Literal, string]];
-
-    if (req.user?.id && req.user.id !== +id) {
-      literal = [
-        [
-          sequelize.literal(
-            `CASE WHEN EXISTS (SELECT 1 FROM follow WHERE follower_id = ${req.user.id} AND followed_id = ${id}) THEN true ELSE false END`,
-          ),
-          "is_following",
-        ],
-      ];
-      literal.push([
-        sequelize.literal(
-          `CASE WHEN EXISTS (SELECT 1 FROM friendship WHERE (sender_id = ${req.user.id} AND receiver_id = ${id}) OR (sender_id = ${id} AND receiver_id = ${req.user.id})) THEN true ELSE false END`,
-        ),
-        "is_friend",
-      ]);
-    }
-
-    const user = await Person.findOne({
-      where: {
-        id,
-        [Op.and]: sequelize.literal(
-          `NOT EXISTS (SELECT 1 FROM organizer WHERE id=:id)`,
-        ),
-      },
-      include: [
-        {
-          model: User,
-          required: true,
-          attributes: [],
-          include: [
-            {
-              model: UserImage,
-              required: true,
-              attributes: [],
-              where: { is_profile: true },
-              include: [
-                {
-                  model: Image,
-                  required: true,
-                  attributes: [],
-                },
-              ],
-            },
-          ],
-        },
-      ],
-      attributes: [
-        [
-          sequelize.fn(
-            "concat",
-            sequelize.col("first_name"),
-            " ",
-            sequelize.col("last_name"),
-          ),
-          "full_name",
-        ],
-        "phone_number",
-        "username",
-        "id",
-        "email",
-        [sequelize.col("User.followers_count"), "followers_count"],
-        [sequelize.col("User.following_count"), "following_count"],
-        [sequelize.col("User.friends_count"), "friends_count"],
-        [sequelize.col("User.UserImages.Image.url"), "profile_image"],
-        ...(literal?.length ? literal : []),
-      ],
-      replacements: { id },
-      benchmark: true,
-    });
+    const UserServiceInstance = new UserService();
+    const user = await UserServiceInstance.profile(+id, req.user?.id);
 
     if (!user) throw new APIError("user not found", StatusCodes.NOT_FOUND);
 
-    if (req.user?.id == +id) {
-      user.setDataValue("followers_visible", true);
-      user.setDataValue("following_visible", true);
-      user.setDataValue("friends_visible", true);
-      return res.status(StatusCodes.OK).json({ success: true, data: user });
-    }
-
-    const settings = await Settings.findOne({
-      where: { user_id: user.id },
-    });
-
-    switch (settings?.followers_visibility) {
-      case "none":
-        user.setDataValue("followers_visible", false);
-        break;
-      case "friends":
-        user.setDataValue(
-          "followers_visible",
-          !!user.getDataValue("is_friend"),
-        );
-        break;
-      case "anyone":
-        user.setDataValue("followers_visible", true);
-        break;
-      default:
-        break;
-    }
-    switch (settings?.following_visibility) {
-      case "none":
-        user.setDataValue("following_visible", false);
-        break;
-      case "friends":
-        user.setDataValue(
-          "following_visible",
-          !!user.getDataValue("is_friend"),
-        );
-        break;
-      case "anyone":
-        user.setDataValue("following_visible", true);
-        break;
-      default:
-        break;
-    }
-    switch (settings?.friends_visibility) {
-      case "none":
-        user.setDataValue("friends_visible", false);
-        break;
-      case "friends":
-        user.setDataValue("friends_visible", !!user.getDataValue("is_friend"));
-        break;
-      case "anyone":
-        user.setDataValue("friends_visible", true);
-        break;
-      default:
-        break;
-    }
+    const SettingsServiceInstance = new SettingsService();
+    await SettingsServiceInstance.setSettings(user, req.user?.id);
 
     //********Cache *********
     const redisClient = new RedisService();
@@ -432,80 +320,16 @@ export const profile = async_(
     return res.status(StatusCodes.OK).json({ success: true, data: user });
   },
 );
-const attrs = (literal?: [[Literal, string]]): FindAttributeOptions => [
-  "user_id",
-  [sequelize.col("Event.id"), "event_id"],
-  [
-    sequelize.fn(
-      "to_char",
-      sequelize.col("Event.date"),
-      "YYYY-MM-DD HH24:MI:SS",
-    ),
-    "date",
-  ],
-  [sequelize.col("Event.time"), "time"],
-  [sequelize.col("Event.Post.content"), "content"],
-  [
-    sequelize.literal(
-      `CASE WHEN "Event"."date" > now() THEN true ELSE false END`,
-    ),
-    "is_upcoming",
-  ],
-  ...(literal?.length ? literal : []),
-  [sequelize.col("Event.EventImages.Image.secure_url"), "image_url"],
-];
 export const likes = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const apifeatures = new APIFeatures(req.query).paginate();
-    let literal!: [[Literal, string]];
-    if (req.user) {
-      if (req.user.id == +id) {
-        literal = [[sequelize.literal(`true`), "is_liked"]];
-      } else {
-        literal = [
-          [
-            sequelize.literal(
-              `CASE WHEN EXISTS (SELECT 1 FROM likes WHERE user_id = ${req.user.id} AND event_id = "Event"."id") THEN true ELSE false END`,
-            ),
-            "is_liked",
-          ],
-        ];
-      }
-    }
-
-    const likes = await Like.findAll({
-      where: { user_id: id },
-      include: [
-        {
-          model: Event,
-          required: true,
-          attributes: [],
-          include: [
-            {
-              model: Post,
-              required: true,
-              attributes: [],
-            },
-            {
-              model: EventImage,
-              required: true,
-              attributes: [],
-              include: [
-                {
-                  model: Image,
-                  required: true,
-                  attributes: [],
-                },
-              ],
-            },
-          ],
-        },
-      ],
-      attributes: attrs(literal),
-      ...apifeatures.query,
-      subQuery: false,
-    });
+    const UserServiceInstance = new UserService();
+    const likes = await UserServiceInstance.likes(
+      +id,
+      req.user?.id,
+      apifeatures,
+    );
 
     return res.status(StatusCodes.OK).json({
       success: true,
@@ -517,55 +341,12 @@ export const interest = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const apifeatures = new APIFeatures(req.query).paginate();
-    let literal!: [[Literal, string]];
-    if (req.user) {
-      if (req.user.id == +id) {
-        literal = [[sequelize.literal(`true`), "is_liked"]];
-      } else {
-        literal = [
-          [
-            sequelize.literal(
-              `CASE WHEN EXISTS (SELECT 1 FROM likes WHERE user_id = ${req.user.id} AND event_id = "Event"."id") THEN true ELSE false END`,
-            ),
-            "is_liked",
-          ],
-        ];
-      }
-    }
-
-    const interests = await Event_Interest.findAll({
-      where: { user_id: id },
-      include: [
-        {
-          model: Event,
-          required: true,
-          attributes: [],
-          include: [
-            {
-              model: Post,
-              required: true,
-              attributes: [],
-            },
-            {
-              model: EventImage,
-              required: true,
-              attributes: [],
-              include: [
-                {
-                  model: Image,
-                  required: true,
-                  attributes: [],
-                },
-              ],
-            },
-          ],
-        },
-      ],
-      attributes: attrs(literal),
-      ...apifeatures.query,
-      subQuery: false,
-    });
-
+    const UserServiceInstance = new UserService();
+    const interests = await UserServiceInstance.interests(
+      +id,
+      req.user?.id,
+      apifeatures,
+    );
     return res.status(StatusCodes.OK).json({
       success: true,
       data: interests,

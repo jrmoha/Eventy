@@ -1,3 +1,4 @@
+import { PollService } from "./poll.service";
 import { NextFunction, Request, Response } from "express";
 import { async_ } from "../../interfaces/middleware/async.middleware";
 import { sequelize } from "../../database";
@@ -6,15 +7,11 @@ import StatusCode from "http-status-codes";
 import Post from "../post/post.model";
 import Poll from "./poll.model";
 import Poll_Options from "./poll.options.model";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import Poll_Selection from "./poll.selection.model";
 import { VoteInput } from "./poll.validator";
-import Person from "../person/person.model";
-import User from "../user/user.model";
-import UserImage from "../image/user.image.model";
-import Image from "../image/image.model";
 import { RedisService } from "../../cache";
-import { CacheKeysGenerator } from "../../utils/cacheKeysGenerator";
+import { CacheKeysGenerator } from "../../utils/cache_keys_generator";
 
 export const create = async_(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -62,93 +59,8 @@ export const get_poll = async_(
     const { id } = req.params;
     const user_id = req.user?.id;
 
-    const poll = await Poll.findByPk(id, {
-      include: [
-        {
-          model: Post,
-          required: true,
-          where: { status: "published" },
-          attributes: [],
-          include: [
-            {
-              model: Organizer,
-              required: true,
-              attributes: [],
-              include: [
-                {
-                  model: User,
-                  required: true,
-                  attributes: [],
-                  include: [
-                    {
-                      model: Person,
-                      required: true,
-                      attributes: [],
-                    },
-                    {
-                      model: UserImage,
-                      required: true,
-                      attributes: [],
-                      include: [
-                        {
-                          model: Image,
-                          required: true,
-                          attributes: [],
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-        {
-          model: Poll_Options,
-          as: "options",
-          attributes: ["id", "option", "votes"],
-          include: [
-            {
-              model: Poll_Selection,
-              as: "selections",
-              where: { user_id },
-              required: false,
-              attributes: ["user_id"],
-            },
-          ],
-        },
-      ],
-      attributes: [
-        "id",
-        "multi_selection",
-        [sequelize.col("Post.content"), "content"],
-        [
-          sequelize.fn(
-            "to_char",
-            sequelize.col("Post.createdAt"),
-            "YYYY-MM-DD HH24:MI:SS",
-          ),
-          "createdAt",
-        ],
-        [
-          sequelize.fn(
-            "concat",
-            sequelize.col("Post.Organizer.User.Person.first_name"),
-            " ",
-            sequelize.col("Post.Organizer.User.Person.last_name"),
-          ),
-          "full_name",
-        ],
-        [sequelize.col("Post.Organizer.User.Person.username"), "username"],
-        [
-          sequelize.col("Post.Organizer.User.UserImages.Image.url"),
-          "profile_image",
-        ],
-      ],
-      benchmark: true,
-      replacements: { user_id },
-      subQuery: false,
-    });
+    const PollServiceInstance = new PollService();
+    const poll = await PollServiceInstance.getPoll(+id, user_id);
 
     if (!poll) throw new APIError("Poll doesn't exist", StatusCode.NOT_FOUND);
 
@@ -177,15 +89,14 @@ export const vote = async_(
     next: NextFunction,
   ) => {
     const user_id = req.user?.id;
-
-    const { id: poll_id, option_id } = req.params;
-
-    const poll = await Poll.findByPk(poll_id);
-    if (!poll) throw new APIError("Poll doesn't exist", StatusCode.NOT_FOUND);
+    const { option_id } = req.params;
 
     const option = await Poll_Options.findByPk(option_id);
     if (!option)
       throw new APIError("Poll option doesn't exist", StatusCode.NOT_FOUND);
+
+    const poll = await Poll.findByPk(option.poll_id);
+    if (!poll) throw new APIError("Poll doesn't exist", StatusCode.NOT_FOUND);
 
     const already_vote = await Poll_Selection.findOne({
       where: { user_id, option_id },
@@ -209,9 +120,7 @@ export const vote = async_(
 
     const redisClient = new RedisService();
     const key = new CacheKeysGenerator().keysGenerator["poll"](req);
-
-    const n = await redisClient.del(key);
-    console.log(key, n);
+    await redisClient.del(key);
 
     return res.status(StatusCode.OK).json({
       success: true,
@@ -227,15 +136,14 @@ export const unvote = async_(
     next: NextFunction,
   ) => {
     const user_id = req.user?.id;
-    const { id: poll_id, option_id } = req.params;
-
-    const poll = await Poll.findByPk(poll_id);
-    if (!poll) throw new APIError("Poll doesn't exist", StatusCode.NOT_FOUND);
+    const { option_id } = req.params;
 
     const option = await Poll_Options.findByPk(option_id);
     if (!option)
       throw new APIError("Poll option doesn't exist", StatusCode.NOT_FOUND);
 
+    // const poll = await Poll.findByPk(poll_id);
+    // if (!poll) throw new APIError("Poll doesn't exist", StatusCode.NOT_FOUND);
     const already_vote = await Poll_Selection.findOne({
       where: { user_id, option_id },
     });

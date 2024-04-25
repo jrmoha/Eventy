@@ -1,6 +1,6 @@
 import { AnyZodObject, ZodError } from "zod";
 import { NextFunction, Request, Response } from "express";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import StatusCodes from "http-status-codes";
 import { ParsedQs } from "qs";
 import { ParamsDictionary } from "express-serve-static-core";
@@ -44,7 +44,7 @@ function trimStringValues(
   const trimmedObj: Record<string, unknown> = {};
   for (const key in obj) {
     if (typeof obj[key] === "string") {
-      trimmedObj[key] = obj[key].trim();
+      trimmedObj[key] = (obj[key] as string).trim();
     } else {
       trimmedObj[key] = obj[key];
     }

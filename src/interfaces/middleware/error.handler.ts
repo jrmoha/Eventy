@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import config from "config";
 import StatusCodes from "http-status-codes";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import fs from "fs";
 import logger from "../../utils/logger";
 
@@ -23,7 +23,7 @@ export const error_handler = async function (
   res: Response,
   next: NextFunction,
 ) {
-  if (req.file) fs.unlinkSync(req.file.path);
+  if (req?.file && req.files?.length == 1) fs.unlinkSync(req.file?.path);
 
   if (req.transaction) await req.transaction.rollback();
 

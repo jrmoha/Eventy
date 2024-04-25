@@ -1,16 +1,16 @@
 import { NextFunction, Request, Response } from "express";
 import { async_ } from "../../interfaces/middleware/async.middleware";
 import Category from "./category.model";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import StatusCodes from "http-status-codes";
-import UserCategory from "./user.category.model";
+import UserCategory from "../user/category/user.category.model";
 import {
   AddCategoriesInput,
   DeleteCategoryInput,
   GetEventCategoriesInput,
 } from "./category.validator";
 import Event from "../event/event.model";
-import EventCategory from "./event.category.model";
+import EventCategory from "../event/category/event.category.model";
 
 export const addUserCategories = async_(
   async (

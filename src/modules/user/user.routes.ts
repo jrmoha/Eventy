@@ -11,7 +11,7 @@ import inboxRoutes from "../inbox/inbox.routes";
 import organizerRoutes from "../organizer/organizer.routes";
 import { blocking } from "../../interfaces/middleware/privacy/blocking.middleware";
 import communityRoutes from "../community/community.routes";
-import settingRoute from "../settings/settings.routes";
+import settingRoute from "./settings/settings.routes";
 import { cache } from "../../interfaces/middleware/cache.middleware";
 
 const router = Router();

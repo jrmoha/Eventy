@@ -26,6 +26,9 @@ const {
   REDIS_URL,
   REDIS_HOST,
   REDIS_PORT,
+  STRIPE_SECRET_KEY,
+  STRIPE_ENDPOINT_SECRET,
+  TICKET_ENCRYPTION_KEY,
 } = process.env;
 
 export default {
@@ -69,6 +72,10 @@ export default {
   maxImageCount: 5,
   images: {
     default_user_image: "eventy/default_user",
+    default_user_url:
+      "http://res.cloudinary.com/db3qmksfk/image/upload/v1709376796/eventy/default_user.jpg",
+    default_user_secure_url:
+      "https://res.cloudinary.com/db3qmksfk/image/upload/v1709376796/eventy/default_user.jpg",
     default_group_image: "eventy/kwdmhxefncz67i9mhblr",
     covers_max_length: 5,
   },
@@ -77,5 +84,12 @@ export default {
     host: REDIS_HOST,
     port: REDIS_PORT,
     ex: 60 * 60, // 1 hour
+  },
+  stripe: {
+    secret_key: STRIPE_SECRET_KEY,
+    endpoint_secret: STRIPE_ENDPOINT_SECRET,
+  },
+  ticket: {
+    encryption_key: TICKET_ENCRYPTION_KEY,
   },
 };

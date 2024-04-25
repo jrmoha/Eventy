@@ -2,6 +2,10 @@ import Person from "../../../modules/person/person.model";
 import config from "config";
 import { sendEmail } from "../../../services/mailer";
 import { Token } from "../../../utils/token";
+import Ticket from "../../../modules/event/tickets/event.tickets.model";
+import Order from "../../../modules/order/order.model";
+import { SafeString } from "handlebars";
+import { htmlToTemplate } from "../../../utils/functions";
 
 type EmailURL = { origin: string };
 
@@ -78,6 +82,57 @@ export const sendVerificationEmail = function (
         url: `${origin}/email/activate/${token}`,
         resend_url: `${origin}/resend/email/activate/${resend_token}`,
       },
+    },
+  };
+
+  return sendEmail({
+    server: config_.mailserver,
+    email: config_.mail,
+  });
+};
+
+export const sendTicketConfirmationEmail = function (
+  user: Person,
+  qrcode: string,
+  event_name: string,
+  event_logo: string,
+  order: Order,
+  ticket: Ticket,
+) {
+  const { first_name, email } = user;
+  const { quantity, total } = order;
+  const { price, class: ticket_class } = ticket;
+
+  const replacements = {
+    first_name,
+    event_name,
+    event_logo: new SafeString(event_logo).toString(),
+    quantity,
+    total,
+    qrcode: new SafeString(qrcode).toString(),
+    price,
+    ticket_class,
+  };
+
+  const html = htmlToTemplate(
+    __dirname + "/template/order.confirmation.html",
+    replacements,
+  );
+
+  const config_ = {
+    mailserver: {
+      service: "gmail",
+      auth: {
+        user: config.get<string>("smtp.user"),
+        pass: config.get<string>("smtp.password"),
+      },
+    },
+    mail: {
+      from: `Eventy<${config.get<string>("smtp.user")}>`,
+      to: email,
+      attachDataUrls: true,
+      subject: "Order Confirmation",
+      html: html,
     },
   };
 

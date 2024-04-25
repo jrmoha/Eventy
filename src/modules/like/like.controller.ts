@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import { async_ } from "../../interfaces/middleware/async.middleware";
 import Event from "../event/event.model";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import { StatusCodes } from "http-status-codes";
 import Like from "./like.model";
 import User from "../user/user.model";
 import { sequelize } from "../../database";
 import Person from "../person/person.model";
-import UserImage from "../image/user.image.model";
+import UserImage from "../user/image/user.image.model";
 import Image from "../image/image.model";
 import { APIFeatures } from "../../utils/api.features";
 import { GetLikesInput, LikeInput, UnlikeInput } from "./like.validator";
@@ -104,8 +104,11 @@ export const get_likes = async_(
       ],
       attributes: [
         [
-          sequelize.literal(
-            '"User->Person".first_name || \' \' || "User->Person".last_name',
+          sequelize.fn(
+            "CONCAT",
+            sequelize.col('"User->Person".first_name'),
+            " ",
+            sequelize.col('"User->Person".last_name'),
           ),
           "full_name",
         ],

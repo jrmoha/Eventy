@@ -1,4 +1,4 @@
-import express, { Express } from "express";
+import express, { Express, NextFunction, Request, Response } from "express";
 import { Server } from "http";
 import cors from "cors";
 import config from "config";
@@ -33,8 +33,16 @@ export class ExpressConfig {
       const io = new SocketService(server);
       await io.init();
       global.io = io.getIO();
+      // this.app.use(express.json());
+      this.app.use((req: Request, res: Response, next: NextFunction) => {
+        if (req.originalUrl == "/api/v1/orders/webhook") {
+          //  express.raw({ type: "application/json" })(req, res, next);
+          next();
+        } else {
+          express.json()(req, res, next);
+        }
+      });
 
-      this.app.use(express.json());
       this.app.use(cors());
       this.app.use(req_logger);
       this.app.use(routes);
@@ -42,11 +50,10 @@ export class ExpressConfig {
       this.app.use(routeError);
       this.app.use(err_logger);
       this.app.use(sigint);
+      this.app.use(error_handler);
       process.on("unhandledRejection", unhandledRejection);
       process.on("uncaughtException", uncaughtException);
-      this.app.use(error_handler);
 
-      //TODO: Uncomment the following lines to enable Redis
       const redis = new RedisService();
       await redis.connect();
 

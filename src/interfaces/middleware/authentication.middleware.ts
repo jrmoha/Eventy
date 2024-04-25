@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import StatusCodes from "http-status-codes";
 import { async_ } from "./async.middleware";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import config from "config";
 import Person from "../../modules/person/person.model";
 import { Token } from "../../utils/token";
@@ -40,7 +40,7 @@ export const authenticate = (optional = false, ...roles: string[]) => {
         StatusCodes.NON_AUTHORITATIVE_INFORMATION,
       );
 
-    if (roles.length && !roles.includes(decoded?.role))
+    if (roles.length && decoded.role && !roles.includes(decoded?.role))
       throw new APIError(
         "You don't have permission to access this resource",
         StatusCodes.FORBIDDEN,

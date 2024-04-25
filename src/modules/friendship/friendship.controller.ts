@@ -3,14 +3,14 @@ import { UnfriendInput } from "./friendship.validator";
 import { async_ } from "../../interfaces/middleware/async.middleware";
 import Friendship from "./friendship.model";
 import { FindAttributeOptions, Op } from "sequelize";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import StatusCodes from "http-status-codes";
 import User from "../user/user.model";
 import { sequelize } from "../../database";
 import Person from "../person/person.model";
-import UserImage from "../image/user.image.model";
+import UserImage from "../user/image/user.image.model";
 import Image from "../image/image.model";
-import Settings from "../settings/settings.model";
+import Settings from "../user/settings/settings.model";
 import { APIFeatures } from "../../utils/api.features";
 
 const includes = {

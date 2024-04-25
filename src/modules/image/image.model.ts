@@ -43,5 +43,4 @@ Image.init(
   },
 );
 
- 
 export default Image;

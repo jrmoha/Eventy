@@ -1,4 +1,4 @@
-import { CacheKeysGenerator } from "../utils/cacheKeysGenerator";
+import { CacheKeysGenerator } from "../utils/cache_keys_generator";
 
-export type resourceType =
+export type ResourceType =
   keyof typeof CacheKeysGenerator.prototype.keysGenerator;

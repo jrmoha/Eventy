@@ -1,12 +1,16 @@
 import Organizer from "../organizer/organizer.model";
 import { sequelize } from "./../../database/index";
 import { DataTypes, Model } from "sequelize";
-
+enum PostStatus {
+  PUBLISHED = "published",
+  DRAFT = "draft",
+  DELETED = "deleted",
+}
 class Post extends Model {
   declare id: number;
   declare content: string;
   declare organizer_id: number;
-  declare status: string;
+  declare status: PostStatus;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 }
@@ -27,7 +31,11 @@ Post.init(
       allowNull: false,
     },
     status: {
-      type: DataTypes.ENUM("published", "draft", "deleted"),
+      type: DataTypes.ENUM(
+        PostStatus.PUBLISHED,
+        PostStatus.DRAFT,
+        PostStatus.DELETED,
+      ),
       allowNull: false,
       defaultValue: "published",
     },

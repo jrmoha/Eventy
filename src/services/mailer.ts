@@ -30,7 +30,11 @@ export const sendEmail = async ({
     }),
   );
 
-  const info = await transporter.sendMail(email);
+  const info = await transporter.sendMail({
+    priority: "high",
+    attachDataUrls: true,
+    ...email,
+  });
 
   console.log("Message sent: %s", info);
 

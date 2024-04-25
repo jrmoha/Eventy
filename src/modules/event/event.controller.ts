@@ -1,31 +1,30 @@
-// import config from "config";
+import { FAQService } from "./faq/faq.service";
+import { EventPhoneService } from "./phone/phone.service";
+import { AgendaService } from "./agenda/agenda.service";
+import { ImageService } from "./../image/image.service";
+import { EventCategoryService } from "./category/category.service";
+import { TicketService } from "./tickets/ticket.service";
+import { CommunityMembershipService } from "../community/membership/community.membership.service";
+import { CommunityService } from "./../community/community.service";
+import { PostService } from "./../post/post.service";
+import { OrganizerService } from "./../organizer/organizer.service";
 import { NextFunction, Request, Response } from "express";
-import fs from "fs";
-import { sequelize } from "../../database";
 import { async_ } from "../../interfaces/middleware/async.middleware";
 import Post from "../post/post.model";
-import Organizer from "../organizer/organizer.model";
 import Event from "./event.model";
-import Event_Phone from "./event.phone.model";
-import Event_Agenda from "./event.agenda.model";
 import Community from "../community/community.model";
-import CommunityMembership from "../community/community.membership.model";
-import Ticket from "./event.tickets.model";
-import Category from "../category/category.model";
-import EventCategory from "../category/event.category.model";
-import EventFAQ from "./event.faq.model";
-import cloudinary from "../../utils/cloudinary";
-import Image from "../image/image.model";
-import EventImage from "../image/event.image.model";
+import CommunityMembership from "../community/membership/community.membership.model";
+import Ticket from "./tickets/event.tickets.model";
 import StatusCodes from "http-status-codes";
 import { CreateEventInput, InterestInput } from "./event.validator";
-import { APIError } from "../../types/APIError.error";
-import Person from "../person/person.model";
-import User from "../user/user.model";
-import Event_Interest from "./event.interest.model";
-import { Literal } from "sequelize/types/utils";
-import { CacheKeysGenerator } from "../../utils/cacheKeysGenerator";
+import { APIError } from "../../error/api-error";
+import Event_Interest from "./interest/event.interest.model";
+import { CacheKeysGenerator } from "../../utils/cache_keys_generator";
 import { RedisService } from "../../cache";
+import { EventService } from "./event.service";
+import { sequelize } from "../../database";
+import logger from "../../utils/logger";
+import { EventImageService } from "./image/event.image.service";
 
 export const create = async_(
   async (
@@ -37,186 +36,86 @@ export const create = async_(
     req.transaction = t;
 
     const user_id = req.user?.id;
-    const {
-      content,
+    if (!user_id) throw new APIError("User not found", StatusCodes.NOT_FOUND);
+
+    const OrganizerServiceInstance = new OrganizerService();
+    const [organizer] = await OrganizerServiceInstance.insertIfNotExists(
+      user_id,
+      t,
+    );
+    const { content } = req.body;
+    const PostServiceInstance = new PostService();
+    const postInstance = new Post({ content, organizer_id: user_id });
+    const post = await PostServiceInstance.savePost(postInstance, t);
+
+    const { location, date, time } = req.body;
+    const EventServiceInstance = new EventService();
+    const eventInstance = new Event({
+      id: post.id,
       location,
-      date,
+      date: new Date(date),
       time,
-      phone_numbers,
-      agenda,
-      allow_community,
-      tickets,
-      categories,
-      faqs,
-    } = req.body;
-
-    const categories_set = new Set(Array.isArray(categories) ? categories : []);
-    const phone_numbers_set = new Set(
-      Array.isArray(phone_numbers) ? phone_numbers : [],
-    );
-
-    const images = req.files as Express.Multer.File[];
-
-    const organizer = await Organizer.findOrCreate({
-      where: { id: user_id },
-      defaults: {
-        id: user_id,
-      },
-      transaction: t,
     });
+    const event = await EventServiceInstance.saveEvent(eventInstance, t);
 
-    const post = await Post.create(
-      {
-        content,
-        organizer_id: user_id,
-      },
-      { transaction: t },
-    );
+    const { phone_numbers } = req.body;
+    const EventPhoneServiceInstance = new EventPhoneService();
+    await EventPhoneServiceInstance.insertPhoneNumbers(event, phone_numbers, t);
 
-    const event = await Event.create(
-      {
-        id: post.id,
-        location,
-        date: new Date(date),
-        time,
-      },
-      { transaction: t },
-    );
-
-    const event_phone_numbers = await Event_Phone.bulkCreate(
-      [...phone_numbers_set].map((phone: string) => ({
-        event_id: event.id,
-        phone,
-      })),
-      { transaction: t },
-    );
-
+    const { agenda } = req.body;
     if (agenda) {
-      await Event_Agenda.bulkCreate(
-        agenda.map((agenda) => ({
-          event_id: event.id,
-          description: agenda.description,
-          start_time: agenda.start_time,
-          end_time: agenda.end_time,
-        })),
-        { transaction: t },
-      );
+      const AgendaServiceInstance = new AgendaService();
+      await AgendaServiceInstance.insertAgenda(event, agenda, t);
     }
-
+    const { allow_community } = req.body;
     if (allow_community) {
-      const community = await Community.create(
-        {
-          id: event.id,
-          name: content,
-        },
-        { transaction: t },
+      const CommunityServiceInstance = new CommunityService();
+      const communityInstance = new Community({ id: event.id, name: content });
+      const community = await CommunityServiceInstance.saveCommunity(
+        communityInstance,
+        t,
       );
 
-      await CommunityMembership.create(
-        {
-          community_id: community.id,
-          user_id,
-          role: "admin",
-        },
-        { transaction: t },
-      );
-    }
-    const event_tickets = await Ticket.bulkCreate(
-      tickets.map((ticket) => ({
-        event_id: event.id,
-        price: ticket.price,
-        class: ticket.class,
-        quantity: ticket.quantity,
-        available: ticket.available,
-      })),
-      { transaction: t },
-    );
-
-    for (const category of categories_set) {
-      const category_exists = await Category.findOne({
-        where: sequelize.where(
-          sequelize.fn("lower", sequelize.col("name")),
-          "=",
-          category.toLowerCase(),
-        ),
+      const CommunityMembershipServiceInstance =
+        new CommunityMembershipService();
+      const communityMembershipInstance = new CommunityMembership({
+        community_id: community.id,
+        user_id,
+        role: "admin",
       });
-      if (category_exists) {
-        await EventCategory.findOrCreate({
-          where: {
-            event_id: event?.id,
-            category: category_exists.name,
-          },
-          defaults: {
-            event_id: event?.id,
-            category: category_exists.name,
-          },
-          transaction: t,
-        });
-      } else {
-        const formattedCategoryName =
-          category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
-        const category_ = await Category.create(
-          { name: formattedCategoryName },
-          { transaction: t },
-        );
-        await EventCategory.create(
-          { event_id: event.id, category: category_.name },
-          { transaction: t },
-        );
-      }
-    }
-
-    for (const faq of faqs || []) {
-      await EventFAQ.create(
-        {
-          event_id: event.id,
-          question: faq.question,
-          answer: faq.answer,
-        },
-        { transaction: t },
+      await CommunityMembershipServiceInstance.addMember(
+        communityMembershipInstance,
+        t,
       );
     }
+    const { tickets } = req.body;
+    const TicketServiceInstance = new TicketService();
+    await TicketServiceInstance.saveTickets(tickets, event, t);
 
-    const images_array = await Promise.all(
-      images.map(async (img: Express.Multer.File) => {
-        const { public_id, secure_url, url } = await cloudinary.uploader.upload(
-          img.path,
-          {
-            folder: `eventy/posts/events/${event.id}`,
-            resource_type: "image",
-          },
-        );
-        const image = await Image.create(
-          {
-            public_id,
-            secure_url,
-            url,
-            size: img.size,
-            format: img.mimetype,
-          },
-          { transaction: t },
-        );
-        fs.unlinkSync(img.path);
-        return image;
-      }),
-    );
-    const event_images = await EventImage.bulkCreate(
-      images_array.map((image: Image) => ({
-        event_id: event.id,
-        public_id: image.public_id,
-      })),
-      { transaction: t },
-    );
+    const { categories } = req.body;
+    const CategoryServiceInstance = new EventCategoryService();
+    await CategoryServiceInstance.bulkCreateCategories(categories, event, t);
 
-    organizer[0].events_count++;
-    await organizer[0].save({ transaction: t });
-    console.log(`post id: ${post.id}`);
+    const { faqs } = req.body;
+    const FAQServiceInstance = new FAQService();
+    await FAQServiceInstance.insertFAQs(faqs, event, t);
+
+    const ImageServiceInstance = new ImageService();
+    const images_array = await ImageServiceInstance.uploadEventImages(
+      req.files as Express.Multer.File[],
+      event,
+      t,
+    );
+    const EventImageServiceInstance = new EventImageService();
+    await EventImageServiceInstance.insertImages(images_array, event, t);
+
+    organizer.events_count++;
+    await organizer.save({ transaction: t });
 
     await t.commit().then(() => {
       console.log("Transaction committed");
       Event.update({ id: post.id }, { where: { id: post.id } }).then(() => {
-        //mock update to trigger trigger
-        console.log("Event updated");
+        logger.info("Event updated"); //mock update to trigger trigger
       });
     });
 
@@ -224,12 +123,6 @@ export const create = async_(
       success: true,
       data: {
         event,
-        post,
-        organizer,
-        event_phone_numbers,
-        event_tickets,
-        event_images,
-        images: images_array,
       },
     });
   },
@@ -238,119 +131,8 @@ export const get = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     const id = Number(req.params.id);
 
-    let literal!: [[Literal, string]];
-    if (req.user?.id) {
-      literal = [
-        [
-          sequelize.literal(
-            `CASE WHEN EXISTS (SELECT 1 FROM likes WHERE event_id = ${id} AND user_id = ${req.user?.id}) THEN true ELSE false END`,
-          ),
-          "is_liked",
-        ],
-      ];
-      literal.push([
-        sequelize.literal(
-          `CASE WHEN EXISTS (SELECT 1 FROM event_interest WHERE event_id = ${id} AND user_id = ${req.user?.id}) THEN true ELSE false END`,
-        ),
-        "is_interested",
-      ]);
-    }
-
-    const event = await Post.findByPk(id, {
-      attributes: ["id", "content"],
-      include: [
-        {
-          model: Organizer,
-          include: [
-            {
-              model: User,
-              attributes: [],
-              include: [
-                {
-                  model: Person,
-                  required: true,
-                  attributes: [],
-                },
-              ],
-              required: true,
-            },
-          ],
-          attributes: [
-            [
-              sequelize.literal('"Organizer->User->Person".first_name'),
-              "first_name",
-            ],
-            [
-              sequelize.literal('"Organizer->User->Person".last_name'),
-              "last_name",
-            ],
-            [
-              sequelize.literal('"Organizer->User->Person".username'),
-              "username",
-            ],
-            [
-              sequelize.literal('"Organizer->User".followers_count'),
-              "followers_count",
-            ],
-            [sequelize.literal('"Organizer".rate'), "rate"],
-            [sequelize.literal('"Organizer".events_count'), "events_count"],
-          ],
-        },
-        {
-          model: Event,
-          required: true,
-          attributes: [
-            "location",
-            "date",
-            "time",
-            "likes_count",
-            "comments_count",
-            "interests_count",
-            "attendees_count",
-            ...(literal ? literal : []),
-          ],
-          include: [
-            {
-              model: EventCategory,
-              attributes: ["category"],
-            },
-            {
-              model: EventImage,
-              include: [
-                {
-                  model: Image,
-                  required: true,
-                  attributes: [],
-                },
-              ],
-              attributes: [
-                [
-                  sequelize.literal('"Event->EventImages->Image".public_id'),
-                  "public_id",
-                ],
-                [sequelize.literal('"Event->EventImages->Image".url'), "url"],
-                [
-                  sequelize.literal('"Event->EventImages->Image".secure_url'),
-                  "secure_url",
-                ],
-              ],
-            },
-            {
-              model: Event_Phone,
-              attributes: ["phone"],
-            },
-            {
-              model: EventFAQ,
-              attributes: ["question", "answer"],
-            },
-            {
-              model: Event_Agenda,
-              attributes: ["description", "start_time", "end_time"],
-            },
-          ],
-        },
-      ],
-    });
+    const EventServiceInstance = new EventService();
+    const event = await EventServiceInstance.getEvent(id, req.user?.id);
 
     if (!event) throw new APIError("Event not found", StatusCodes.NOT_FOUND);
 
@@ -361,7 +143,7 @@ export const get = async_(
     //*********** Cache the event ***********
     const redisClient = new RedisService();
     const key: string = new CacheKeysGenerator().keysGenerator["event"](req);
-    await redisClient.set(key, event);
+    await redisClient.set(key, { post: event });
 
     return res.status(StatusCodes.OK).json({
       success: true,
@@ -407,5 +189,40 @@ export const interest = async_(
         event,
       },
     });
+  },
+);
+
+export const similar_events = async_(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.id;
+    const EventServiceInstance = new EventService();
+    const events = await EventServiceInstance.getSimilarEvents(
+      +id,
+      req.headers["x-access-token"] as string,
+    );
+    if (!events) return null;
+
+    //*********** Cache the event ***********
+    const redisClient = new RedisService();
+    const key: string = new CacheKeysGenerator().keysGenerator["similarEvents"](
+      req,
+    );
+    await redisClient.set(key, events);
+
+    return res.status(StatusCodes.OK).json({ success: true, data: events });
+  },
+);
+
+export const tickets = async_(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.id;
+
+    const tickets = await Ticket.findAll({
+      where: {
+        event_id: id,
+      },
+      attributes: ["ticket_id", "price", "class", "available"],
+    });
+    return res.status(StatusCodes.OK).json({ success: true, data: tickets });
   },
 );

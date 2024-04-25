@@ -4,7 +4,7 @@ import Person from "../person/person.model";
 import User from "../user/user.model";
 import { Op } from "sequelize";
 import { StatusCodes } from "http-status-codes";
-import { APIError } from "../../types/APIError.error";
+import { APIError } from "../../error/api-error";
 import { Token } from "../../utils/token";
 import Password from "../../utils/password";
 import { JwtPayload } from "jsonwebtoken";
@@ -22,9 +22,9 @@ import {
   sendVerificationEmail,
 } from "../../interfaces/handlers/email/email.handler";
 import { nanoid } from "nanoid";
-import Settings from "../settings/settings.model";
+import Settings from "../user/settings/settings.model";
 import logger from "../../utils/logger";
-import UserImage from "../image/user.image.model";
+import UserImage from "../user/image/user.image.model";
 import Image from "../image/image.model";
 import { sequelize } from "../../database";
 
@@ -152,6 +152,7 @@ export const login = async_(
     const payload: JwtPayload = {
       id: person.id,
       username: person.username,
+      email: person.email,
       first_name: person.first_name,
       last_name: person.last_name,
       role: organizer ? "o" : "u",
@@ -193,6 +194,18 @@ export const emailVerification = async_(
     await person.save();
 
     await Settings.create({ user_id: person.id });
+
+    await Image.findOrCreate({
+      where: { public_id: config.get<string>("images.default_user_image") },
+      defaults: {
+        public_id: config.get<string>("images.default_user_image"),
+        url: config.get<string>("images.default_user_url"),
+        secure_url: config.get<string>("images.default_user_secure_url"),
+        size: 0,
+        format: "jpg",
+      },
+    });
+
     await UserImage.create({
       public_id: config.get<string>("images.default_user_image"),
       user_id: person.id,
