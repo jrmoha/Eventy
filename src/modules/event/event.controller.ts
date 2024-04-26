@@ -14,7 +14,6 @@ import Post from "../post/post.model";
 import Event from "./event.model";
 import Community from "../community/community.model";
 import CommunityMembership from "../community/membership/community.membership.model";
-import Ticket from "./tickets/event.tickets.model";
 import StatusCodes from "http-status-codes";
 import { CreateEventInput, InterestInput } from "./event.validator";
 import { APIError } from "../../error/api-error";
@@ -217,12 +216,9 @@ export const tickets = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id;
 
-    const tickets = await Ticket.findAll({
-      where: {
-        event_id: id,
-      },
-      attributes: ["ticket_id", "price", "class", "available"],
-    });
+    const TicketServiceInstance = new TicketService();
+    const tickets = await TicketServiceInstance.getTickets(+id);
+
     return res.status(StatusCodes.OK).json({ success: true, data: tickets });
   },
 );

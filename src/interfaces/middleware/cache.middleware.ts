@@ -11,7 +11,7 @@ export const cache = (resource: ResourceType) => {
     const key = keysGenerator[resource](req);
     const client = new RedisService().Client;
 
-    const cached = await client.get(key);
+    const cached = await client?.get(key);
     if (cached) {
       const data = JSON.parse(cached);
 
