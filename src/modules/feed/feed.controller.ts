@@ -12,13 +12,9 @@ export const get_home = async_(
 
     const covers = await FeedServiceInstance.get_home_covers();
     const organizers = await FeedServiceInstance.get_home_organizers(req);
+    const events: Event[] = await FeedServiceInstance.get_feed_events(req);
 
-    let events: Event[];
-    if (req.user) {
-      events = (await FeedServiceInstance.get_home_events(req)) as Event[];
-    } else {
-      events = (await FeedServiceInstance.random_events()) as Event[];
-    }
+
     const data = { covers, organizers, events };
 
     const redisClient = new RedisService();
@@ -29,6 +25,4 @@ export const get_home = async_(
   },
 );
 
-export const get_feed = async_(
-  async (req: Request, res: Response, next: NextFunction) => {},
-);
+ 

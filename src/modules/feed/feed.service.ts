@@ -70,7 +70,7 @@ export class FeedService {
       subQuery: false,
     });
   }
-  public async get_home_events(req: Request): Promise<Event[]> {
+  private async get_home_events(req: Request): Promise<Event[]> {
     const includes: Includeable[] = [
       {
         model: Post,
@@ -131,7 +131,7 @@ export class FeedService {
       [sequelize.col("Post.Organizer.User.followers_count"), "followers_count"],
       [sequelize.col("EventImages.Image.secure_url"), "image"],
     ];
-    const recommendations = await this.recommendations_events(
+    const recommendations = await this.fetch_recommendations_events(
       req.user?.id as number,
       req.headers["x-access-token"] as string,
     );
@@ -168,7 +168,7 @@ export class FeedService {
       subQuery: false,
     }) as Promise<Event[]>;
   }
-  public async random_events(): Promise<Event[]> {
+  private async random_events(): Promise<Event[]> {
     const includes: Includeable[] = [
       {
         model: Post,
@@ -240,7 +240,7 @@ export class FeedService {
       subQuery: false,
     });
   }
-  private async recommendations_events(user_id: number, token: string) {
+  private async fetch_recommendations_events(user_id: number, token: string) {
     const response = await axios.post(
       "http://localhost:8000/user",
       { elementid: user_id },
@@ -252,5 +252,10 @@ export class FeedService {
       },
     );
     return response;
+  }
+
+  public async get_feed_events(req: Request): Promise<Event[]> {
+    if (req.user) return this.get_home_events(req);
+    return this.random_events();
   }
 }
