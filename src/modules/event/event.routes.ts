@@ -7,12 +7,14 @@ import { validate } from "../../interfaces/middleware/validator.middleware";
 import { createEventSchema, interestSchema } from "./event.validator";
 import likeRoutes from "../like/like.routes";
 import searchRoutes from "../search/search.routes";
+import rateRoutes from "../rate/rate.routes";
 import { cache } from "../../interfaces/middleware/cache.middleware";
 
 const router = Router();
 
 router.use("/search", searchRoutes);
 router.use("/:event_id", likeRoutes);
+router.use("/:event_id", rateRoutes);
 
 router.post(
   "/create",

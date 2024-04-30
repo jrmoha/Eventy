@@ -14,7 +14,6 @@ export const get_home = async_(
     const organizers = await FeedServiceInstance.get_home_organizers(req);
     const events: Event[] = await FeedServiceInstance.get_feed_events(req);
 
-
     const data = { covers, organizers, events };
 
     const redisClient = new RedisService();
@@ -24,5 +23,3 @@ export const get_home = async_(
     return res.status(StatusCodes.OK).json({ success: true, data });
   },
 );
-
- 

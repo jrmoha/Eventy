@@ -1,4 +1,5 @@
 import Event from "../event/event.model";
+import Attendance from "./attendance.model";
 
 export class AttendanceService {
   constructor() {}
@@ -12,5 +13,13 @@ export class AttendanceService {
         id,
       },
     });
+  }
+  public async isAttendee(user_id: number, event_id: number): Promise<boolean> {
+    return !!(await Attendance.findOne({
+      where: {
+        user_id,
+        event_id,
+      },
+    }));
   }
 }

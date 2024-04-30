@@ -22,7 +22,7 @@ Organizer.init(
       allowNull: true,
     },
     rate: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.FLOAT,
       allowNull: false,
       defaultValue: 0,
     },
