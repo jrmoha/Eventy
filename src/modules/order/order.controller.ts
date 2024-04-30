@@ -154,13 +154,4 @@ export const orderDetails = async_(
     return res.status(StatusCodes.OK).json({ success: true, data: order });
   },
 );
-export const success = async_(
-  async (req: Request, res: Response, next: NextFunction) => {
-    return res.status(StatusCodes.OK).json({ success: true });
-  },
-);
-export const cancel = async_(
-  async (req: Request, res: Response, next: NextFunction) => {
-    return res.status(StatusCodes.OK).json({ success: true });
-  },
-);
+ 

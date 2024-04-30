@@ -21,7 +21,5 @@ router.post(
   express.raw({ type: "application/json" }),
   OrderController.webhook,
 );
-router.get("/success", OrderController.success);
-router.get("/cancel", OrderController.cancel);
 
 export default router;
