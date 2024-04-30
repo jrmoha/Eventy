@@ -10,7 +10,7 @@ import Person from "../person/person.model";
 import { FollowInput } from "./follow.validator";
 import Settings from "../user/settings/settings.model";
 import Friendship from "../friendship/friendship.model";
-import { APIFeatures } from "../../utils/api.features";
+import { APIFeatures } from "../../lib/api.features";
 
 export const follow = async_(
   async (

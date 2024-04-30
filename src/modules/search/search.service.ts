@@ -1,6 +1,6 @@
 import { Request } from "express";
-import { APIFeatures, queryString } from "../../utils/api.features";
-import QueryBuilder from "../../utils/query_builder";
+import { APIFeatures, queryString } from "../../lib/api.features";
+import QueryBuilder from "../../lib/query_builder";
 import Event from "../event/event.model";
 import EventImage from "../event/image/event.image.model";
 import { SearchInput } from "./search.validator";

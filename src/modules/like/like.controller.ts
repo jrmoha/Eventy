@@ -9,7 +9,7 @@ import { sequelize } from "../../database";
 import Person from "../person/person.model";
 import UserImage from "../user/image/user.image.model";
 import Image from "../image/image.model";
-import { APIFeatures } from "../../utils/api.features";
+import { APIFeatures } from "../../lib/api.features";
 import { GetLikesInput, LikeInput, UnlikeInput } from "./like.validator";
 
 export const like = async_(

@@ -1,7 +1,7 @@
 import fs from "fs";
 import { Transaction } from "sequelize";
 import Event from "../event/event.model";
-import cloudinary from "../../utils/cloudinary";
+import cloudinary from "../../cloud/cloudinary";
 import Image from "./image.model";
 
 export class ImageService {

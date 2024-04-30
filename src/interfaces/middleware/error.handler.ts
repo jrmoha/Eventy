@@ -3,7 +3,7 @@ import config from "config";
 import StatusCodes from "http-status-codes";
 import { APIError } from "../../error/api-error";
 import fs from "fs";
-import logger from "../../utils/logger";
+import logger from "../../log/logger";
 
 export const routeError = function (
   req: Request,

@@ -1,5 +1,6 @@
 import winston from "winston";
 import "winston-daily-rotate-file";
+
 const { combine, timestamp, printf, colorize, simple } = winston.format;
 
 const logFormat = printf(({ level, message, timestamp }) => {

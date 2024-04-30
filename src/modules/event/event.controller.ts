@@ -18,11 +18,11 @@ import StatusCodes from "http-status-codes";
 import { CreateEventInput, InterestInput } from "./event.validator";
 import { APIError } from "../../error/api-error";
 import Event_Interest from "./interest/event.interest.model";
-import { CacheKeysGenerator } from "../../utils/cache_keys_generator";
+import { CacheKeysGenerator } from "../../lib/cache_keys_generator";
 import { RedisService } from "../../cache";
 import { EventService } from "./event.service";
 import { sequelize } from "../../database";
-import logger from "../../utils/logger";
+import logger from "../../log/logger";
 import { EventImageService } from "./image/event.image.service";
 
 export const create = async_(

@@ -1,5 +1,5 @@
 import { Redis } from "ioredis";
-import logger from "../utils/logger";
+import logger from "../log/logger";
 import config from "config";
 export class RedisService {
   private readonly client: Redis;

@@ -1,5 +1,5 @@
 import { FindAttributeOptions, Op } from "sequelize";
-import { APIFeatures } from "../../utils/api.features";
+import { APIFeatures } from "../../lib/api.features";
 import Friendship from "./friendship.model";
 import { sequelize } from "../../database";
 import User from "../user/user.model";

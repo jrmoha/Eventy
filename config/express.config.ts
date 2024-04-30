@@ -15,8 +15,8 @@ import {
   req_logger,
   err_logger,
 } from "../src/interfaces/middleware/logger.middleware";
-import logger from "../src/utils/logger";
-import { SocketService } from "../src/services/socket";
+import logger from "../src/log/logger";
+import { SocketService } from "../src/socket";
 import { RedisService } from "../src/cache";
 export class ExpressConfig {
   private app: Express;

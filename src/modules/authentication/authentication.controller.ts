@@ -5,8 +5,8 @@ import User from "../user/user.model";
 import { Op } from "sequelize";
 import { StatusCodes } from "http-status-codes";
 import { APIError } from "../../error/api-error";
-import { Token } from "../../utils/token";
-import Password from "../../utils/password";
+import { Token } from "../../lib/token";
+import Password from "../../lib/password";
 import { JwtPayload } from "jsonwebtoken";
 import config from "config";
 import {
@@ -23,7 +23,7 @@ import {
 } from "../../interfaces/handlers/email/email.handler";
 import { nanoid } from "nanoid";
 import Settings from "../user/settings/settings.model";
-import logger from "../../utils/logger";
+import logger from "../../log/logger";
 import UserImage from "../user/image/user.image.model";
 import Image from "../image/image.model";
 import { sequelize } from "../../database";

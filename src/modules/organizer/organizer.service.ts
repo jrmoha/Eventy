@@ -1,6 +1,6 @@
 import { Literal } from "sequelize/types/utils";
 import { sequelize } from "../../database";
-import { APIFeatures } from "../../utils/api.features";
+import { APIFeatures } from "../../lib/api.features";
 import Event from "../event/event.model";
 import EventImage from "../event/image/event.image.model";
 import Image from "../image/image.model";

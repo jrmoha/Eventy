@@ -1,7 +1,7 @@
 import { FindAttributeOptions, Op } from "sequelize";
 import Inbox from "./inbox.model";
 import { sequelize } from "../../database";
-import { APIFeatures } from "../../utils/api.features";
+import { APIFeatures } from "../../lib/api.features";
 import User from "../user/user.model";
 import Person from "../person/person.model";
 import UserImage from "../user/image/user.image.model";

@@ -4,7 +4,7 @@ import config from "config";
 import { NextFunction, Request, Response } from "express";
 import StatusCodes from "http-status-codes";
 import { async_ } from "../../interfaces/middleware/async.middleware";
-import cloudinary from "../../utils/cloudinary";
+import cloudinary from "../../cloud/cloudinary";
 import Image from "../image/image.model";
 import fs from "fs";
 import UserImage from "./image/user.image.model";
@@ -16,12 +16,12 @@ import {
   UpdateUserInput,
 } from "./user.validator";
 import { sequelize } from "../../database";
-import { APIFeatures } from "../../utils/api.features";
+import { APIFeatures } from "../../lib/api.features";
 import Event from "../event/event.model";
 import Post from "../post/post.model";
 import bcrypt from "bcryptjs";
-import { Token } from "../../utils/token";
-import { CacheKeysGenerator } from "../../utils/cache_keys_generator";
+import { Token } from "../../lib/token";
+import { CacheKeysGenerator } from "../../lib/cache_keys_generator";
 import { RedisService } from "../../cache";
 import { UserService } from "./user.service";
 

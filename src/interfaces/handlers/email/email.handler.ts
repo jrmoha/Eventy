@@ -1,11 +1,11 @@
 import Person from "../../../modules/person/person.model";
 import config from "config";
-import { sendEmail } from "../../../services/mailer";
-import { Token } from "../../../utils/token";
+import { sendEmail } from "../../../mail";
+import { Token } from "../../../lib/token";
 import Ticket from "../../../modules/event/tickets/event.tickets.model";
 import Order from "../../../modules/order/order.model";
 import { SafeString } from "handlebars";
-import { htmlToTemplate } from "../../../utils/functions";
+import { htmlToTemplate } from "../../../lib/functions";
 
 type EmailURL = { origin: string };
 

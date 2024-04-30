@@ -4,7 +4,7 @@ import { StatusCodes } from "http-status-codes";
 import { FeedService } from "./feed.service";
 import Event from "../event/event.model";
 import { RedisService } from "../../cache";
-import { CacheKeysGenerator } from "../../utils/cache_keys_generator";
+import { CacheKeysGenerator } from "../../lib/cache_keys_generator";
 
 export const get_home = async_(
   async (req: Request, res: Response, next: NextFunction) => {

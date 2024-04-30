@@ -1,5 +1,5 @@
 import { OrderService } from "./order.service";
-import { Encryption } from "./../../utils/encryption";
+import { Encryption } from "../../lib/encryption";
 /* eslint-disable no-case-declarations */
 import { NextFunction, Request, Response } from "express-serve-static-core";
 import { async_ } from "../../interfaces/middleware/async.middleware";
@@ -14,7 +14,7 @@ import Post from "../post/post.model";
 import { PaymentService } from "../payment/payment.service";
 import config from "config";
 import Person from "../person/person.model";
-import logger from "../../utils/logger";
+import logger from "../../log/logger";
 
 export const orderTicket = async_(
   async (req: Request, res: Response, next: NextFunction) => {

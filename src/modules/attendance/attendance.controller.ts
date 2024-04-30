@@ -1,5 +1,5 @@
 import config from "config";
-import { Encryption } from "./../../utils/encryption";
+import { Encryption } from "../../lib/encryption";
 import { NextFunction, Request, Response } from "express";
 import { async_ } from "../../interfaces/middleware/async.middleware";
 import { OrderDetailsInput } from "../order/order.validator";

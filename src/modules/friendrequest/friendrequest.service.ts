@@ -5,7 +5,7 @@ import UserImage from "../user/image/user.image.model";
 import Person from "../person/person.model";
 import User from "../user/user.model";
 import FriendRequest from "./friendrequest.model";
-import { APIFeatures } from "../../utils/api.features";
+import { APIFeatures } from "../../lib/api.features";
 
 export class FriendRequestService {
   constructor() {}

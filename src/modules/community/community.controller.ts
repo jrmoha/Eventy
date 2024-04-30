@@ -5,7 +5,7 @@ import { StatusCodes } from "http-status-codes";
 import CommunityMembership from "./membership/community.membership.model";
 import config from "config";
 import Image from "../image/image.model";
-import { APIFeatures } from "../../utils/api.features";
+import { APIFeatures } from "../../lib/api.features";
 import { APIError } from "../../error/api-error";
 import Event from "../event/event.model";
 import Post from "../post/post.model";

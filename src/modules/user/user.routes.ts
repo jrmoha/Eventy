@@ -3,7 +3,7 @@ import followRoutes from "../follow/follow.routes";
 import friendRequestRoutes from "../friendrequest/friendrequest.routes";
 import friendshipRoutes from "../friendship/friendship.routes";
 import { authenticate } from "../../interfaces/middleware/authentication.middleware";
-import multer from "../../utils/multer";
+import multer from "../../cloud/multer";
 import * as UC from "./user.controller";
 import { validate } from "../../interfaces/middleware/validator.middleware";
 import * as US from "./user.validator";

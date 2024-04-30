@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import StatusCodes from "http-status-codes";
 import { RedisService } from "../../cache";
 import { async_ } from "./async.middleware";
-import { CacheKeysGenerator } from "../../utils/cache_keys_generator";
+import { CacheKeysGenerator } from "../../lib/cache_keys_generator";
 import { ResourceType } from "../../types/cache.type";
 
 export const cache = (resource: ResourceType) => {

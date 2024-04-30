@@ -6,7 +6,7 @@ import { sequelize } from "../../../database";
 import Inbox from "../inbox.model";
 import { APIError } from "../../../error/api-error";
 import { StatusCodes } from "http-status-codes";
-import { APIFeatures } from "../../../utils/api.features";
+import { APIFeatures } from "../../../lib/api.features";
 import Message from "./message.model";
 
 export const get_messages = async_(

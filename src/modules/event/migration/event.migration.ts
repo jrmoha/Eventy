@@ -1,5 +1,5 @@
 import { sequelize } from "../../../database/index";
-import logger from "../../../utils/logger";
+import logger from "../../../log/logger";
 
 const alter_query = `ALTER TABLE events ADD COLUMN IF NOT EXISTS search TSVECTOR;`;
 const function_query = `

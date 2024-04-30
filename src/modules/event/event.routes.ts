@@ -1,7 +1,7 @@
 import { authenticate } from "./../../interfaces/middleware/authentication.middleware";
 import { Router } from "express";
 import * as EventController from "./event.controller";
-import upload from "../../utils/multer";
+import upload from "../../cloud/multer";
 import config from "config";
 import { validate } from "../../interfaces/middleware/validator.middleware";
 import { createEventSchema, interestSchema } from "./event.validator";

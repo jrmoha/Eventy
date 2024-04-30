@@ -11,7 +11,7 @@ import Person from "../person/person.model";
 import UserImage from "../user/image/user.image.model";
 import Image from "../image/image.model";
 import Settings from "../user/settings/settings.model";
-import { APIFeatures } from "../../utils/api.features";
+import { APIFeatures } from "../../lib/api.features";
 
 const includes = {
   sender: {

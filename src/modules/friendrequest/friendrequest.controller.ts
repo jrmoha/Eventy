@@ -10,7 +10,7 @@ import Block from "../block/block.model";
 import Person from "../person/person.model";
 import { FriendRequestInput } from "./friendrequest.validator";
 import Friendship from "../friendship/friendship.model";
-import { APIFeatures } from "../../utils/api.features";
+import { APIFeatures } from "../../lib/api.features";
 
 export const get_all = async_(
   async (req: Request<{}, {}, {}>, res: Response, next: NextFunction) => {

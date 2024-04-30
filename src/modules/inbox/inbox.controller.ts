@@ -2,7 +2,7 @@ import { InboxSerivce } from "./inbox.service";
 import { Request, Response, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
 import { async_ } from "../../interfaces/middleware/async.middleware";
-import { APIFeatures } from "../../utils/api.features";
+import { APIFeatures } from "../../lib/api.features";
 
 export const get_inboxes = async_(
   async (req: Request, res: Response, next: NextFunction) => {

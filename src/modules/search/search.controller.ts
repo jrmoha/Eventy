@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { async_ } from "../../interfaces/middleware/async.middleware";
 import StatusCodes from "http-status-codes";
 import { SearchInput } from "./search.validator";
-import { queryString } from "../../utils/api.features";
+import { queryString } from "../../lib/api.features";
 import { SearchService } from "./search.service";
 
 export const search = async_(

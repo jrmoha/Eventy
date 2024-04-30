@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize";
 import config from "config";
-import logger from "../utils/logger";
+import logger from "../log/logger";
 export class Database {
   private readonly sequelize: Sequelize;
 

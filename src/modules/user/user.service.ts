@@ -9,7 +9,7 @@ import Like from "../like/like.model";
 import Post from "../post/post.model";
 import Event from "../event/event.model";
 import EventImage from "../event/image/event.image.model";
-import { APIFeatures } from "../../utils/api.features";
+import { APIFeatures } from "../../lib/api.features";
 import Event_Interest from "../event/interest/event.interest.model";
 
 export class UserService {

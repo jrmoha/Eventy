@@ -11,7 +11,7 @@ import { APIError } from "../../error/api-error";
 import Poll_Selection from "./poll.selection.model";
 import { VoteInput } from "./poll.validator";
 import { RedisService } from "../../cache";
-import { CacheKeysGenerator } from "../../utils/cache_keys_generator";
+import { CacheKeysGenerator } from "../../lib/cache_keys_generator";
 
 export const create = async_(
   async (req: Request, res: Response, next: NextFunction) => {

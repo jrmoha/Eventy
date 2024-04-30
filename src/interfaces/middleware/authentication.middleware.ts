@@ -4,7 +4,7 @@ import { async_ } from "./async.middleware";
 import { APIError } from "../../error/api-error";
 import config from "config";
 import Person from "../../modules/person/person.model";
-import { Token } from "../../utils/token";
+import { Token } from "../../lib/token";
 
 export const authenticate = (optional = false, ...roles: string[]) => {
   return async_(async (req: Request, res: Response, next: NextFunction) => {

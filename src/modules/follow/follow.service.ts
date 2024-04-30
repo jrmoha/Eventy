@@ -1,4 +1,4 @@
-import { APIFeatures } from "./../../utils/api.features";
+import { APIFeatures } from "../../lib/api.features";
 import { FindAttributeOptions } from "sequelize";
 import { sequelize } from "../../database";
 import { Literal } from "sequelize/types/utils";
