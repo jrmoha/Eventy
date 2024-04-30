@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import { sequelize } from "./../../database/index";
+import { sequelize } from "../../database/index";
 import Image from "./image.model";
 
 class SystemImage extends Image {

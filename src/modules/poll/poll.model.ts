@@ -1,5 +1,5 @@
 import Post from "../post/post.model";
-import { sequelize } from "./../../database/index";
+import { sequelize } from "../../database/index";
 import { DataTypes } from "sequelize";
 
 class Poll extends Post {

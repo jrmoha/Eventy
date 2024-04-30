@@ -5,7 +5,7 @@ import { Token } from "../../../lib/token";
 import Ticket from "../../../modules/event/tickets/event.tickets.model";
 import Order from "../../../modules/order/order.model";
 import { SafeString } from "handlebars";
-import { htmlToTemplate } from "../../../lib/functions";
+import { htmlToTemplate } from "../../../utils/functions";
 
 type EmailURL = { origin: string };
 

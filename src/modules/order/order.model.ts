@@ -1,7 +1,7 @@
 import Ticket from "../event/tickets/event.tickets.model";
 import Payment from "../payment/payment.model";
 import User from "../user/user.model";
-import { sequelize } from "./../../database/index";
+import { sequelize } from "../../database/index";
 import { DataTypes, Model } from "sequelize";
 
 export enum OrderStatus {

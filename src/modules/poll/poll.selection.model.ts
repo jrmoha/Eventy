@@ -1,4 +1,4 @@
-import { sequelize } from "./../../database/index";
+import { sequelize } from "../../database/index";
 import { DataTypes, Model } from "sequelize";
 import Poll_Options from "./poll.options.model";
 import User from "../user/user.model";

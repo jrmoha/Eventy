@@ -1,4 +1,4 @@
-import { sequelize } from "./../../database/index";
+import { sequelize } from "../../database/index";
 import Post from "../post/post.model";
 import { DataTypes } from "sequelize";
 import "./migration/event.migration";

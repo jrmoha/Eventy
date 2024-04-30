@@ -1,4 +1,6 @@
 import express, { Express, NextFunction, Request, Response } from "express";
+import compression from "compression";
+import helmet from "helmet";
 import { Server } from "http";
 import cors from "cors";
 import config from "config";
@@ -42,7 +44,8 @@ export class ExpressConfig {
           express.json()(req, res, next);
         }
       });
-
+      this.app.use(compression());
+      this.app.use(helmet());
       this.app.use(cors());
       this.app.use(req_logger);
       this.app.use(routes);

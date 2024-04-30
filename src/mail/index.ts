@@ -2,6 +2,7 @@ import nodemailer from "nodemailer";
 import { Email, EmailServer } from "../types/email.type";
 import hbs from "nodemailer-express-handlebars";
 import path from "path";
+import logger from "../log/logger";
 
 export const sendEmail = async ({
   email,
@@ -36,7 +37,7 @@ export const sendEmail = async ({
     ...email,
   });
 
-  console.log("Message sent: %s", info);
+  logger.info("Message sent: %s", info);
 
   return !!info.accepted.length;
 };

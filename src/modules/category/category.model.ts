@@ -1,4 +1,4 @@
-import { sequelize } from "./../../database/index";
+import { sequelize } from "../../database/index";
 import { DataTypes, Model } from "sequelize";
 
 class Category extends Model {

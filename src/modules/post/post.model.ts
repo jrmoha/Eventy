@@ -1,5 +1,5 @@
 import Organizer from "../organizer/organizer.model";
-import { sequelize } from "./../../database/index";
+import { sequelize } from "../../database/index";
 import { DataTypes, Model } from "sequelize";
 enum PostStatus {
   PUBLISHED = "published",
