@@ -29,6 +29,7 @@ const {
   STRIPE_SECRET_KEY,
   STRIPE_ENDPOINT_SECRET,
   TICKET_ENCRYPTION_KEY,
+  CLIENT_URL,
 } = process.env;
 
 export default {
@@ -91,5 +92,10 @@ export default {
   },
   ticket: {
     encryption_key: TICKET_ENCRYPTION_KEY,
+  },
+  client_url: CLIENT_URL,
+  premium: {
+    price: 1000,
+    duration: 30,
   },
 };

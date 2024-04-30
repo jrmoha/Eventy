@@ -3,7 +3,7 @@ import User from "../user/user.model";
 import { sequelize } from "../../database/index";
 import { DataTypes, Model } from "sequelize";
 
-export default class PremiumUser extends Model {
+class PremiumUser extends Model {
   declare user_id: number;
   declare payment_id: string;
   declare start_date: Date;
@@ -79,3 +79,5 @@ PremiumUser.belongsTo(Payment, {
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
 });
+
+export default PremiumUser;

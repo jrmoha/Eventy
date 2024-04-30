@@ -37,8 +37,10 @@ export class ExpressConfig {
       global.io = io.getIO();
       // this.app.use(express.json());
       this.app.use((req: Request, res: Response, next: NextFunction) => {
-        if (req.originalUrl == "/api/v1/orders/webhook") {
-          //  express.raw({ type: "application/json" })(req, res, next);
+        const is_webhook =
+          req.originalUrl == "/api/v1/orders/webhook" ||
+          req.originalUrl == "/api/v1/premium/webhook";
+        if (is_webhook) {
           next();
         } else {
           express.json()(req, res, next);
