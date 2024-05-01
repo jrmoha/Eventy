@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { async_ } from "../../interfaces/middleware/async.middleware";
 import { APIError } from "../../error/api-error";
 import { StatusCodes } from "http-status-codes";
-import { PaymentService } from "../payment/payment.service";
+import { PremiumPaymentService } from "../payment/premiumPayment.service";
 import Person from "../person/person.model";
 import logger from "../../log/logger";
 import config from "config";
@@ -20,7 +20,7 @@ export const becomePremium = async_(
       throw new APIError("User is already premium", StatusCodes.BAD_REQUEST);
 
     // Create payment
-    const paymentServiceInstance = new PaymentService();
+    const paymentServiceInstance = new PremiumPaymentService();
     const checkoutSession = await paymentServiceInstance.premium_checkout({
       req,
       user: req.user as Person,
@@ -39,7 +39,7 @@ export const webhook = async_(
 
     if (!sig) throw new APIError("No signature", StatusCodes.BAD_REQUEST);
 
-    const endpointSecret = config.get<string>("stripe.endpoint_secret");
+    const endpointSecret = config.get<string>("stripe.premium_endpoint_secret");
     const stripeWebhookEvent = Stripe.webhooks.constructEvent(
       req.body,
       sig,

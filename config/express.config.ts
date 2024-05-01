@@ -41,6 +41,7 @@ export class ExpressConfig {
           req.originalUrl == "/api/v1/orders/webhook" ||
           req.originalUrl == "/api/v1/premium/webhook";
         if (is_webhook) {
+          logger.info("Webhook request");
           next();
         } else {
           express.json()(req, res, next);

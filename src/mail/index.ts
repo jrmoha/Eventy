@@ -37,7 +37,7 @@ export const sendEmail = async ({
     ...email,
   });
 
-  logger.info("Message sent: %s", info);
+  logger.info(`Message sent: ${info.accepted}`);
 
   return !!info.accepted.length;
 };

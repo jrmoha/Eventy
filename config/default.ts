@@ -30,6 +30,8 @@ const {
   STRIPE_ENDPOINT_SECRET,
   TICKET_ENCRYPTION_KEY,
   CLIENT_URL,
+  STRIPE_PREMIUM_ENDPOINT_SECRET,
+  STRIPE_PREMIUM_SECRET_KEY,
 } = process.env;
 
 export default {
@@ -89,6 +91,8 @@ export default {
   stripe: {
     secret_key: STRIPE_SECRET_KEY,
     endpoint_secret: STRIPE_ENDPOINT_SECRET,
+    premium_secret_key: STRIPE_PREMIUM_SECRET_KEY,
+    premium_endpoint_secret: STRIPE_PREMIUM_ENDPOINT_SECRET,
   },
   ticket: {
     encryption_key: TICKET_ENCRYPTION_KEY,

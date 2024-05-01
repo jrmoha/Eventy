@@ -11,7 +11,7 @@ import Stripe from "stripe";
 import { sequelize } from "../../database";
 import Event from "../event/event.model";
 import Post from "../post/post.model";
-import { PaymentService } from "../payment/payment.service";
+import { OrderPaymentService } from "../payment/orderPayment.service";
 import config from "config";
 import Person from "../person/person.model";
 import logger from "../../log/logger";
@@ -75,7 +75,7 @@ export const orderTicket = async_(
       quantity,
     });
 
-    const paymentService = new PaymentService();
+    const paymentService = new OrderPaymentService();
     const checkoutSession = await paymentService.ticket_checkout({
       req,
       ticket,
@@ -95,7 +95,7 @@ export const webhook = async_(
     const sig = req.headers["stripe-signature"];
 
     if (!sig) throw new APIError("No signature", StatusCodes.BAD_REQUEST);
-    
+
     const endpointSecret = config.get<string>("stripe.endpoint_secret");
     const stripeWebhookEvent = Stripe.webhooks.constructEvent(
       req.body,
@@ -107,7 +107,7 @@ export const webhook = async_(
       throw new APIError("Invalid signature", StatusCodes.BAD_REQUEST);
 
     const OrderServiceInstance = new OrderService();
-    
+
     // Handle the event
     switch (stripeWebhookEvent.type) {
       case "checkout.session.async_payment_failed":
@@ -154,4 +154,3 @@ export const orderDetails = async_(
     return res.status(StatusCodes.OK).json({ success: true, data: order });
   },
 );
- 
