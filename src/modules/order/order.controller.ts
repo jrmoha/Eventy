@@ -76,7 +76,7 @@ export const orderTicket = async_(
     });
 
     const paymentService = new OrderPaymentService();
-    const checkoutSession = await paymentService.ticket_checkout({
+    const checkoutSession = await paymentService.payment_checkout({
       req,
       ticket,
       order,

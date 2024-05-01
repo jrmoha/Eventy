@@ -1,11 +1,13 @@
 import Stripe from "stripe";
-import {
-  IPremiumPaymentService,
-  PremiumCheckout,
-} from "./premiumPayment.service.d";
+import { IPaymentService } from "./IPaymentService.d";
 import config from "config";
-
-export class PremiumPaymentService implements IPremiumPaymentService {
+import { Request } from "express";
+import Person from "../person/person.model";
+export type PremiumCheckout = {
+  req: Request;
+  user: Person;
+};
+export class PremiumPaymentService implements IPaymentService {
   private readonly stripe: Stripe;
   private readonly key: string;
 
@@ -13,7 +15,7 @@ export class PremiumPaymentService implements IPremiumPaymentService {
     this.key = config.get<string>("stripe.premium_secret_key");
     this.stripe = new Stripe(this.key);
   }
-  public async premium_checkout({
+  public async payment_checkout({
     req,
     user,
   }: PremiumCheckout): Promise<Stripe.Response<Stripe.Checkout.Session>> {

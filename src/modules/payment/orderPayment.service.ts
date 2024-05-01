@@ -1,8 +1,20 @@
 import Stripe from "stripe";
-import { IOrderPaymentService, TicketCheckout } from "./orderPayment.service.d";
+import { IPaymentService } from "./IPaymentService.d";
 import config from "config";
+import { Request } from "express";
+import Ticket from "../event/tickets/event.tickets.model";
+import Event from "../event/event.model";
+import Order from "../order/order.model";
+import Person from "../person/person.model";
 
-export class OrderPaymentService implements IOrderPaymentService {
+export type TicketCheckout = {
+  req: Request;
+  ticket: Ticket;
+  order: Order;
+  user: Person;
+  event: Event;
+};
+export class OrderPaymentService implements IPaymentService {
   private readonly stripe: Stripe;
   private readonly key: string;
 
@@ -11,7 +23,7 @@ export class OrderPaymentService implements IOrderPaymentService {
     this.stripe = new Stripe(this.key);
   }
 
-  public async ticket_checkout({
+  public async payment_checkout({
     req,
     ticket,
     order,

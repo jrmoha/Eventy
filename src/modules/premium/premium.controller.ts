@@ -21,7 +21,7 @@ export const becomePremium = async_(
 
     // Create payment
     const paymentServiceInstance = new PremiumPaymentService();
-    const checkoutSession = await paymentServiceInstance.premium_checkout({
+    const checkoutSession = await paymentServiceInstance.payment_checkout({
       req,
       user: req.user as Person,
     });
