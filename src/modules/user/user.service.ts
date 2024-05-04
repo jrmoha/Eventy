@@ -14,6 +14,9 @@ import Event_Interest from "../event/interest/event.interest.model";
 
 export class UserService {
   constructor() {}
+  public async deleteUser(id: number): Promise<number> {
+    return User.destroy({ where: { id } });
+  }
   private likes_interests_attrs(
     literal?: [[Literal, string]],
   ): FindAttributeOptions {

@@ -20,6 +20,7 @@ import {
 import logger from "../src/log/logger";
 import { SocketService } from "../src/socket";
 import { RedisService } from "../src/cache";
+import { startJobs } from "../src/jobs/jobs";
 export class ExpressConfig {
   private app: Express;
   private port: number;
@@ -65,6 +66,7 @@ export class ExpressConfig {
 
       await database.init();
       server.listen(this.port, () => {
+        startJobs();
         logger.info(`Server is running on port ${this.port}`);
       });
     } catch (error) {

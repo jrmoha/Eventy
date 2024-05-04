@@ -7,7 +7,6 @@ class Event extends Post {
   declare date: Date;
   declare time: string;
   declare likes_count: number;
-  declare comments_count: number;
   declare interests_count: number;
   declare attendees_count: number;
   declare search: string;
@@ -31,11 +30,6 @@ Event.init(
       allowNull: false,
     },
     likes_count: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0,
-    },
-    comments_count: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,

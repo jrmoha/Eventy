@@ -21,7 +21,49 @@ export class EventService {
     await event.save({ transaction: t });
     return event;
   }
+  public async todaysEvents(): Promise<Event[]> {
+    const todayDate = new Date();
+    const formattedTodayDate = todayDate.toISOString().split("T")[0];
 
+    return Event.findAll({
+      where: {
+        date: {
+          [Op.eq]: formattedTodayDate,
+        },
+      },
+      include: [
+        {
+          model: Post,
+          required: true,
+          attributes: [],
+        },
+        {
+          model: EventImage,
+          required: true,
+          attributes: [],
+          include: [
+            {
+              model: Image,
+              required: true,
+              attributes: [],
+            },
+          ],
+        },
+        {
+          model: Event_Agenda,
+          required: false,
+        },
+      ],
+      attributes: [
+        "id",
+        "location",
+        "date",
+        "time",
+        [sequelize.col("Post.content"), "content"],
+        [sequelize.col("EventImages.Image.secure_url"), "cover"],
+      ],
+    });
+  }
   public async getEvent(
     id: number,
     user_id: number | undefined,
@@ -91,7 +133,6 @@ export class EventService {
             "date",
             "time",
             "likes_count",
-            "comments_count",
             "interests_count",
             "attendees_count",
             ...(literal ? literal : []),
@@ -146,12 +187,6 @@ export class EventService {
     const similarEventsIds = await this.fetchSimilarEventsIds(id, token);
     if (!similarEventsIds) return null;
 
-    // const result: Post[] = [];
-    // for (const eventId of similarEventsIds) {
-    //   const post = await this.getEvent(eventId, undefined);
-    //   if (post) result.push(post);
-    // }
-    // return result;
     return Post.findAll({
       where: {
         id: {

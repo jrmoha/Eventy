@@ -7,7 +7,6 @@ class Ticket extends Model {
   declare event_id: number;
   declare price: number;
   declare class: string;
-  declare quantity: number;
   declare available: number;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
@@ -30,10 +29,6 @@ Ticket.init(
     },
     class: {
       type: DataTypes.STRING,
-      allowNull: false,
-    },
-    quantity: {
-      type: DataTypes.INTEGER,
       allowNull: false,
     },
     available: {

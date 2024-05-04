@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Reminder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .cover-img {
+            width: 100%;
+            height: auto;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .content p {
+            color: #333333;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .event-details {
+            margin-bottom: 30px;
+        }
+
+        .event-details h2 {
+            color: #007bff;
+            margin-top: 0;
+        }
+
+        .event-details ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .event-details li {
+            margin-bottom: 10px;
+        }
+
+        .agenda {
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        .agenda h2 {
+            color: #333333;
+            margin-top: 0;
+        }
+
+        .agenda ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .agenda li {
+            margin-bottom: 10px;
+        }
+
+        .button {
+            display: inline-block;
+
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .unsubscribe {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666666;
+        }
+
+        .unsubscribe a {
+            color: #666666;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Event Reminder</h1>
+        </div>
+        <div class="content">
+            <p>Dear {{first_name}},</p>
+            <p>This is a friendly reminder that the event you registered for will take place today.</p>
+            <div class="event-details">
+                <h2>Event Details:</h2>
+                <ul>
+                    <li><strong>Event:</strong> {{event_name}}</li>
+                    <li><strong>Date:</strong> {{event_date}}</li>
+                    <li><strong>Time:</strong> {{event_time}}</li>
+                    <li><strong>Location:</strong> {{event_location}}</li>
+                </ul>
+            </div>
+            <img src="{{event_cover}}" alt="Cover Image" class="cover-img">
+            {{#if agenda.length}}
+            <div class="agenda">
+                <h2>Agenda:</h2>
+                <ul>
+                    {{#each agenda}}
+                    <li>{{this.description}} - {{this.start_time}} - {{this.end_time}}</li>
+                    {{/each}}
+                </ul>
+            </div>
+            {{/if}}
+            <p>We look forward to seeing you there!</p>
+            <p>If you have any questions or need further assistance, feel free to contact us.</p>
+            <p>Best regards,<br>Eventy.</p>
+            <p><a href="{{event_url}}" class="button">View Event Details</a></p>
+        </div>
+        <div class="unsubscribe">
+            <p>If you wish to unsubscribe from event reminders, <a href="{{unsub_link}}">click here</a>.</p>
+        </div>
+    </div>
+</body>
+
+</html>

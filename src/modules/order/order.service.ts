@@ -216,4 +216,19 @@ export class OrderService {
 
     return;
   }
+
+  public async orderBuyers(event: Event): Promise<Order[]> {
+    return Order.findAll({
+      include: [
+        {
+          model: Ticket,
+          required: true,
+        },
+      ],
+      where: {
+        "$Ticket.event_id$": event.id,
+      },
+      attributes: ["user_id", [sequelize.col("Ticket.event_id"), "event_id"]],
+    });
+  }
 }

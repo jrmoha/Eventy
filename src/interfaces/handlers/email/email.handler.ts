@@ -6,6 +6,8 @@ import Ticket from "../../../modules/event/tickets/event.tickets.model";
 import Order from "../../../modules/order/order.model";
 import { SafeString } from "handlebars";
 import { htmlToTemplate } from "../../../utils/functions";
+import Event from "../../../modules/event/event.model";
+import Event_Agenda from "../../../modules/event/agenda/agenda.model";
 
 type EmailURL = { origin: string };
 
@@ -90,7 +92,59 @@ export const sendVerificationEmail = function (
     email: config_.mail,
   });
 };
+export const sendReminderEmail = function (user: Person, event: Event) {
+  const { first_name } = user;
+  const { content, date, time, location } = event;
+  const event_url = `${config.get("client_url")}/event/${event.id}`;
+  const unsub_link = `http://${config.get("host")}:${config.get("port")}/unsubscribe/reminders?id=${user.id}`;
 
+  const agenda = event?.dataValues?.Event_Agendas?.map(
+    (agenda: Event_Agenda) => {
+      return {
+        description: agenda.description,
+        start_time: agenda.start_time,
+        end_time: agenda.end_time,
+      };
+    },
+  );
+  const replacements = {
+    first_name,
+    event_name: content,
+    event_date: date,
+    event_time: time,
+    event_location: location,
+    event_cover: new SafeString(event?.dataValues?.cover).toString(),
+    agenda,
+    event_url,
+    unsub_link,
+  };
+
+  const html = htmlToTemplate(
+    __dirname + "/template/reminder.html",
+    replacements,
+  );
+  const config_ = {
+    mailserver: {
+      service: "gmail",
+      auth: {
+        user: config.get<string>("smtp.user"),
+        pass: config.get<string>("smtp.password"),
+      },
+    },
+    mail: {
+      from: `Eventy<${config.get<string>("smtp.user")}>`,
+      to: user.email,
+      attachDataUrls: true,
+      subject: `Reminder for ${content}`,
+      html,
+    },
+  };
+
+  return sendEmail({
+    server: config_.mailserver,
+    email: config_.mail,
+  });
+};
 export const sendTicketConfirmationEmail = function (
   user: Person,
   qrcode: string,
@@ -132,7 +186,7 @@ export const sendTicketConfirmationEmail = function (
       to: email,
       attachDataUrls: true,
       subject: "Order Confirmation",
-      html: html,
+      html,
     },
   };
 
