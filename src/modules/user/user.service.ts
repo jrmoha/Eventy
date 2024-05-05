@@ -11,9 +11,33 @@ import Event from "../event/event.model";
 import EventImage from "../event/image/event.image.model";
 import { APIFeatures } from "../../lib/api.features";
 import Event_Interest from "../event/interest/event.interest.model";
+import Settings from "./settings/settings.model";
 
 export class UserService {
   constructor() {}
+  public async findUserWithReminderSettings(id: number): Promise<User | null> {
+    return User.findOne({
+      where: { id, "$settings.allow_reminders$": true },
+      include: [
+        {
+          model: Person,
+          required: true,
+          attributes: [],
+        },
+        {
+          model: Settings,
+          required: true,
+          as: "settings",
+          attributes: ["allow_reminders"],
+        },
+      ],
+      attributes: [
+        "id",
+        [sequelize.col("Person.email"), "email"],
+        [sequelize.col("Person.first_name"), "first_name"],
+      ],
+    });
+  }
   public async deleteUser(id: number): Promise<number> {
     return User.destroy({ where: { id } });
   }

@@ -217,7 +217,7 @@ export class OrderService {
     return;
   }
 
-  public async orderBuyers(event: Event): Promise<Order[]> {
+  public async findOrderBuyers(event: Event): Promise<Order[]> {
     return Order.findAll({
       include: [
         {

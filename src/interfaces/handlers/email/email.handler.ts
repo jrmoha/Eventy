@@ -93,7 +93,7 @@ export const sendVerificationEmail = function (
   });
 };
 export const sendReminderEmail = function (user: Person, event: Event) {
-  const { first_name } = user;
+  const { first_name, email } = user;
   const { content, date, time, location } = event;
   const event_url = `${config.get("client_url")}/event/${event.id}`;
   const unsub_link = `http://${config.get("host")}:${config.get("port")}/unsubscribe/reminders?id=${user.id}`;
@@ -133,7 +133,7 @@ export const sendReminderEmail = function (user: Person, event: Event) {
     },
     mail: {
       from: `Eventy<${config.get<string>("smtp.user")}>`,
-      to: user.email,
+      to: email,
       attachDataUrls: true,
       subject: `Reminder for ${content}`,
       html,
