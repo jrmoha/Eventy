@@ -17,10 +17,12 @@ import { QrCodeService } from "../../lib/qrcode";
 import { Encryption } from "../../lib/encryption";
 import Image from "../image/image.model";
 import EventImage from "../event/image/event.image.model";
+import { z } from "zod";
 
 export class OrderService {
   constructor() {}
   public async orderDetails(order_id: string) {
+    this.validateOrderId(order_id);
     const attributes: FindAttributeOptions = [
       "status",
       [sequelize.col("Order.total"), "amount_paid"],
@@ -230,5 +232,14 @@ export class OrderService {
       },
       attributes: ["user_id", [sequelize.col("Ticket.event_id"), "event_id"]],
     });
+  }
+  private validateOrderId(order_id: string) {
+    if (!order_id)
+      throw new APIError("Invalid link", StatusCodes.BAD_REQUEST);
+
+    const valid_uuid = z.string().uuid().safeParse(order_id);
+
+    if (!valid_uuid.success)
+      throw new APIError("Invalid order id", StatusCodes.BAD_REQUEST);
   }
 }
