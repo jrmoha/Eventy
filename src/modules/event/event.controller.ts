@@ -112,7 +112,7 @@ export const create = async_(
     await organizer.save({ transaction: t });
 
     await t.commit().then(() => {
-      console.log("Transaction committed");
+      logger.info("Transaction committed");
       Event.update({ id: post.id }, { where: { id: post.id } }).then(() => {
         logger.info("Event updated"); //mock update to trigger trigger
       });
