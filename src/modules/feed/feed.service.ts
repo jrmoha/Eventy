@@ -60,6 +60,8 @@ export class FeedService {
         "followers_count",
         [sequelize.col("Person.first_name"), "first_name"],
         [sequelize.col("Person.last_name"), "last_name"],
+        [sequelize.col("Person.username"), "username"],
+        [sequelize.col("Person.id"), "id"],
         [sequelize.col("Person.email"), "email"],
         [sequelize.col("Organizer.bio"), "bio"],
         [sequelize.col("Organizer.rate"), "rate"],
