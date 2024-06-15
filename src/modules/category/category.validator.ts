@@ -3,10 +3,7 @@ import { TypeOf, array, object, string } from "zod";
 export const addCategoriesSchema = object({
   body: object({
     categories: array(
-      //   object({
-      // name:
       string({ required_error: "Category is required" }).min(1).max(255),
-      //   }),
     ).min(1),
   }),
 });

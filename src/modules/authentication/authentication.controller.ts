@@ -27,6 +27,8 @@ import logger from "../../log/logger";
 import UserImage from "../user/image/user.image.model";
 import Image from "../image/image.model";
 import { sequelize } from "../../database";
+import { AddCategoriesInput } from "../category/category.validator";
+import UserCategory from "../user/category/user.category.model";
 
 export const signup = async_(
   async (
@@ -170,7 +172,7 @@ export const login = async_(
 
 export const emailVerification = async_(
   async (
-    req: Request<{}, {}, {}, EmailInput>,
+    req: Request<{}, {}, AddCategoriesInput, EmailInput>,
     res: Response,
     next: NextFunction,
   ) => {
@@ -190,10 +192,15 @@ export const emailVerification = async_(
     if (person.confirmed)
       throw new APIError("User is already confirmed", StatusCodes.BAD_REQUEST);
 
-    person.confirmed = true;
-    await person.save();
-
     await Settings.create({ user_id: person.id });
+
+    const { categories } = req.body;
+    await UserCategory.bulkCreate(
+      categories.map((category) => ({
+        user_id: person.id,
+        category,
+      })),
+    );
 
     await Image.findOrCreate({
       where: { public_id: config.get<string>("images.default_user_image") },
@@ -211,6 +218,9 @@ export const emailVerification = async_(
       user_id: person.id,
       is_profile: true,
     });
+
+    person.confirmed = true;
+    await person.save();
 
     return res.status(StatusCodes.ACCEPTED).json({ success: true });
   },
