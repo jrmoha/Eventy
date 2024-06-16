@@ -12,6 +12,7 @@ import UserImage from "../user/image/user.image.model";
 import Image from "../image/image.model";
 import Settings from "../user/settings/settings.model";
 import { APIFeatures } from "../../lib/api.features";
+import { RedisService } from "../../cache";
 
 const includes = {
   sender: {
@@ -137,7 +138,7 @@ export const unfriend = async_(
         [Op.or]: [{ id: user_id }, { id: other_id }],
       },
     });
-
+    await new RedisService().del(`Organizer:${other_id};User:${user_id}`);
     return res.status(StatusCodes.OK).json({ success: true });
   },
 );

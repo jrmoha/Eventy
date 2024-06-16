@@ -11,6 +11,7 @@ import { FollowInput } from "./follow.validator";
 import Settings from "../user/settings/settings.model";
 import Friendship from "../friendship/friendship.model";
 import { APIFeatures } from "../../lib/api.features";
+import { RedisService } from "../../cache";
 
 export const follow = async_(
   async (
@@ -59,6 +60,7 @@ export const follow = async_(
       by: 1,
     });
     await followed.save();
+    await new RedisService().del(`Organizer:${followed_id};User:${follower_id}`);
     return res.status(StatusCodes.OK).json({ success: true });
   },
 );
@@ -102,7 +104,7 @@ export const unfollow = async_(
       by: 1,
       where: { id: followed_id },
     });
-
+    await new RedisService().del(`Organizer:${followed_id};User:${follower_id}`);
     return res.status(StatusCodes.OK).json({ success: true });
   },
 );

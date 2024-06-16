@@ -46,6 +46,13 @@ export class OrganizerService {
         ),
         "is_friend",
       ]);
+      //search for the current user in the friend request table as sender_id
+      literal.push([
+        sequelize.literal(
+          `CASE WHEN EXISTS (SELECT 1 FROM friend_request WHERE sender_id = ${current_id} AND receiver_id = ${organizer_id}) THEN true ELSE false END`,
+        ),
+        "sent_request",
+      ]);
     }
 
     return Person.findByPk(organizer_id, {

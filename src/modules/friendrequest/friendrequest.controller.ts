@@ -11,6 +11,7 @@ import Person from "../person/person.model";
 import { FriendRequestInput } from "./friendrequest.validator";
 import Friendship from "../friendship/friendship.model";
 import { APIFeatures } from "../../lib/api.features";
+import { RedisService } from "../../cache";
 
 export const get_all = async_(
   async (req: Request<{}, {}, {}>, res: Response, next: NextFunction) => {
@@ -106,7 +107,7 @@ export const send = async_(
       sender_id,
       receiver_id,
     });
-
+    await new RedisService().del(`Organizer:${receiver_id};User:${sender_id}`);
     return friend_request
       ? res.status(StatusCodes.OK).json({ success: true })
       : next(new APIError("Error Occurred", StatusCodes.INTERNAL_SERVER_ERROR));
@@ -154,7 +155,7 @@ export const accept = async_(
     });
 
     await friend_request.destroy();
-
+    await new RedisService().del(`Organizer:${receiver_id};User:${sender_id}`);
     return res.status(StatusCodes.CREATED).json({ success: true });
   },
 );
@@ -184,7 +185,7 @@ export const cancel = async_(
       );
 
     await friend_request.destroy();
-
+    await new RedisService().del(`Organizer:${other_id};User:${user_id}`);
     return res.status(StatusCodes.OK).json({ success: true });
   },
 );
