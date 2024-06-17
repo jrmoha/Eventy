@@ -50,20 +50,7 @@ export const get_messages = async_(
     const apifeatures = new APIFeatures(req.query).paginate();
     const messages = await Message.findAll({
       where: { inbox_id },
-      attributes: [
-        "id",
-        "message",
-        "sender_id",
-        "receiver_id",
-        [
-          sequelize.fn(
-            "to_char",
-            sequelize.col("createdAt"),
-            "YYYY-MM-DD HH24:MI:SS",
-          ),
-          "createdAt",
-        ],
-      ],
+      attributes: ["id", "message", "sender_id", "receiver_id", "createdAt"],
       order: [["createdAt", "DESC"]],
       ...apifeatures.query,
     });

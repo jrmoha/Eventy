@@ -92,9 +92,9 @@ export class UserService {
     return Person.findOne({
       where: {
         id,
-        [Op.and]: sequelize.literal(
-          `NOT EXISTS (SELECT 1 FROM organizer WHERE id=:id)`,
-        ),
+        // [Op.and]: sequelize.literal(
+        //   `NOT EXISTS (SELECT 1 FROM organizer WHERE id=:id)`,
+        // ),
       },
       include: [
         {

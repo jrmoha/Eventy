@@ -18,7 +18,7 @@ Organizer.init(
       allowNull: false,
     },
     bio: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(500),
       allowNull: true,
     },
     rate: {

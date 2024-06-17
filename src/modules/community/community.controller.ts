@@ -53,9 +53,9 @@ export const get_communities = async_(
           id: community.id,
           name: community.name,
           last_message: community.last_message,
-          last_message_time: new Date(
+          last_message_time: community.last_message?new Date(
             community.last_message_time,
-          ).toLocaleString(),
+          ).toLocaleString():null,
           image_url: default_group_image?.secure_url,
         };
       });

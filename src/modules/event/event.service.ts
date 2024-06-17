@@ -13,6 +13,7 @@ import Event_Phone from "./phone/phone.model";
 import Event from "./event.model";
 import axios from "axios";
 import { Op, Transaction } from "sequelize";
+import UserImage from "../user/image/user.image.model";
 
 export class EventService {
   constructor() {}
@@ -100,6 +101,21 @@ export class EventService {
                   required: true,
                   attributes: [],
                 },
+                {
+                  model: UserImage,
+                  required: true,
+                  attributes: [],
+                  where:{
+                    is_profile: true
+                  },
+                  include: [
+                    {
+                      model: Image,
+                      required: true,
+                      attributes: [],
+                    }, 
+                  ],
+                },
               ],
               required: true,
             },
@@ -123,6 +139,11 @@ export class EventService {
             ],
             [sequelize.literal('"Organizer".rate'), "rate"],
             [sequelize.literal('"Organizer".events_count'), "events_count"],
+            [sequelize.literal('"Organizer".id'), "id"],
+            [
+              sequelize.literal('"Organizer->User->UserImages->Image".url'),
+              "image",
+            ],
           ],
         },
         {

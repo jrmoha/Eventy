@@ -8,23 +8,25 @@ export const socketMiddleware = async (socket: Socket, next: Function) => {
   try {
     const token = socket.handshake.auth.headers["x-access-token"] as string;
 
-    if (!token)
+    if (!token) {
       socket.emit("error", {
         message: "You must provide a token",
         status: StatusCodes.UNAUTHORIZED,
       });
+    }
 
-    if (!token.startsWith(config.get<string>("jwt.bearer")))
+    if (!token.startsWith(config.get<string>("jwt.bearer"))) {
       socket.emit("error", {
         message: "Invalid token",
         status: StatusCodes.UNAUTHORIZED,
       });
+    }
 
     const baseToken = token.split(" ")[1];
 
     const decoded = jwt.verify(
       baseToken,
-      config.get<string>("jwt.secret"),
+      config.get<string>("jwt.private_key"),
     ) as JwtPayload;
 
     if (!decoded?.id)

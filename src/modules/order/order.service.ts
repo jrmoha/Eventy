@@ -18,6 +18,8 @@ import { Encryption } from "../../lib/encryption";
 import Image from "../image/image.model";
 import EventImage from "../event/image/event.image.model";
 import { z } from "zod";
+import Community from "../community/community.model";
+import CommunityMembership from "../community/membership/community.membership.model";
 
 export class OrderService {
   constructor() {}
@@ -152,6 +154,7 @@ export class OrderService {
         },
       ],
       attributes: [
+        "id",
         [sequelize.col("Post.content"), "content"],
         [sequelize.col("EventImages.Image.secure_url"), "logo"],
       ],
@@ -169,6 +172,13 @@ export class OrderService {
     const qrCodeService = new QrCodeService();
     const qrCodeUrl = await qrCodeService.generate(url);
 
+    if (await Community.findOne({ where: { id: event.id } })) {
+      await CommunityMembership.findOrCreate({
+        where: { user_id, community_id: event.id },
+        defaults: { user_id, community_id: event.id },
+        transaction: t,
+      });
+    }
     //Send the QR code to the user email
     await sendTicketConfirmationEmail(
       user,
@@ -178,7 +188,6 @@ export class OrderService {
       order,
       ticket,
     );
-
     await t.commit();
 
     return;
@@ -234,8 +243,7 @@ export class OrderService {
     });
   }
   private validateOrderId(order_id: string) {
-    if (!order_id)
-      throw new APIError("Invalid link", StatusCodes.BAD_REQUEST);
+    if (!order_id) throw new APIError("Invalid link", StatusCodes.BAD_REQUEST);
 
     const valid_uuid = z.string().uuid().safeParse(order_id);
 

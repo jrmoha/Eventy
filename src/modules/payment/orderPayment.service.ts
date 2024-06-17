@@ -35,13 +35,23 @@ export class OrderPaymentService implements IPaymentService {
       line_items: [
         {
           price_data: {
-            currency: "usd",
+            currency: "egp",
             product_data: {
               name: "Ticket for " + event.content,
             },
             unit_amount: ticket.price * 100,
           },
           quantity: order.quantity,
+        },
+        {
+          price_data: {
+            currency: "egp",
+            product_data: {
+              name: "Service Fee",
+            },
+            unit_amount: Number(ticket.price) * Number(order.quantity) * 2.5,
+          },
+          quantity: 1,
         },
       ],
       mode: "payment",
