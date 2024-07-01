@@ -1,1 +1,0 @@
-# eventy-server
