@@ -45,7 +45,7 @@
 
 ## Project Overview
 
-## Eventy is a web-based social media platform that connects individuals through shared interests in local and global events. It modernizes event venue access with an e-ticketing system, providing a seamless platform for event discovery, engagement, and experience sharing.
+### Eventy is a web-based social media platform that connects individuals through shared interests in local and global events. It modernizes event venue access with an e-ticketing system, providing a seamless platform for event discovery, engagement, and experience sharing.
 
 ## Motivation
 
