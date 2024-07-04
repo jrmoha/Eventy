@@ -222,7 +222,8 @@ The future development of Eventy will focus on the following key features:
 
 ## Overall System Architecture
 
- 
+![blocks](https://github.com/jrmoha/Eventy/assets/94176787/95dbc1ee-3112-4612-9652-0f3888b5a920)
+
 
 ---
 
