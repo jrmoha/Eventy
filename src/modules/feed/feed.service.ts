@@ -244,7 +244,7 @@ export class FeedService {
   }
   private async fetch_recommendations_events(user_id: number, token: string) {
     const response = await axios.post(
-      "http://localhost:8000/user",
+      config.get<string>("recommendation_url"),
       { elementid: user_id },
       {
         headers: {

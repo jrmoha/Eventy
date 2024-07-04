@@ -32,6 +32,7 @@ const {
   CLIENT_URL,
   STRIPE_PREMIUM_ENDPOINT_SECRET,
   STRIPE_PREMIUM_SECRET_KEY,
+  RECOMMENDATION_URL,
 } = process.env;
 
 export default {
@@ -98,6 +99,7 @@ export default {
     encryption_key: TICKET_ENCRYPTION_KEY,
   },
   client_url: CLIENT_URL,
+  recommendation_url: RECOMMENDATION_URL,
   premium: {
     price: 1000,
     duration: 30,

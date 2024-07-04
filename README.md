@@ -1,5 +1,3 @@
-# Eventy
-
 <p align="center">
     <h1 align="center">Eventy</h1>
 </p>
@@ -195,15 +193,11 @@ Once you have installed and set up Eventy, you can start using the platform as e
 
 **Below is a video demo of the Eventy platform:**
 
-
 https://github.com/jrmoha/Eventy/assets/94176787/7cfc7b33-857d-4cb7-841d-670643c32c47
-
 
 **Here's mobile version of ticket scanning:**
 
-
 https://github.com/jrmoha/Eventy/assets/94176787/bc3fc893-70b3-4d1a-9a19-9c4cad73817b
-
 
 ---
 
@@ -228,7 +222,7 @@ The future development of Eventy will focus on the following key features:
 
 ## Overall System Architecture
 
-![alt text](blocks.jpg)
+ 
 
 ---
 
