@@ -7,6 +7,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "dev:pm2":"yarn build && pm2 start dist/src/index.js --name Eventy --watch --log /logs/Eventy.log -i 3",
     "build": "tsc",
     "start": "yarn build && node dist/src/index.js",
     "format": "prettier --write src/**/*.ts",

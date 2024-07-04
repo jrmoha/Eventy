@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { async_ } from "../../interfaces/middleware/async.middleware";
 import { APIError } from "../../error/api-error";
 import { StatusCodes } from "http-status-codes";
-// import { APIFeatures } from "../../lib/api.features";
+import { APIFeatures } from "../../lib/api.features";
 import { RedisService } from "../../cache";
 import { CacheKeysGenerator } from "../../lib/cache_keys_generator";
 import { OrganizerService } from "./organizer.service";
@@ -37,16 +37,15 @@ export const events = async_(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
-    // const apifeatures = new APIFeatures(req.query).paginate();
+    const apifeatures = new APIFeatures(req.query).paginate();
 
     const OrganizerServiceInstance = new OrganizerService();
     const events = await OrganizerServiceInstance.getOrganizerEvents(
       +id,
-      // apifeatures,
+      apifeatures,
     );
 
     if (!events) throw new APIError("Events not found", StatusCodes.NOT_FOUND);
- 
 
     const upcoming = events.filter((event) => {
       return new Date(event.dataValues.date) > new Date();

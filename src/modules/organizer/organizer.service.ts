@@ -110,7 +110,7 @@ export class OrganizerService {
   }
   public async getOrganizerEvents(
     organizer_id: number,
-    // apifeatures: APIFeatures,
+    apifeatures: APIFeatures,
   ): Promise<Post[] | null> {
     return Post.findAll({
       where: { organizer_id, status: "published" },
@@ -150,7 +150,7 @@ export class OrganizerService {
         [sequelize.col("Event.time"), "time"],
         [sequelize.col("Event.EventImages.Image.url"), "image_url"],
       ],
-      // ...apifeatures.query,
+      ...apifeatures.query,
       subQuery: false,
     });
   }
